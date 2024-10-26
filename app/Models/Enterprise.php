@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Enterprise extends Model
 {
     use HasFactory, Notifiable, HasUuid;
+    use App\Traits\HasUuid;
 
     protected $table = 'enterprises';
 
