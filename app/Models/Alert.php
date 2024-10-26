@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Model;
 
 class Alert extends Model
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, HasUuid, Notifiable;
 
     protected $table = 'alerts';
 
     protected $fillable = [
         'description',
-        'enterprise_id'
+        'enterprise_id',
     ];
 }

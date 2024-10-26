@@ -33,8 +33,10 @@ class MovementRepository
         $movement = $this->model->find($id);
         if ($movement) {
             $movement->update($data);
+
             return $movement;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class MovementRepository
         if ($movement) {
             return $movement->delete();
         }
+
         return false;
     }
 }

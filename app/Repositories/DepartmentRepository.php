@@ -33,8 +33,10 @@ class DepartmentRepository
         $department = $this->model->find($id);
         if ($department) {
             $department->update($data);
+
             return $department;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class DepartmentRepository
         if ($department) {
             return $department->delete();
         }
+
         return false;
     }
 }

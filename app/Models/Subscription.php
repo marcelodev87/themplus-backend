@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Model;
 
 class Subscription extends Model
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, HasUuid, Notifiable;
 
     protected $table = 'subscriptions';
 
@@ -15,5 +15,4 @@ class Subscription extends Model
         'name',
         'price',
     ];
-
 }

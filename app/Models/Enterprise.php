@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Enterprise extends Model
 {
-    use HasFactory, Notifiable, HasUuid;
     use App\Traits\HasUuid;
+    use HasFactory, HasUuid, Notifiable;
 
     protected $table = 'enterprises';
 
@@ -21,6 +21,6 @@ class Enterprise extends Model
         'address',
         'email',
         'phone',
-        'subscription_id'
+        'subscription_id',
     ];
 }

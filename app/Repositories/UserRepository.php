@@ -33,8 +33,10 @@ class UserRepository
         $user = $this->model->find($id);
         if ($user) {
             $user->update($data);
+
             return $user;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class UserRepository
         if ($user) {
             return $user->delete();
         }
+
         return false;
     }
 }

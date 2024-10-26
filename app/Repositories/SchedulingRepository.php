@@ -33,8 +33,10 @@ class SchedulingRepository
         $scheduling = $this->model->find($id);
         if ($scheduling) {
             $scheduling->update($data);
+
             return $scheduling;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class SchedulingRepository
         if ($scheduling) {
             return $scheduling->delete();
         }
+
         return false;
     }
 }

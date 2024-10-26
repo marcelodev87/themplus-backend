@@ -33,8 +33,10 @@ class FinancialMovementRepository
         $financialMovement = $this->model->find($id);
         if ($financialMovement) {
             $financialMovement->update($data);
+
             return $financialMovement;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class FinancialMovementRepository
         if ($financialMovement) {
             return $financialMovement->delete();
         }
+
         return false;
     }
 }

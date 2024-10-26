@@ -33,8 +33,10 @@ class CategoryRepository
         $category = $this->model->find($id);
         if ($category) {
             $category->update($data);
+
             return $category;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class CategoryRepository
         if ($category) {
             return $category->delete();
         }
+
         return false;
     }
 }

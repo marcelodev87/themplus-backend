@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, HasUuid, Notifiable;
 
     protected $table = 'departments';
 
     protected $fillable = [
         'name',
         'parent_id',
-        'enterprise_id'
+        'enterprise_id',
     ];
 }

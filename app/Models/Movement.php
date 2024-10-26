@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Model;
 
 class Movement extends Model
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, HasUuid, Notifiable;
 
     protected $table = 'movements';
 
@@ -19,6 +19,6 @@ class Movement extends Model
         'receipt',
         'category_id',
         'account_id',
-        'enterprise_id'
+        'enterprise_id',
     ];
 }

@@ -33,8 +33,10 @@ class EnterpriseRepository
         $enterprise = $this->model->find($id);
         if ($enterprise) {
             $enterprise->update($data);
+
             return $enterprise;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class EnterpriseRepository
         if ($enterprise) {
             return $enterprise->delete();
         }
+
         return false;
     }
 }

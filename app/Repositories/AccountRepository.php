@@ -33,8 +33,10 @@ class AccountRepository
         $account = $this->model->find($id);
         if ($account) {
             $account->update($data);
+
             return $account;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class AccountRepository
         if ($account) {
             return $account->delete();
         }
+
         return false;
     }
 }

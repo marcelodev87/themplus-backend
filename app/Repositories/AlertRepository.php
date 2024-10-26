@@ -33,8 +33,10 @@ class AlertRepository
         $alert = $this->model->find($id);
         if ($alert) {
             $alert->update($data);
+
             return $alert;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class AlertRepository
         if ($alert) {
             return $alert->delete();
         }
+
         return false;
     }
 }

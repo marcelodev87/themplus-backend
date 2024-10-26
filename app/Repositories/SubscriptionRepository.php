@@ -33,8 +33,10 @@ class SubscriptionRepository
         $subscription = $this->model->find($id);
         if ($subscription) {
             $subscription->update($data);
+
             return $subscription;
         }
+
         return null;
     }
 
@@ -44,6 +46,7 @@ class SubscriptionRepository
         if ($subscription) {
             return $subscription->delete();
         }
+
         return false;
     }
 }

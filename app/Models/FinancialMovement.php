@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Model;
 
 class FinancialMovement extends Model
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, HasUuid, Notifiable;
 
     protected $table = 'financial_movements';
 
