@@ -4,10 +4,11 @@ namespace App\Models;
 
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class Scheduling extends Model
 {
-    use HasFactory, HasUuid, Notifiable;
+    use HasUuid, Notifiable;
 
     protected $table = 'schedulings';
 

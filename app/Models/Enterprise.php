@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasUuid;
+use Illuminate\Notifications\Notifiable;
 
 class Enterprise extends Model
 {
-    use App\Traits\HasUuid;
-    use HasFactory, HasUuid, Notifiable;
+    use HasUuid, Notifiable;
 
     protected $table = 'enterprises';
 
