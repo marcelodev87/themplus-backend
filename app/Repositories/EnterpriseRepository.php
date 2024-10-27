@@ -23,8 +23,10 @@ class EnterpriseRepository
         return $this->model->find($id);
     }
 
-    public function create(array $data)
+    public function createOnlyName($name)
     {
+        $data = ['name' => $name];
+
         return $this->model->create($data);
     }
 

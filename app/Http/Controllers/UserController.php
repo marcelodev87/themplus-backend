@@ -2,33 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\UserService;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    private $service;
+
+    public function __construct(UserService $service)
+    {
+        $this->service = $service;
+    }
+
     public function login(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
+        try {
+            $user = $this->service->login($request);
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            return response(['message' => 'Credenciais inválidas'], 401);
+            $token = $user->createToken('my-app-token')->plainTextToken;
+
+            return response()->json(['user' => $user, 'token' => $token], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao logar com usuário: '.$e->getMessage());
+
+            return response()->json(['error' => 'Erro interno do servidor'], 500);
         }
-
-        $token = $user->createToken('my-app-token')->plainTextToken;
-
-        return response(['user' => $user, 'token' => $token], 200);
     }
 
     public function register(Request $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            DB::beginTransaction();
 
-        $token = $user->createToken('my-app-token')->plainTextToken;
+            $user = $this->service->create($request);
 
-        return response(['user' => $user, 'token' => $token], 201);
+            if ($user) {
+                $token = $user->createToken('my-app-token')->plainTextToken;
+
+                DB::commit();
+
+                return response()->json(['user' => $user, 'token' => $token, 'message' => 'Cadastro realizado com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar usuário');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar usuário: '.$e->getMessage());
+
+            return response()->json(['error' => 'Erro interno do servidor'], 500);
+        }
     }
 }
