@@ -7,6 +7,7 @@ use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
 use App\Rules\UserRule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class UserService
 {
@@ -38,11 +39,15 @@ class UserService
 
         $user = $this->repository->findByEmail($data['email']);
         if (! $user) {
-            throw new ValidationException('Este e-mail não está registrado');
-        }
-        if (! Hash::check($data['password'], $user->password)) {
-            throw new ValidationException('A senha está incorreta');
-        }
+           throw ValidationException::withMessages([
+               'email' => ['Credenciais não constam em nosso registro'],
+           ]);
+       }
+       if (! Hash::check($data['password'], $user->password)) {
+           throw ValidationException::withMessages([
+               'password' => ['Credenciais não constam em nosso registro'],
+           ]);
+       }
 
         return $user;
     }
