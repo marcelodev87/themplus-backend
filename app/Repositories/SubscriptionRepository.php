@@ -23,6 +23,11 @@ class SubscriptionRepository
         return $this->model->find($id);
     }
 
+    public function findByName($name)
+    {
+        return $this->model->where('name', $name)->first();
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);

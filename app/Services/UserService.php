@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
 use App\Rules\UserRule;
 use Illuminate\Support\Facades\Hash;
@@ -15,11 +16,18 @@ class UserService
 
     protected $enterpriseRepository;
 
-    public function __construct(UserRule $rule, UserRepository $repository, EnterpriseRepository $enterpriseRepository)
-    {
+    protected $subscriptionRepository;
+
+    public function __construct(
+        UserRule $rule,
+        UserRepository $repository,
+        EnterpriseRepository $enterpriseRepository,
+        SubscriptionRepository $subscriptionRepository
+    ) {
         $this->rule = $rule;
         $this->repository = $repository;
         $this->enterpriseRepository = $enterpriseRepository;
+        $this->subscriptionRepository = $subscriptionRepository;
     }
 
     public function login($request)
@@ -46,7 +54,9 @@ class UserService
         $data = $request->only(['name', 'password', 'email', 'nameEnterprise']);
         $data['password'] = Hash::make($data['password']);
 
-        $enterprise = $this->enterpriseRepository->create($data['nameEnterprise']);
+        $subscription = $this->subscriptionRepository->findByName('free');
+        $enterprise = $this->enterpriseRepository->createStart($data['nameEnterprise'], $subscription->id);
+
         $data['enterprise_id'] = $enterprise->id;
         $data['position'] = 'admin';
         unset($data['nameEnterprise']);

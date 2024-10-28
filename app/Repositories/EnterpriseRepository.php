@@ -23,9 +23,9 @@ class EnterpriseRepository
         return $this->model->find($id);
     }
 
-    public function createOnlyName($name)
+    public function createStart($name, $subscriptionId)
     {
-        $data = ['name' => $name];
+        $data = ['name' => $name, 'subscription_id' => $subscriptionId];
 
         return $this->model->create($data);
     }
