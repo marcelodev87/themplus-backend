@@ -27,7 +27,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error('Erro ao logar com usuário: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage() ], 500);
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
     }
 
@@ -52,7 +52,7 @@ class UserController extends Controller
 
             Log::error('Erro ao registrar usuário: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage() ], 500);
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
     }
 }

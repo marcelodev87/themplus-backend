@@ -20,12 +20,12 @@ class CategoryRepository
 
     public function getAllByEnterprise($enterpriseId)
     {
-        return $this->model->where('enterprise_id',$enterpriseId)->get();
+        return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
     public function getAllByEnterpriseWithDefaults($enterpriseId)
     {
-        return $this->model->where('enterprise_id',$enterpriseId)->orWhere('enterprise_id', null)->get();
+        return $this->model->where('enterprise_id', $enterpriseId)->orWhere('enterprise_id', null)->get();
     }
 
     public function findById($id)

@@ -39,15 +39,15 @@ class UserService
 
         $user = $this->repository->findByEmail($data['email']);
         if (! $user) {
-           throw ValidationException::withMessages([
-               'email' => ['Credenciais não constam em nosso registro'],
-           ]);
-       }
-       if (! Hash::check($data['password'], $user->password)) {
-           throw ValidationException::withMessages([
-               'password' => ['Credenciais não constam em nosso registro'],
-           ]);
-       }
+            throw ValidationException::withMessages([
+                'email' => ['Credenciais não constam em nosso registro'],
+            ]);
+        }
+        if (! Hash::check($data['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'password' => ['Credenciais não constam em nosso registro'],
+            ]);
+        }
 
         return $user;
     }

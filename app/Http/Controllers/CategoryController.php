@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Services\CategoryService;
 use App\Repositories\CategoryRepository;
+use App\Services\CategoryService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
     private $service;
+
     private $repository;
 
-    public function __construct(CategoryService $service,  CategoryRepository $repository)
+    public function __construct(CategoryService $service, CategoryRepository $repository)
     {
         $this->service = $service;
         $this->repository = $repository;
     }
+
     public function index()
     {
         return 'Ola mundo';
@@ -44,7 +46,7 @@ class CategoryController extends Controller
 
             Log::error('Erro ao registrar categoria: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage() ], 500);
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
     }
 
