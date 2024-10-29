@@ -11,6 +11,7 @@ class CategoryRule
     {
         $rules = [
             'name' => 'required|string|min:3|max:30',
+            'type' => 'required|string',
         ];
 
         $messages = [
@@ -18,6 +19,8 @@ class CategoryRule
             'name.string' => 'O nome deve ser uma string',
             'name.min' => 'O nome da categoria não pode ter menos de 3 caracteres',
             'name.max' => 'O nome da categoria não pode ter mais de 30 caracteres',
+            'type.required' => 'O tipo de movimentação da categoria é obrigatório',
+            'type.string' => 'O tipo de movimentação deve ser uma string',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

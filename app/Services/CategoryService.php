@@ -26,8 +26,9 @@ class CategoryService
     {
         $this->rule->create($request);
 
-        $data = $request->only(['name']);
+        $data = $request->only(['name', 'type']);
         $data['enterprise_id'] = $request->user()->enterprise_id;
+        
 
         return $this->repository->create($data);
     }

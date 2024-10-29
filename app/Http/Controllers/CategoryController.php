@@ -27,14 +27,13 @@ class CategoryController extends Controller
     {
         try {
             DB::beginTransaction();
-            $x = 10;
             $category = $this->service->create($request);
 
             if ($category) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $categories = $this->repository->getAllByEnterprise($enterpriseId);
+                $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
 
                 return response()->json(['categories' => $categories, 'message' => 'Categoria cadastrada com sucesso'], 201);
             }
