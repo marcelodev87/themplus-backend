@@ -20,9 +20,18 @@ class CategoryController extends Controller
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        return 'Ola mundo';
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+
+            return response()->json(['categories' => $categories], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
     public function store(Request $request)
@@ -50,16 +59,6 @@ class CategoryController extends Controller
         }
     }
 
-    public function show(string $id)
-    {
-        //
-    }
-
-    public function edit(string $id)
-    {
-        //
-    }
-
     public function update(Request $request, string $id)
     {
         //
@@ -67,6 +66,23 @@ class CategoryController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $category = $this->repository->delete($id);
+
+            if ($category) {
+                DB::commit();
+
+                return response()->json(['message' => 'Categoria deletada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar categoria');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar categoria: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 }
