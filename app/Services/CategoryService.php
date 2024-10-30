@@ -28,4 +28,13 @@ class CategoryService
 
         return $this->repository->create($data);
     }
+
+    public function update($request)
+    {
+        $this->rule->update($request);
+
+        $data = $request->only(['name', 'type', 'enterpriseId']);
+
+        return $this->repository->update($request->input('id'), $data);
+    }
 }

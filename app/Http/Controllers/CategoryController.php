@@ -59,9 +59,29 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $category = $this->service->update($request);
+
+            if ($category) {
+                DB::commit();
+
+                $enterpriseId = $request->input('enterpriseId');
+                $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+
+                return response()->json(['categories' => $categories, 'message' => 'Categoria atualizada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar categoria');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar categoria: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
     public function destroy(string $id)
