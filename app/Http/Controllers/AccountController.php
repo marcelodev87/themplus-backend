@@ -24,7 +24,7 @@ class AccountController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $categories = $this->repository->getAllByEnterprise($enterpriseId);
+            $accounts = $this->repository->getAllByEnterprise($enterpriseId);
 
             return response()->json(['accounts' => $accounts], 200);
         } catch (\Exception $e) {
