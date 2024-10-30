@@ -18,6 +18,11 @@ class AccountRepository
         return $this->model->all();
     }
 
+    public function getAllByEnterprise($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)->get();
+    }
+
     public function findById($id)
     {
         return $this->model->find($id);

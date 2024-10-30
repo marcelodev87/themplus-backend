@@ -2,63 +2,107 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\AccountRepository;
+use App\Services\AccountService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
-class AccountController extends Controller
+class AccountController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private $service;
+
+    private $repository;
+
+    public function __construct(AccountService $service, AccountRepository $repository)
     {
-        //
+        $this->service = $service;
+        $this->repository = $repository;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $categories = $this->repository->getAllByEnterprise($enterpriseId);
+
+            return response()->json(['accounts' => $accounts], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as contas: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $account = $this->service->create($request);
+
+            if ($account) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['accounts' => $accounts, 'message' => 'Conta cadastrada com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar conta');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar conta: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $account = $this->service->update($request);
+
+            if ($account) {
+                DB::commit();
+
+                $enterpriseId = $request->input('enterpriseId');
+                $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['categories' => $accounts, 'message' => 'Conta atualizada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar conta');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar conta: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $category = $this->repository->delete($id);
+
+            if ($category) {
+                DB::commit();
+
+                return response()->json(['message' => 'Conta deletada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar conta');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar conta: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 }

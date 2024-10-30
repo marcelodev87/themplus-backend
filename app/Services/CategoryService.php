@@ -33,7 +33,8 @@ class CategoryService
     {
         $this->rule->update($request);
 
-        $data = $request->only(['name', 'type', 'enterpriseId']);
+        $data = $request->only(['name', 'type']);
+        $data['enterprise_id'] = $request->user()->enterprise_id;
 
         return $this->repository->update($request->input('id'), $data);
     }

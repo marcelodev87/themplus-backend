@@ -16,5 +16,8 @@ class Account extends Model
         'name',
         'balance',
         'enterprise_id',
+        'agency_number',
+        'account_number',
+        'description',
     ];
 }

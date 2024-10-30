@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class CategoryController extends Controller
+class CategoryController
 {
     private $service;
 
@@ -68,7 +68,7 @@ class CategoryController extends Controller
             if ($category) {
                 DB::commit();
 
-                $enterpriseId = $request->input('enterpriseId');
+                $enterpriseId = $request->user()->enterprise_id;
                 $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
 
                 return response()->json(['categories' => $categories, 'message' => 'Categoria atualizada com sucesso'], 200);

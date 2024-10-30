@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -12,4 +13,11 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/', [CategoryController::class, 'update']);
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
+});
+
+Route::prefix('account')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [AccountController::class, 'index']);
+    Route::post('/', [AccountController::class, 'store']);
+    Route::put('/', [AccountController::class, 'update']);
+    Route::delete('/{id}', [AccountController::class, 'destroy']);
 });
