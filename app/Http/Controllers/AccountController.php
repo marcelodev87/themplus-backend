@@ -59,7 +59,7 @@ class AccountController
         }
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -68,10 +68,10 @@ class AccountController
             if ($account) {
                 DB::commit();
 
-                $enterpriseId = $request->input('enterpriseId');
+                $enterpriseId = $request->user()->enterprise_id;
                 $accounts = $this->repository->getAllByEnterprise($enterpriseId);
 
-                return response()->json(['categories' => $accounts, 'message' => 'Conta atualizada com sucesso'], 200);
+                return response()->json(['accounts' => $accounts, 'message' => 'Conta atualizada com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao atualizar conta');

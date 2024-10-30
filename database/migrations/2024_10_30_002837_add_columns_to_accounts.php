@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('accounts', function (Blueprint $table) {
             $table->text('description')->nullable()->after('enterprise_id');
-            $table->string('account_number')->nullable(false)->after('enterprise_id');
+            $table->string('account_number')->nullable()->after('enterprise_id');
             $table->string('agency_number')->nullable()->after('enterprise_id');
         });
     }
