@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EnterpriseController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -16,10 +17,10 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('account')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [EnterpriseController::class, 'index']);
-    Route::post('/', [EnterpriseController::class, 'store']);
-    Route::put('/', [EnterpriseController::class, 'update']);
-    Route::delete('/{id}', [EnterpriseController::class, 'destroy']);
+    Route::get('/', [AccountController::class, 'index']);
+    Route::post('/', [AccountController::class, 'store']);
+    Route::put('/', [AccountController::class, 'update']);
+    Route::delete('/{id}', [AccountController::class, 'destroy']);
 });
 
 Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
