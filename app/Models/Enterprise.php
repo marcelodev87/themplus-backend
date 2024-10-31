@@ -16,12 +16,15 @@ class Enterprise extends Model
         'name',
         'cnpj',
         'cpf',
-        'country',
+        'cep',
         'state',
         'city',
+        'neighborhood',
         'address',
+        'complement',
         'email',
         'phone',
         'subscription_id',
+        'number_address',
     ];
 }

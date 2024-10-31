@@ -2,61 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\EnterpriseRepository;
+use App\Services\EnterpriseService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EnterpriseController
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $service;
+
+    private $repository;
+
+    public function __construct(EnterpriseService $service, EnterpriseRepository $repository)
+    {
+        $this->service = $service;
+        $this->repository = $repository;
+    }
+
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Request $request)
     {
-        //
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $enterprise = $this->repository->findById($enterpriseId);
+
+            return response()->json(['enterprise' => $enterprise], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar dados da organização: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $enterprise = $this->service->update($request);
+
+            if ($enterprise) {
+                DB::commit();
+
+                return response()->json(['enterprise' => $enterprise, 'message' => 'Organização atualizada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar organização');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar organização: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
