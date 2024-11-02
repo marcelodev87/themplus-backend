@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EnterpriseController;
+use App\Http\Controllers\FinancialMovementController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,13 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/', [CategoryController::class, 'update']);
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
+});
+
+Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [FinancialMovementController::class, 'index']);
+    Route::post('/', [FinancialMovementController::class, 'store']);
+    Route::put('/', [FinancialMovementController::class, 'update']);
+    Route::delete('/{id}', [FinancialMovementController::class, 'destroy']);
 });
 
 Route::prefix('account')->middleware('auth:sanctum')->group(function () {
