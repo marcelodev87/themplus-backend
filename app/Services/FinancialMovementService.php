@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Repositories\AccountRepository;
 use App\Repositories\FinancialMovementRepository;
 use App\Rules\FinancialMovementRule;
-use Carbon\Carbon;
 
 class FinancialMovementService
 {
@@ -32,7 +31,7 @@ class FinancialMovementService
         $data = [
             'type' => $request->input('type'),
             'value' => $request->input('value'),
-            'date_movement' => Carbon::now()->format('d-m-Y H:i:s'),
+            'date_movement' => $request->input('date'),
             'description' => $request->input('description'),
             'receipt' => $request->input('file'),
             'category_id' => $request->input('category'),

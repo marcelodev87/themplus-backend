@@ -43,6 +43,7 @@ class FinancialMovementRule
             'id' => 'required|string|max:100',
             'type' => 'required|string',
             'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
+            'date' => 'required|date_format:d-m-Y',
             'category_id' => 'required|string',
             'account_id' => 'required|string',
         ];
@@ -56,6 +57,8 @@ class FinancialMovementRule
             'value.required' => 'O valor é obrigatório',
             'value.numeric' => 'O valor deve ser um número',
             'value.regex' => 'O valor deve ter no máximo duas casas decimais',
+            'date.required' => 'A data de movimentação é obrigatória',
+            'date.date_format' => 'A data de movimentação deve estar no formato DD-MM-YYYY',
             'category_id.required' => 'O ID da categoria é obrigatório',
             'category_id.string' => 'O ID da categoria deve ser uma string',
             'account_id.required' => 'O ID da conta é obrigatório',

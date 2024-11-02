@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AccountResource;
+use App\Http\Resources\CategoryResource;
+use App\Repositories\AccountRepository;
+use App\Repositories\CategoryRepository;
 use App\Repositories\FinancialMovementRepository;
 use App\Services\FinancialMovementService;
 use Illuminate\Http\Request;
@@ -14,10 +18,20 @@ class FinancialMovementController
 
     private $repository;
 
-    public function __construct(FinancialMovementService $service, FinancialMovementRepository $repository)
-    {
+    private $categoryRepository;
+
+    private $accountRepository;
+
+    public function __construct(
+        FinancialMovementService $service,
+        FinancialMovementRepository $repository,
+        AccountRepository $accountRepository,
+        CategoryRepository $categoryRepository,
+    ) {
         $this->service = $service;
         $this->repository = $repository;
+        $this->categoryRepository = $categoryRepository;
+        $this->accountRepository = $accountRepository;
     }
 
     public function index(Request $request)
@@ -29,6 +43,23 @@ class FinancialMovementController
             return response()->json(['movements' => $movements], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as movimentações: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
+    public function getFormInformations(Request $request)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+
+            $categories = $this->repository->getAllByEnterprise($enterpriseId);
+            $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+
+            return response()->json(['categories' => CategoryResource::collection($categories),
+                'accounts' => AccountResource::collection($accounts), ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar informações: '.$e->getMessage());
 
             return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }

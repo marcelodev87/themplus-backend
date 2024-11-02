@@ -24,6 +24,7 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FinancialMovementController::class, 'index']);
+    Route::get('/informations', [FinancialMovementController::class, 'getFormInformations']);
     Route::post('/', [FinancialMovementController::class, 'store']);
     Route::put('/', [FinancialMovementController::class, 'update']);
     Route::delete('/{id}', [FinancialMovementController::class, 'destroy']);
