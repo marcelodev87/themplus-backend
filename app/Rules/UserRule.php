@@ -68,4 +68,55 @@ class UserRule
 
         return true;
     }
+
+    public function updateData($request)
+    {
+        $rules = [
+            'name' => 'required|string|min:3|max:30',
+            'email' => 'required|string|email|max:50',
+        ];
+
+        $messages = [
+            'name.required' => 'O nome é obrigatório',
+            'name.string' => 'O nome deve ser uma string',
+            'name.min' => 'O nome não pode ter menos de 3 caracteres',
+            'name.max' => 'O nome não pode ter mais de 30 caracteres',
+            'email.required' => 'O e-mail é obrigatório',
+            'email.string' => 'O e-mail deve ser uma string',
+            'email.email' => 'O e-mail deve ser um endereço de e-mail válido',
+            'email.max' => 'O e-mail não pode ter mais de 50 caracteres',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
+
+    public function updatePassword($request)
+    {
+        $rules = [
+            'passwordActual' => 'required|string',
+            'passwordNew' => 'required|string|min:8',
+        ];
+
+        $messages = [
+            'passwordActual.required' => 'A senha é obrigatória',
+            'passwordActual.string' => 'A senha deve ser uma string',
+            'passwordNew.required' => 'A senha é obrigatória',
+            'passwordNew.string' => 'A senha deve ser uma string',
+            'passwordNew.min' => 'A senha deve ter pelo menos 8 caracteres',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
 }

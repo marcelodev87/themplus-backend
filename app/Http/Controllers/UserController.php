@@ -55,4 +55,48 @@ class UserController
             return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
     }
+
+    public function updateData(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $user = $this->service->updateData($request);
+
+            if ($user) {
+                DB::commit();
+
+                return response()->json(['user' => $user, 'message' => 'Seus dados foram atualizados com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar seus dados');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar dados do usuário atual: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
+    public function updatePassword(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $user = $this->service->updatePassword($request);
+
+            if ($user) {
+                DB::commit();
+
+                return response()->json(['user' => $user, 'message' => 'Sua senha foi atualizada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar sua senha');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar senha do usuário atual: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
 }

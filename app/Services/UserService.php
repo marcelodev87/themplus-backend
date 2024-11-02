@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\UserHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
@@ -67,5 +68,25 @@ class UserService
         unset($data['nameEnterprise']);
 
         return $this->repository->create($data);
+    }
+
+    public function updateData($request)
+    {
+        $this->rule->updateData($request);
+
+        $data = $request->only(['name', 'email']);
+
+        return $this->repository->updateData($request->user()->id, $data);
+    }
+
+    public function updatePassword($request)
+    {
+        $this->rule->updatePassword($request);
+
+        UserHelper::validUser($request->user()->email, $request->input('passwordActual'));
+
+        $data = ['password' => Hash::make($request->input('passwordNew'))];
+
+        return $this->repository->updatePassword($request->user()->id, $data);
     }
 }

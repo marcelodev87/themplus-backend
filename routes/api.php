@@ -1,13 +1,18 @@
 <?php
 
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EnterpriseController;
-use App\Http\Controllers\AccountController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/register', [UserController::class, 'register']);
+
+Route::prefix('user')->middleware('auth:sanctum')->group(function () {
+    Route::put('/password', [UserController::class, 'updatePassword']);
+    Route::put('/data', [UserController::class, 'updateData']);
+});
 
 Route::prefix('category')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);

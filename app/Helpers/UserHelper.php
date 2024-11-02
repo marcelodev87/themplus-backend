@@ -2,16 +2,16 @@
 
 namespace App\Helpers;
 
+use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use App\Repositories\UserRepository;
-use App\Models\User;
 
 class UserHelper
 {
     public static function validUser($email, $password)
     {
-        $userRepository = new UserRepository(new User());
+        $userRepository = new UserRepository(new User);
         $user = $userRepository->findByEmail($email);
         if (! Hash::check($password, $user->password)) {
             throw ValidationException::withMessages([
@@ -19,5 +19,4 @@ class UserHelper
             ]);
         }
     }
-
 }

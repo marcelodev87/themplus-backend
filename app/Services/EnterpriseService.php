@@ -2,18 +2,17 @@
 
 namespace App\Services;
 
+use App\Helpers\UserHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\UserRepository;
 use App\Rules\EnterpriseRule;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
-use App\Helpers\UserHelper;
 
 class EnterpriseService
 {
     protected $rule;
 
     protected $repository;
+
     protected $userRepository;
 
     public function __construct(
@@ -58,6 +57,4 @@ class EnterpriseService
 
         return $this->repository->update($request->input('id'), $data);
     }
-
-    
 }
