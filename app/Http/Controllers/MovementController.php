@@ -6,13 +6,13 @@ use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
-use App\Repositories\FinancialMovementRepository;
-use App\Services\FinancialMovementService;
+use App\Repositories\MovementRepository;
+use App\Services\MovementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class FinancialMovementController
+class MovementController
 {
     private $service;
 
@@ -23,8 +23,8 @@ class FinancialMovementController
     private $accountRepository;
 
     public function __construct(
-        FinancialMovementService $service,
-        FinancialMovementRepository $repository,
+        MovementService $service,
+        MovementRepository $repository,
         AccountRepository $accountRepository,
         CategoryRepository $categoryRepository,
     ) {
@@ -48,13 +48,13 @@ class FinancialMovementController
         }
     }
 
-    public function getFormInformations(Request $request)
+    public function getFormInformations(Request $request, $type)
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
 
-            $categories = $this->repository->getAllByEnterprise($enterpriseId);
-            $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId, $type);
+            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
             return response()->json(['categories' => CategoryResource::collection($categories),
                 'accounts' => AccountResource::collection($accounts), ], 200);

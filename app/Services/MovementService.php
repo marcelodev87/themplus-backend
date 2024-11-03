@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use App\Repositories\AccountRepository;
-use App\Repositories\FinancialMovementRepository;
-use App\Rules\FinancialMovementRule;
+use App\Repositories\MovementRepository;
+use App\Rules\MovementRule;
+use Carbon\Carbon;
 
-class FinancialMovementService
+class MovementService
 {
     protected $rule;
 
@@ -15,8 +16,8 @@ class FinancialMovementService
     protected $accountRepository;
 
     public function __construct(
-        FinancialMovementRule $rule,
-        FinancialMovementRepository $repository,
+        MovementRule $rule,
+        MovementRepository $repository,
         AccountRepository $accountRepository
     ) {
         $this->rule = $rule;
@@ -28,12 +29,17 @@ class FinancialMovementService
     {
         $this->rule->create($request);
 
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('receipts');
+        }
+
         $data = [
             'type' => $request->input('type'),
             'value' => $request->input('value'),
-            'date_movement' => $request->input('date'),
+            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
             'description' => $request->input('description'),
-            'receipt' => $request->input('file'),
+            'receipt' => $filePath,
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
             'enterprise_id' => $request->user()->enterprise_id,

@@ -3,7 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EnterpriseController;
-use App\Http\Controllers\FinancialMovementController;
+use App\Http\Controllers\MovementController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,11 +23,11 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [FinancialMovementController::class, 'index']);
-    Route::get('/informations', [FinancialMovementController::class, 'getFormInformations']);
-    Route::post('/', [FinancialMovementController::class, 'store']);
-    Route::put('/', [FinancialMovementController::class, 'update']);
-    Route::delete('/{id}', [FinancialMovementController::class, 'destroy']);
+    Route::get('/', [MovementController::class, 'index']);
+    Route::get('/informations/{type}', [MovementController::class, 'getFormInformations']);
+    Route::post('/', [MovementController::class, 'store']);
+    Route::put('/', [MovementController::class, 'update']);
+    Route::delete('/{id}', [MovementController::class, 'destroy']);
 });
 
 Route::prefix('account')->middleware('auth:sanctum')->group(function () {

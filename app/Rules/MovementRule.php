@@ -5,15 +5,15 @@ namespace App\Rules;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class FinancialMovementRule
+class MovementRule
 {
     public function create($request)
     {
         $rules = [
             'type' => 'required|string',
             'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
-            'category_id' => 'required|string',
-            'account_id' => 'required|string',
+            'category' => 'required|string',
+            'account' => 'required|string',
         ];
 
         $messages = [
@@ -22,10 +22,10 @@ class FinancialMovementRule
             'value.required' => 'O valor é obrigatório',
             'value.numeric' => 'O valor deve ser um número',
             'value.regex' => 'O valor deve ter no máximo duas casas decimais',
-            'category_id.required' => 'O ID da categoria é obrigatório',
-            'category_id.string' => 'O ID da categoria deve ser uma string',
-            'account_id.required' => 'O ID da conta é obrigatório',
-            'account_id.string' => 'O ID da conta deve ser uma string',
+            'category.required' => 'O ID da categoria é obrigatório',
+            'category.string' => 'O ID da categoria deve ser uma string',
+            'account.required' => 'O ID da conta é obrigatório',
+            'account.string' => 'O ID da conta deve ser uma string',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

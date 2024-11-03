@@ -23,9 +23,16 @@ class CategoryRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
-    public function getAllByEnterpriseWithDefaults($enterpriseId)
+    public function getAllByEnterpriseWithDefaults($enterpriseId, $type = null)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)->orWhere('enterprise_id', null)->get();
+        return $this->model->where(function ($query) use ($enterpriseId) {
+            $query->where('enterprise_id', $enterpriseId)
+                ->orWhere('enterprise_id', null);
+        })
+            ->when($type === 'entrada' || $type === 'saída', function ($query) use ($type) {
+                return $query->where('type', $type);
+            })
+            ->get();
     }
 
     public function findById($id)

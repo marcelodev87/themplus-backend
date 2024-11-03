@@ -47,7 +47,7 @@ class AccountRepository
 
     public function updateBalance($accountId, $type, $value)
     {
-        $account = $this->model->find($id);
+        $account = $this->model->find($accountId);
         if ($account) {
             if ($type === 'entrada') {
                 $data = ['balance' => $account->balance + $value];
