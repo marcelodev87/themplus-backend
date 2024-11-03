@@ -22,4 +22,14 @@ class Movement extends Model
         'account_id',
         'enterprise_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

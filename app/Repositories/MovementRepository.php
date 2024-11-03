@@ -20,7 +20,9 @@ class MovementRepository
 
     public function getAllByEnterprise($enterpriseId)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)->get();
+        return $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $enterpriseId)
+            ->get();
     }
 
     public function findById($id)
