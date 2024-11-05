@@ -100,7 +100,7 @@ class MovementController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $movements = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+                $movements = $this->repository->getAllByEnterprise($enterpriseId);
 
                 return response()->json(['movements' => $movements, 'message' => 'Movimentação atualizada com sucesso'], 200);
             }

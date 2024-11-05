@@ -44,8 +44,8 @@ class MovementRule
             'type' => 'required|string',
             'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
             'date' => 'required|date_format:d-m-Y',
-            'category_id' => 'required|string',
-            'account_id' => 'required|string',
+            'category' => 'required|string',
+            'account' => 'required|string',
         ];
 
         $messages = [
@@ -59,10 +59,10 @@ class MovementRule
             'value.regex' => 'O valor deve ter no máximo duas casas decimais',
             'date.required' => 'A data de movimentação é obrigatória',
             'date.date_format' => 'A data de movimentação deve estar no formato DD-MM-YYYY',
-            'category_id.required' => 'O ID da categoria é obrigatório',
-            'category_id.string' => 'O ID da categoria deve ser uma string',
-            'account_id.required' => 'O ID da conta é obrigatório',
-            'account_id.string' => 'O ID da conta deve ser uma string',
+            'category.required' => 'O ID da categoria é obrigatório',
+            'category.string' => 'O ID da categoria deve ser uma string',
+            'account.required' => 'O ID da conta é obrigatório',
+            'account.string' => 'O ID da conta deve ser uma string',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
