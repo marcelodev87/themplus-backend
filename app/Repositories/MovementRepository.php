@@ -18,10 +18,22 @@ class MovementRepository
         return $this->model->all();
     }
 
-    public function getAllByEnterprise($enterpriseId)
+    public function getAllByEnterpriseWithRelations($enterpriseId)
     {
         return $this->model->with(['account', 'category'])
             ->where('enterprise_id', $enterpriseId)
+            ->get();
+    }
+
+    public function getAllByEnterprise($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)->get();
+    }
+
+    public function getAllByAccount($enterpriseId, $accountId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)
+            ->where('account_id', $accountId)
             ->get();
     }
 

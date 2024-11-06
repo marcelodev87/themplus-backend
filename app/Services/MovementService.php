@@ -47,14 +47,16 @@ class MovementService
 
         $movement = $this->repository->create($data);
         if ($movement) {
-            $movement = $this->accountRepository->updateBalance(
+            $movements = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $newValueAccount = $this->calculateValueAccount($movements);
+
+            return $this->accountRepository->updateBalance(
                 $request->input('account'),
-                $request->input('type'),
-                $request->input('value')
+                $newValueAccount
             );
         }
 
-        return $movement;
+        return null;
     }
 
     public function update($request)
@@ -71,6 +73,32 @@ class MovementService
             'enterprise_id' => $request->user()->enterprise_id,
         ];
 
-        return $this->repository->update($request->input('id'), $data);
+        $movement = $this->repository->update($request->input('id'), $data);
+
+        if ($movement) {
+            $movements = $this->repository->getAllByAccount(
+                $request->user()->enterprise_id,
+                $request->input('account')
+            );
+            $newValueAccount = $this->calculateValueAccount($movements);
+
+            return $this->accountRepository->updateBalance(
+                $request->input('account'),
+                $newValueAccount
+            );
+        }
+
+        return null;
+    }
+
+    public function calculateValueAccount($movements)
+    {
+        $value = 0;
+
+        foreach ($movements as $movement) {
+            $value += ($movement->type === 'entrada' ? 1 : -1) * $movement->value;
+        }
+
+        return $value;
     }
 }

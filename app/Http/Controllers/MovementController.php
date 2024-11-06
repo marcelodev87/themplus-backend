@@ -38,7 +38,7 @@ class MovementController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $movements = $this->repository->getAllByEnterprise($enterpriseId);
+            $movements = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
             return response()->json(['movements' => $movements], 200);
         } catch (\Exception $e) {
@@ -75,7 +75,7 @@ class MovementController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $movements = $this->repository->getAllByEnterprise($enterpriseId);
+                $movements = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 return response()->json(['movements' => $movements, 'message' => 'Movimentação cadastrada com sucesso'], 201);
             }
@@ -100,7 +100,7 @@ class MovementController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $movements = $this->repository->getAllByEnterprise($enterpriseId);
+                $movements = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 return response()->json(['movements' => $movements, 'message' => 'Movimentação atualizada com sucesso'], 200);
             }
