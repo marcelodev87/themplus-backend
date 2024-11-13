@@ -10,13 +10,13 @@ class DepartmentRule
     public function create($request)
     {
         $rules = [
-            'name' => 'required|string|min:3|max:20',
+            'name' => 'required|string|min:1|max:20',
         ];
 
         $messages = [
             'name.required' => 'O nome do departamento é obrigatório',
             'name.string' => 'O nome deve ser uma string',
-            'name.min' => 'O nome do departamento não pode ter menos de 3 caracteres',
+            'name.min' => 'O nome do departamento não pode ter menos de 1 caracteres',
             'name.max' => 'O nome da departamento não pode ter mais de 20 caracteres',
         ];
 

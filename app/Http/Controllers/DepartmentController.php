@@ -28,7 +28,7 @@ class DepartmentController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $departments = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+            $departments = $this->repository->getAllByEnterprise($enterpriseId);
 
             return response()->json(['departments' => $departments], 200);
         } catch (\Exception $e) {
@@ -93,7 +93,7 @@ class DepartmentController
         try {
             DB::beginTransaction();
 
-            $this->rule->delete($request);
+            $this->rule->delete($id);
             $department = $this->repository->delete($id);
 
             if ($department) {
