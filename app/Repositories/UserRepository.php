@@ -17,9 +17,15 @@ class UserRepository
     {
         return $this->model->all();
     }
+
     public function getAllByEnterprise($enterpriseId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();
+    }
+
+    public function getAllByDepartment($departmentId)
+    {
+        return $this->model->where('department_id', $departmentId)->get();
     }
 
     public function findById($id)
@@ -39,7 +45,7 @@ class UserRepository
 
     public function updateMember($id, array $data)
     {
-        $user = $this->model->find($id);
+        $user = $this->findById($id);
         if ($user) {
             if ($user->email !== $data['email']) {
                 $existingEmail = $this->model->where('email', $data['email'])->first();
@@ -54,9 +60,10 @@ class UserRepository
 
         return null;
     }
+
     public function updateData($id, array $data)
     {
-        $user = $this->model->find($id);
+        $user = $this->findById($id);
         if ($user) {
             $user->update($data);
 
@@ -68,7 +75,7 @@ class UserRepository
 
     public function updatePassword($id, array $data)
     {
-        $user = $this->model->find($id);
+        $user = $this->findById($id);
         if ($user) {
             $user->update($data);
 
@@ -78,9 +85,14 @@ class UserRepository
         return null;
     }
 
+    public function updateDepartment($departmentId)
+    {
+        $this->model->where('department_id', $departmentId)->update(['department_id' => null]);
+    }
+
     public function delete($id)
     {
-        $user = $this->model->find($id);
+        $user = $this->findById($id);
         if ($user) {
             return $user->delete();
         }

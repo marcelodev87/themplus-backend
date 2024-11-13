@@ -30,7 +30,7 @@ class SchedulingRepository
 
     public function update($id, array $data)
     {
-        $scheduling = $this->model->find($id);
+        $scheduling = $this->findById($id);
         if ($scheduling) {
             $scheduling->update($data);
 
@@ -42,7 +42,7 @@ class SchedulingRepository
 
     public function delete($id)
     {
-        $scheduling = $this->model->find($id);
+        $scheduling = $this->findById($id);
         if ($scheduling) {
             return $scheduling->delete();
         }

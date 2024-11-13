@@ -75,7 +75,7 @@ class UserRule
             'name' => 'required|string|min:3|max:30',
             'password' => 'required|string|min:8',
             'email' => 'required|string|email|max:50|unique:users',
-            'position' => 'required|string'
+            'position' => 'required|string',
         ];
 
         $messages = [
@@ -107,10 +107,10 @@ class UserRule
     public function updateMember($request)
     {
         $rules = [
-             'id' => 'required|string|max:100',
+            'id' => 'required|string|max:100',
             'name' => 'required|string|min:3|max:30',
             'email' => 'required|string|email|max:50',
-            'position' => 'required|string'
+            'position' => 'required|string',
         ];
 
         $messages = [
@@ -137,6 +137,7 @@ class UserRule
 
         return true;
     }
+
     public function updateData($request)
     {
         $rules = [

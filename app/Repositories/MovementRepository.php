@@ -49,7 +49,7 @@ class MovementRepository
 
     public function update($id, array $data)
     {
-        $movement = $this->model->find($id);
+        $movement = $this->findById($id);
         if ($movement) {
             $movement->update($data);
 
@@ -61,7 +61,7 @@ class MovementRepository
 
     public function delete($id)
     {
-        $movement = $this->model->find($id);
+        $movement = $this->findById($id);
         if ($movement) {
             return $movement->delete();
         }

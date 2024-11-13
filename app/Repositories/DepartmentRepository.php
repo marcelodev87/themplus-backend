@@ -8,14 +8,22 @@ class DepartmentRepository
 {
     protected $model;
 
-    public function __construct(Department $department)
+    protected $userRepository;
+
+    public function __construct(Department $department, UserRepository $userRepository)
     {
         $this->model = $department;
+        $this->userRepository = $userRepository;
     }
 
     public function getAll()
     {
         return $this->model->all();
+    }
+
+    public function getAllByEnterprise($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
     public function findById($id)
@@ -30,7 +38,7 @@ class DepartmentRepository
 
     public function update($id, array $data)
     {
-        $department = $this->model->find($id);
+        $department = $this->findById($id);
         if ($department) {
             $department->update($data);
 
@@ -40,13 +48,30 @@ class DepartmentRepository
         return null;
     }
 
-    public function delete($id)
+    private function deleteChildren($id)
     {
-        $department = $this->model->find($id);
+        $children = $this->model->where('parent_id', $id)->get();
+
+        foreach ($children as $child) {
+            $this->deleteChildren($child->id);
+            $child->delete();
+        }
+    }
+
+    private function updateDepartmentUser($departmentId)
+    {
+        $this->userRepository->update($departmentId);
+    }
+
+    public function delete($id): void
+    {
+        $department = $this->findById($id);
+
         if ($department) {
-            return $department->delete();
+            $this->deleteChildren($department->id);
+            $this->updateDepartmentUser($department->id);
+            $department->delete();
         }
 
-        return false;
     }
 }

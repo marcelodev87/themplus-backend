@@ -35,7 +35,7 @@ class AccountRepository
 
     public function update($id, array $data)
     {
-        $account = $this->model->find($id);
+        $account = $this->findById($id);
         if ($account) {
             $account->update($data);
 
@@ -47,7 +47,7 @@ class AccountRepository
 
     public function updateBalance($accountId, $newBalance)
     {
-        $account = $this->model->find($accountId);
+        $account = $this->findById($accountId);
 
         if ($account) {
             $account->update(['balance' => $newBalance]);
@@ -60,7 +60,7 @@ class AccountRepository
 
     public function delete($id)
     {
-        $account = $this->model->find($id);
+        $account = $this->findById($id);
         if ($account) {
             return $account->delete();
         }

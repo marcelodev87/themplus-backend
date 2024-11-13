@@ -2,63 +2,113 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\DepartmentRepository;
+use App\Rules\DepartmentRule;
+use App\Services\DepartmentService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DepartmentController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    private $service;
+
+    private $repository;
+
+    private $rule;
+
+    public function __construct(DepartmentService $service, DepartmentRepository $repository, DepartmentRule $rule)
     {
-        //
+        $this->service = $service;
+        $this->repository = $repository;
+        $this->rule = $rule;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $departments = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+
+            return response()->json(['departments' => $departments], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas os departamentos: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $department = $this->service->create($request);
+
+            if ($department) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $departments = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['departments' => $departments, 'message' => 'Departamento cadastrado com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar departamento');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar departamento: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $department = $this->service->update($request);
+
+            if ($department) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $departments = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['departments' => $departments, 'message' => 'Departamento atualizado com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar departamento');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar departamento: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $this->rule->delete($request);
+            $department = $this->repository->delete($id);
+
+            if ($department) {
+                DB::commit();
+
+                return response()->json(['message' => 'Departamento deletado com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar departamento');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar departamento: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
     }
 }

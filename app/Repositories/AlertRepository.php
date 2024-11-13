@@ -30,7 +30,7 @@ class AlertRepository
 
     public function update($id, array $data)
     {
-        $alert = $this->model->find($id);
+        $alert = $this->findById($id);
         if ($alert) {
             $alert->update($data);
 
@@ -42,7 +42,7 @@ class AlertRepository
 
     public function delete($id)
     {
-        $alert = $this->model->find($id);
+        $alert = $this->findById($id);
         if ($alert) {
             return $alert->delete();
         }

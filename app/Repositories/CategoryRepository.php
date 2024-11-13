@@ -47,7 +47,7 @@ class CategoryRepository
 
     public function update($id, array $data)
     {
-        $category = $this->model->find($id);
+        $category = $this->findById($id);
         if ($category) {
             $category->update($data);
 
@@ -59,7 +59,7 @@ class CategoryRepository
 
     public function delete($id)
     {
-        $category = $this->model->find($id);
+        $category = $this->findById($id);
         if ($category) {
             return $category->delete();
         }

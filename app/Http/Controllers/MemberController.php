@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\UserService;
 use App\Repositories\UserRepository;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class MemberController
 {
     private $service;
+
     private $repository;
 
     public function __construct(UserService $service, UserRepository $repository)
@@ -45,6 +46,7 @@ class MemberController
 
                 $enterpriseId = $request->user()->enterprise_id;
                 $users = $this->repository->getAllByEnterprise($enterpriseId);
+
                 return response()->json(['users' => $users, 'message' => 'Membro adicionado á sua organização com sucesso'], 201);
             }
 
@@ -69,6 +71,7 @@ class MemberController
 
                 $enterpriseId = $request->user()->enterprise_id;
                 $users = $this->repository->getAllByEnterprise($enterpriseId);
+
                 return response()->json(['users' => $users, 'message' => 'Dados do membro foram atualizados com sucesso'], 200);
             }
 

@@ -74,7 +74,7 @@ class UserService
     {
         $this->rule->include($request);
 
-        $data = $request->only(['name', 'email', 'position', ]);
+        $data = $request->only(['name', 'email', 'position']);
         $data['password'] = Hash::make($request->input('password'));
         $data['enterprise_id'] = $request->user()->enterprise_id;
         $data['created_by'] = $request->user()->id;
@@ -90,6 +90,7 @@ class UserService
 
         return $this->repository->updateMember($request->id, $data);
     }
+
     public function updateData($request)
     {
         $this->rule->updateData($request);

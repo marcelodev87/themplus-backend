@@ -32,7 +32,7 @@ class EnterpriseRepository
 
     public function update($id, array $data)
     {
-        $enterprise = $this->model->find($id);
+        $enterprise = $this->findById($id);
         if ($enterprise) {
             $enterprise->update($data);
 
@@ -44,7 +44,7 @@ class EnterpriseRepository
 
     public function delete($id)
     {
-        $enterprise = $this->model->find($id);
+        $enterprise = $this->findById($id);
         if ($enterprise) {
             return $enterprise->delete();
         }

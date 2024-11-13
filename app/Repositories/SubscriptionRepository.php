@@ -35,7 +35,7 @@ class SubscriptionRepository
 
     public function update($id, array $data)
     {
-        $subscription = $this->model->find($id);
+        $subscription = $this->findById($id);
         if ($subscription) {
             $subscription->update($data);
 

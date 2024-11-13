@@ -2,10 +2,11 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\MemberController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login']);
@@ -28,6 +29,13 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/', [CategoryController::class, 'update']);
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
+});
+
+Route::prefix('department')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [DepartmentController::class, 'index']);
+    Route::post('/', [DepartmentController::class, 'store']);
+    Route::put('/', [DepartmentController::class, 'update']);
+    Route::delete('/{id}', [DepartmentController::class, 'destroy']);
 });
 
 Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
