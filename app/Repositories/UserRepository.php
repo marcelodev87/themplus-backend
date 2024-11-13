@@ -17,6 +17,10 @@ class UserRepository
     {
         return $this->model->all();
     }
+    public function getAllByEnterprise($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)->get();
+    }
 
     public function findById($id)
     {
@@ -33,6 +37,23 @@ class UserRepository
         return $this->model->create($data);
     }
 
+    public function updateMember($id, array $data)
+    {
+        $user = $this->model->find($id);
+        if ($user) {
+            if ($user->email !== $data['email']) {
+                $existingEmail = $this->model->where('email', $data['email'])->first();
+                if ($existingEmail) {
+                    throw new \Exception('Email já registrado no sistema');
+                }
+            }
+            $user->update($data);
+
+            return $user;
+        }
+
+        return null;
+    }
     public function updateData($id, array $data)
     {
         $user = $this->model->find($id);

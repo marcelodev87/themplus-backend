@@ -70,6 +70,26 @@ class UserService
         return $this->repository->create($data);
     }
 
+    public function include($request)
+    {
+        $this->rule->include($request);
+
+        $data = $request->only(['name', 'email', 'position', ]);
+        $data['password'] = Hash::make($request->input('password'));
+        $data['enterprise_id'] = $request->user()->enterprise_id;
+        $data['created_by'] = $request->user()->id;
+
+        return $this->repository->create($data);
+    }
+
+    public function updateMember($request)
+    {
+        $this->rule->updateMember($request);
+
+        $data = $request->only(['name', 'email', 'position']);
+
+        return $this->repository->updateMember($request->id, $data);
+    }
     public function updateData($request)
     {
         $this->rule->updateData($request);

@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EnterpriseController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\MemberController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login']);
@@ -13,6 +14,13 @@ Route::post('/register', [UserController::class, 'register']);
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::put('/password', [UserController::class, 'updatePassword']);
     Route::put('/data', [UserController::class, 'updateData']);
+});
+
+Route::prefix('member')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [MemberController::class, 'index']);
+    Route::post('/', [MemberController::class, 'store']);
+    Route::put('/', [MemberController::class, 'update']);
+    Route::delete('/{id}', [MemberController::class, 'destroy']);
 });
 
 Route::prefix('category')->middleware('auth:sanctum')->group(function () {
