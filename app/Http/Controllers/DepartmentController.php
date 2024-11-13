@@ -88,7 +88,7 @@ class DepartmentController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(string $id, Request $request)
     {
         try {
             DB::beginTransaction();
@@ -98,8 +98,11 @@ class DepartmentController
 
             if ($department) {
                 DB::commit();
+                $enterpriseId = $request->user()->enterprise_id;
+                $departments = $this->repository->getAllByEnterprise($enterpriseId);
 
-                return response()->json(['message' => 'Departamento deletado com sucesso'], 200);
+                return response()->json(['departments' => $departments, 'message' => 'Departamento deletado com sucesso'], 200);
+
             }
 
             throw new \Exception('Falha ao deletar departamento');

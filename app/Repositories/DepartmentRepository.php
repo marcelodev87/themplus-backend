@@ -60,18 +60,21 @@ class DepartmentRepository
 
     private function updateDepartmentUser($departmentId)
     {
-        $this->userRepository->update($departmentId);
+        $this->userRepository->updateDepartment($departmentId);
     }
 
-    public function delete($id): void
+    public function delete($id)
     {
         $department = $this->findById($id);
 
         if ($department) {
             $this->deleteChildren($department->id);
             $this->updateDepartmentUser($department->id);
-            $department->delete();
+
+            return $department->delete();
         }
+
+        return false;
 
     }
 }
