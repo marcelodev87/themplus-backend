@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\AccountResource;
-use App\Services\SchedulingRepository;
+use App\Http\Resources\CategoryResource;
+use App\Repositories\SchedulingRepository;
 use App\Services\SchedulingService;
+use App\Repositories\AccountRepository;
+use App\Repositories\CategoryRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,19 +18,27 @@ class SchedulingController
 
     private $repository;
 
+    private $categoryRepository;
+
+    private $accountRepository;
+
     public function __construct(
         SchedulingService $service,
         SchedulingRepository $repository,
+        AccountRepository $accountRepository,
+        CategoryRepository $categoryRepository,
     ) {
         $this->service = $service;
         $this->repository = $repository;
+        $this->categoryRepository = $categoryRepository;
+        $this->accountRepository = $accountRepository;
     }
 
     public function index(Request $request)
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $schedulings = $this->repository->getAllByEnterprise($enterpriseId);
+            $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
             return response()->json(['schedulings' => $schedulings], 200);
         } catch (\Exception $e) {
@@ -64,7 +75,7 @@ class SchedulingController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $schedulings = $this->repository->getAllByEnterprise($enterpriseId);
+                $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento cadastrado com sucesso'], 201);
             }

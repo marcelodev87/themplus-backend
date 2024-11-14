@@ -15,5 +15,22 @@ class Scheduling extends Model
     protected $fillable = [
         'date_movement',
         'enterprise_id',
+        'type',
+        'status',
+        'value',
+        'description',
+        'receipt',
+        'category_id',
+        'account_id',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

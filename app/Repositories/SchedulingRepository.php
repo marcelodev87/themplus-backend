@@ -22,6 +22,12 @@ class SchedulingRepository
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
+    public function getAllByEnterpriseWithRelations($enterpriseId)
+    {
+        return $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $enterpriseId)
+            ->get();
+    }
 
     public function findById($id)
     {
