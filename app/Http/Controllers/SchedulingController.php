@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AccountResource;
 use App\Services\SchedulingRepository;
 use App\Services\SchedulingService;
 use Illuminate\Http\Request;
@@ -31,6 +32,23 @@ class SchedulingController
             return response()->json(['schedulings' => $schedulings], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os agendamentos: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
+    public function getFormInformations(Request $request, $type)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId, $type);
+            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
+
+            return response()->json(['categories' => CategoryResource::collection($categories),
+                'accounts' => AccountResource::collection($accounts), ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar informações: '.$e->getMessage());
 
             return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
