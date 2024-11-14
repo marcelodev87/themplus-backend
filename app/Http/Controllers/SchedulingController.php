@@ -120,7 +120,7 @@ class SchedulingController
         }
     }
 
-    public function finalize(Request $request)
+    public function finalize(Request $request, $id)
     {
         try {
             DB::beginTransaction();

@@ -60,9 +60,10 @@ class SchedulingRepository
     {
         $scheduling = $this->findById($id);
         if ($scheduling) {
-            $scheduling->update($data);
-
-            return $this->movementService->includeScheduling($scheduling->toArray());
+            $result = $this->movementService->includeScheduling($scheduling->toArray());
+            if ($result) {
+                return $scheduling->delete();
+            }
 
         }
 

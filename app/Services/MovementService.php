@@ -108,11 +108,11 @@ class MovementService
         $movement = $this->repository->create($data);
 
         if ($movement) {
-            $movements = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $movements = $this->repository->getAllByEnterprise($scheduling['enterprise_id']);
             $newValueAccount = $this->calculateValueAccount($movements);
 
             return $this->accountRepository->updateBalance(
-                $request->input('account'),
+                $scheduling['account_id'],
                 $newValueAccount
             );
         }
