@@ -6,6 +6,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,13 @@ Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [MovementController::class, 'store']);
     Route::put('/', [MovementController::class, 'update']);
     Route::delete('/{id}', [MovementController::class, 'destroy']);
+});
+
+Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [SchedulingController::class, 'index']);
+    Route::post('/', [SchedulingController::class, 'store']);
+    Route::put('/', [SchedulingController::class, 'update']);
+    Route::delete('/{id}', [SchedulingController::class, 'destroy']);
 });
 
 Route::prefix('account')->middleware('auth:sanctum')->group(function () {
