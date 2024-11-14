@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
-use App\Repositories\SchedulingRepository;
-use App\Services\SchedulingService;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\SchedulingRepository;
+use App\Rules\SchedulingRule;
+use App\Services\SchedulingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +19,8 @@ class SchedulingController
 
     private $repository;
 
+    private $rule;
+
     private $categoryRepository;
 
     private $accountRepository;
@@ -25,11 +28,13 @@ class SchedulingController
     public function __construct(
         SchedulingService $service,
         SchedulingRepository $repository,
+        SchedulingRule $rule,
         AccountRepository $accountRepository,
         CategoryRepository $categoryRepository,
     ) {
         $this->service = $service;
         $this->repository = $repository;
+        $this->rule = $rule;
         $this->categoryRepository = $categoryRepository;
         $this->accountRepository = $accountRepository;
     }
@@ -110,6 +115,32 @@ class SchedulingController
             DB::rollBack();
 
             Log::error('Erro ao atualizar agendamento: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
+    public function finalize(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $this->rule->finalize($id);
+            $movement = $this->repository->finalize($id);
+
+            if ($movement) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $schedulings = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento finalizado com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao finalizar agendamento');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao finalizar agendamento: '.$e->getMessage());
 
             return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }

@@ -16,7 +16,6 @@ class Scheduling extends Model
         'date_movement',
         'enterprise_id',
         'type',
-        'status',
         'value',
         'description',
         'receipt',

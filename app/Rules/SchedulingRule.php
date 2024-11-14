@@ -74,6 +74,27 @@ class SchedulingRule
         return true;
     }
 
+    public function finalize($id)
+    {
+        $rules = [
+            'id' => 'required|string|exists:schedulings,id',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID do agendamento é obrigatório.',
+            'id.string' => 'O ID do agendamento deve ser uma string.',
+            'id.exists' => 'O ID do agendamento não existe.',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
+
     public function delete($id)
     {
         $rules = [

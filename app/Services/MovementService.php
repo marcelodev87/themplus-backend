@@ -91,6 +91,35 @@ class MovementService
         return null;
     }
 
+    public function includeScheduling($scheduling)
+    {
+
+        $data = [
+            'type' => $scheduling['type'],
+            'value' => $scheduling['value'],
+            'date_movement' => $scheduling['date_movement'],
+            'description' => $scheduling['description'],
+            'receipt' => $scheduling['receipt'],
+            'category_id' => $scheduling['category_id'],
+            'account_id' => $scheduling['account_id'],
+            'enterprise_id' => $scheduling['enterprise_id'],
+        ];
+
+        $movement = $this->repository->create($data);
+
+        if ($movement) {
+            $movements = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $newValueAccount = $this->calculateValueAccount($movements);
+
+            return $this->accountRepository->updateBalance(
+                $request->input('account'),
+                $newValueAccount
+            );
+        }
+
+        return null;
+    }
+
     public function calculateValueAccount($movements)
     {
         $value = 0;

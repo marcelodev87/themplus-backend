@@ -3,14 +3,18 @@
 namespace App\Repositories;
 
 use App\Models\Scheduling;
+use App\Services\MovementService;
 
 class SchedulingRepository
 {
     protected $model;
 
-    public function __construct(Scheduling $scheduling)
+    protected $movementService;
+
+    public function __construct(Scheduling $scheduling, MovementService $movementService)
     {
         $this->model = $scheduling;
+        $this->movementService = $movementService;
     }
 
     public function getAll()
@@ -22,6 +26,7 @@ class SchedulingRepository
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
+
     public function getAllByEnterpriseWithRelations($enterpriseId)
     {
         return $this->model->with(['account', 'category'])
@@ -46,6 +51,19 @@ class SchedulingRepository
             $scheduling->update($data);
 
             return $scheduling;
+        }
+
+        return null;
+    }
+
+    public function finalize($id)
+    {
+        $scheduling = $this->findById($id);
+        if ($scheduling) {
+            $scheduling->update($data);
+
+            return $this->movementService->includeScheduling($scheduling->toArray());
+
         }
 
         return null;

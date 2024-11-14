@@ -34,7 +34,6 @@ class SchedulingService
             'value' => $request->input('value'),
             'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
             'description' => $request->input('description'),
-            'status' => 0,
             'receipt' => $filePath,
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
