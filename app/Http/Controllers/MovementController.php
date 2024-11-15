@@ -48,6 +48,19 @@ class MovementController
         }
     }
 
+    public function filterMovements(Request $request)
+    {
+        try {
+            $movements = $this->repository->getAllByEnterpriseWithRelationsWithParams($request);
+
+            return response()->json(['movements' => $movements], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar movimentações com base nos filtros: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
     public function getFormInformations(Request $request, $type)
     {
         try {

@@ -25,6 +25,25 @@ class MovementRepository
             ->get();
     }
 
+    public function getAllByEnterpriseWithRelationsWithParams($request)
+    {
+        $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
+        $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
+
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $request->user()->enterprise_id);
+
+        if (! is_null($out) && $out) {
+            $query->where('type', 'saida');
+        }
+
+        if (! is_null($entry) && $entry) {
+            $query->where('type', 'entrada');
+        }
+
+        return $query->get();
+    }
+
     public function getAllByEnterprise($enterpriseId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();
