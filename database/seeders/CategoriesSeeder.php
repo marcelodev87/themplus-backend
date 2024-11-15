@@ -37,7 +37,7 @@ class CategoriesSeeder extends Seeder
         Category::create(['name' => 'Material EBD', 'type' => 'saída', 'enterprise_id' => null]);
         Category::create(['name' => 'Plano de saúde', 'type' => 'saída', 'enterprise_id' => null]);
         Category::create(['name' => 'Saldo inicial', 'type' => 'entrada', 'enterprise_id' => null]);
-        Category::create(['name' => 'Transferências entre contas', 'type' => 'entrada', 'enterprise_id' => null]);
+        Category::create(['name' => 'Transferências entre contas', 'type' => 'transferencia', 'enterprise_id' => null]);
         Category::create(['name' => 'Combustível/Transporte', 'type' => 'saída', 'enterprise_id' => null]);
         Category::create(['name' => 'Ajuda de custo', 'type' => 'saída', 'enterprise_id' => null]);
         Category::create(['name' => 'Tarifa bancária', 'type' => 'saída', 'enterprise_id' => null]);
