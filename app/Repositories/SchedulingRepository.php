@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Scheduling;
 use App\Services\MovementService;
+use Carbon\Carbon;
 
 class SchedulingRepository
 {
@@ -32,6 +33,31 @@ class SchedulingRepository
         return $this->model->with(['account', 'category'])
             ->where('enterprise_id', $enterpriseId)
             ->get();
+    }
+
+    public function getAllByEnterpriseWithRelationsWithParams($request)
+    {
+        $expired = $request->has('expired') ? filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN) : null;
+        $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
+        $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
+
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $request->user()->enterprise_id);
+
+        if (! is_null($out) && $out) {
+            $query->where('type', 'saida');
+        }
+
+        if (! is_null($entry) && $entry) {
+            $query->where('type', 'entrada');
+        }
+
+        if (! is_null($expired) && $expired) {
+            $yesterday = Carbon::yesterday()->format('Y-m-d');
+            $query->where('date_movement', '<', $yesterday);
+        }
+
+        return $query->get();
     }
 
     public function findById($id)

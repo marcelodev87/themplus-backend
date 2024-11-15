@@ -53,6 +53,19 @@ class SchedulingController
         }
     }
 
+    public function filterSchedulings(Request $request)
+    {
+        try {
+            $schedulings = $this->repository->getAllByEnterpriseWithRelationsWithParams($request);
+
+            return response()->json(['schedulings' => $schedulings], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar agendamentos com base nos filtros: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
     public function getFormInformations(Request $request, $type)
     {
         try {

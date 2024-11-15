@@ -49,6 +49,7 @@ Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [SchedulingController::class, 'index']);
+    Route::get('/filter', [SchedulingController::class, 'filterSchedulings']);
     Route::get('/informations/{type}', [SchedulingController::class, 'getFormInformations']);
     Route::post('/', [SchedulingController::class, 'store']);
     Route::put('/', [SchedulingController::class, 'update']);
