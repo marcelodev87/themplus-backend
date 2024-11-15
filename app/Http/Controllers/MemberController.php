@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -24,9 +25,9 @@ class MemberController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $users = $this->repository->getAllByEnterprise($enterpriseId);
+            $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
-            return response()->json(['users' => $users], 200);
+            return response()->json(['users' => UserResource::collection($users)], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
 
@@ -45,9 +46,9 @@ class MemberController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $users = $this->repository->getAllByEnterprise($enterpriseId);
+                $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
-                return response()->json(['users' => $users, 'message' => 'Membro adicionado á sua organização com sucesso'], 201);
+                return response()->json(['users' => UserResource::collection($users), 'message' => 'Membro adicionado á sua organização com sucesso'], 201);
             }
 
             throw new \Exception('Falha ao criar membro da organização');
@@ -70,9 +71,9 @@ class MemberController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $users = $this->repository->getAllByEnterprise($enterpriseId);
+                $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
-                return response()->json(['users' => $users, 'message' => 'Dados do membro foram atualizados com sucesso'], 200);
+                return response()->json(['users' => UserResource::collection($users), 'message' => 'Dados do membro foram atualizados com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao atualizar dados do membro');

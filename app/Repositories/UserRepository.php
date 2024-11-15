@@ -23,6 +23,13 @@ class UserRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getAllByEnterpriseWithRelations($enterpriseId)
+    {
+        return $this->model->with(['department'])
+            ->where('enterprise_id', $enterpriseId)
+            ->get();
+    }
+
     public function getAllByDepartment($departmentId)
     {
         return $this->model->where('department_id', $departmentId)->get();
