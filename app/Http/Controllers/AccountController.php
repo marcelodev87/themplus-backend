@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AccountExport;
 use App\Repositories\AccountRepository;
 use App\Services\AccountService;
 use Illuminate\Http\Request;
@@ -57,6 +58,18 @@ class AccountController
 
             return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $enterpriseId = $request->user()->enterprise_id;
+
+        $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+
+        $dateTime = now()->format('Ymd_His');
+        $fileName = "accounts_{$enterpriseId}_{$dateTime}.xlsx";
+
+        return (new AccountExport($accounts))->download($fileName);
     }
 
     public function createTransfer(Request $request)

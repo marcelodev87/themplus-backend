@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SchedulingExport;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
@@ -9,7 +10,6 @@ use App\Repositories\CategoryRepository;
 use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
 use App\Services\SchedulingService;
-use App\Exports\SchedulingExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

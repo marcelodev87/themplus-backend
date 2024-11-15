@@ -63,6 +63,7 @@ Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
 Route::prefix('account')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [AccountController::class, 'index']);
     Route::post('/', [AccountController::class, 'store']);
+    Route::post('/export', [AccountController::class, 'export']);
     Route::post('/transfer', [AccountController::class, 'createTransfer']);
     Route::put('/', [AccountController::class, 'update']);
     Route::delete('/{id}', [AccountController::class, 'destroy']);
