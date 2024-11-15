@@ -53,7 +53,7 @@ class AccountService
         $transferOut = $this->categoryRepository->findByName('Transferência', 'saída');
 
         $dataOut = [
-            'type' => 'transferencia',
+            'type' => 'saída',
             'value' => $request->input('value'),
             'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
             'category_id' => $transferOut->id,
@@ -61,7 +61,7 @@ class AccountService
             'enterprise_id' => $request->user()->enterprise_id,
         ];
         $dataEntry = [
-            'type' => 'transferencia',
+            'type' => 'entrada',
             'value' => $request->input('value'),
             'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
             'category_id' => $transferEntry->id,
