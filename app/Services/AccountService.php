@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Repositories\AccountRepository;
+use App\Repositories\CategoryRepository;
 use App\Rules\AccountRule;
+use Carbon\Carbon;
 
 class AccountService
 {
@@ -11,12 +13,20 @@ class AccountService
 
     protected $repository;
 
+    protected $movementService;
+
+    protected $categoryRepository;
+
     public function __construct(
         AccountRule $rule,
         AccountRepository $repository,
+        MovementService $movementService,
+        CategoryRepository $categoryRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
+        $this->movementService = $movementService;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function create($request)
@@ -33,6 +43,33 @@ class AccountService
         ];
 
         return $this->repository->create($data);
+    }
+
+    public function createTransfer($request)
+    {
+        $this->rule->createTransfer($request);
+
+        $transferEntry = $this->categoryRepository->findByName('Transferência', 'entrada');
+        $transferOut = $this->categoryRepository->findByName('Transferência', 'saída');
+
+        $dataOut = [
+            'type' => 'transferencia',
+            'value' => $request->input('value'),
+            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
+            'category_id' => $transferOut->id,
+            'account_id' => $request->input('accountOut'),
+            'enterprise_id' => $request->user()->enterprise_id,
+        ];
+        $dataEntry = [
+            'type' => 'transferencia',
+            'value' => $request->input('value'),
+            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
+            'category_id' => $transferEntry->id,
+            'account_id' => $request->input('accountEntry'),
+            'enterprise_id' => $request->user()->enterprise_id,
+        ];
+
+        return $this->movementService->createTransfer($dataOut, $dataEntry);
     }
 
     public function update($request)

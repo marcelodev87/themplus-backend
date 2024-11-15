@@ -40,6 +40,11 @@ class CategoryRepository
         return $this->model->find($id);
     }
 
+    public function findByName($name, $type)
+    {
+        return $this->model->where('name', $name)->where('type', $type)->first();
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);

@@ -45,7 +45,7 @@ class SchedulingRepository
             ->where('enterprise_id', $request->user()->enterprise_id);
 
         if (! is_null($out) && $out) {
-            $query->where('type', 'saida');
+            $query->where('type', 'saída');
         }
 
         if (! is_null($entry) && $entry) {

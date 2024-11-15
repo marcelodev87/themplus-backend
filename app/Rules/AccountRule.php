@@ -29,6 +29,36 @@ class AccountRule
         return true;
     }
 
+    public function createTransfer($request)
+    {
+        $rules = [
+            'accountOut' => 'required|string',
+            'accountEntry' => 'required|string',
+            'date' => 'required|date_format:d/m/Y',
+            'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
+        ];
+
+        $messages = [
+            'accountOut.required' => 'O ID da conta de saída é obrigatória',
+            'accountOut.string' => 'O ID da conta de saída deve ser uma string',
+            'accountEntry.required' => 'O ID da conta de entrada é obrigatória',
+            'accountEntry.string' => 'O ID da conta de entrada deve ser uma string',
+            'value.required' => 'O valor é obrigatório',
+            'value.numeric' => 'O valor deve ser um número',
+            'value.regex' => 'O valor deve ter no máximo duas casas decimais',
+            'date.required' => 'A data de transferência é obrigatória',
+            'date.date_format' => 'A data de transferência deve estar no formato DD-MM-YYYY',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
+
     public function update($request)
     {
         $rules = [

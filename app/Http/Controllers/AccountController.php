@@ -59,6 +59,31 @@ class AccountController
         }
     }
 
+    public function createTransfer(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $transfer = $this->service->createTransfer($request);
+
+            if ($transfer['out'] && $transfer['entry']) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['accounts' => $accounts, 'message' => 'Transferência realizada com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao realizar transferência');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao realizar transferência: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
     public function update(Request $request)
     {
         try {
