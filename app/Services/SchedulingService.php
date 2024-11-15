@@ -51,12 +51,13 @@ class SchedulingService
             'type' => $request->input('type'),
             'value' => $request->input('value'),
             'description' => $request->input('description'),
+            'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d'),
             'receipt' => $request->input('file'),
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
             'enterprise_id' => $request->user()->enterprise_id,
         ];
 
-        $movement = $this->repository->update($request->input('id'), $data);
+        return $this->repository->update($request->input('id'), $data);
     }
 }

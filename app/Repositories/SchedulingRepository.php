@@ -74,9 +74,7 @@ class SchedulingRepository
     {
         $scheduling = $this->findById($id);
         if ($scheduling) {
-            $scheduling->update($data);
-
-            return $scheduling;
+            return $scheduling->update($data);
         }
 
         return null;

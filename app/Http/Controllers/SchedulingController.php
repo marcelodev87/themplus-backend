@@ -118,7 +118,7 @@ class SchedulingController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $schedulings = $this->repository->getAllByEnterprise($enterpriseId);
+                $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento atualizado com sucesso'], 200);
             }
