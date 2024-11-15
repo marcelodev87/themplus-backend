@@ -43,6 +43,7 @@ Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [MovementController::class, 'index']);
     Route::get('/filter', [MovementController::class, 'filterMovements']);
     Route::get('/informations/{type}', [MovementController::class, 'getFormInformations']);
+    Route::post('/export', [MovementController::class, 'export']);
     Route::post('/', [MovementController::class, 'store']);
     Route::put('/', [MovementController::class, 'update']);
     Route::delete('/{id}', [MovementController::class, 'destroy']);

@@ -44,6 +44,22 @@ class MovementRepository
         return $query->get();
     }
 
+    public function export($out, $entry, $enterpriseId)
+    {
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $enterpriseId);
+
+        if ($out) {
+            $query->where('type', 'saída');
+        }
+
+        if ($entry) {
+            $query->where('type', 'entrada');
+        }
+
+        return $query->get();
+    }
+
     public function getAllByEnterprise($enterpriseId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();

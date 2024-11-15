@@ -61,6 +61,20 @@ class MovementController
         }
     }
 
+    public function export(Request $request)
+    {
+        $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
+        $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
+        $enterpriseId = $request->user()->enterprise_id;
+
+        $movements = $this->repository->export($out, $entry, $enterpriseId);
+
+        $dateTime = now()->format('Ymd_His');
+        $fileName = "movements_{$enterpriseId}_{$dateTime}.xlsx";
+
+        return (new MovementExport($movements))->download($fileName);
+    }
+
     public function getFormInformations(Request $request, $type)
     {
         try {
