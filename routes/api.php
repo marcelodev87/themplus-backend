@@ -54,6 +54,7 @@ Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
     Route::get('/filter', [SchedulingController::class, 'filterSchedulings']);
     Route::get('/informations/{type}', [SchedulingController::class, 'getFormInformations']);
     Route::post('/', [SchedulingController::class, 'store']);
+    Route::post('/export', [SchedulingController::class, 'export']);
     Route::put('/', [SchedulingController::class, 'update']);
     Route::put('/finalize/{id}', [SchedulingController::class, 'finalize']);
     Route::delete('/{id}', [SchedulingController::class, 'destroy']);

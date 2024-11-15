@@ -80,6 +80,26 @@ class SchedulingRepository
         return null;
     }
 
+    public function export($out, $entry, $expired, $enterpriseId)
+    {
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $enterpriseId);
+
+        if ($out) {
+            $query->where('type', 'saída');
+        }
+
+        if ($entry) {
+            $query->where('type', 'entrada');
+        }
+
+        if ($expired) {
+            $query->whereDate('date_movement', '<', now()->toDateString());
+        }
+
+        return $query->get();
+    }
+
     public function finalize($id)
     {
         $scheduling = $this->findById($id);

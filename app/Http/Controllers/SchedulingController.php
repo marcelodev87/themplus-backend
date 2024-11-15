@@ -9,6 +9,7 @@ use App\Repositories\CategoryRepository;
 use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
 use App\Services\SchedulingService;
+use App\Exports\SchedulingExport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -64,6 +65,21 @@ class SchedulingController
 
             return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
+        $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
+        $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
+        $enterpriseId = $request->user()->enterprise_id;
+
+        $schedulings = $this->repository->export($out, $entry, $expired, $enterpriseId);
+
+        $dateTime = now()->format('Ymd_His');
+        $fileName = "schedulings_{$enterpriseId}_{$dateTime}.xlsx";
+
+        return (new SchedulingExport($schedulings))->download($fileName);
     }
 
     public function getFormInformations(Request $request, $type)

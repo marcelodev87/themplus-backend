@@ -7,6 +7,7 @@ use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\MovementRepository;
+use App\Exports\MovementExport;
 use App\Services\MovementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
