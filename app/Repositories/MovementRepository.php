@@ -70,7 +70,7 @@ class MovementRepository
         $distinctMonthsYears = $this->model
             ->where('enterprise_id', $enterpriseId)
             ->selectRaw('DISTINCT DATE_FORMAT(date_movement, "%m/%Y") as month_year')
-            ->orderBy('month_year')
+            ->orderBy('date_movement')
             ->pluck('month_year');
 
         $results = [];

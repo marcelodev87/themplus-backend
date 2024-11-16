@@ -28,7 +28,7 @@ class FinancialRepository
 
     public function mountDeliveries($enterpriseId)
     {
-        return $this->movementRepository->getDeliveries('enterprise_id', $enterpriseId)->get();
+        return $this->movementRepository->getDeliveries($enterpriseId);
     }
 
     public function findById($id)
