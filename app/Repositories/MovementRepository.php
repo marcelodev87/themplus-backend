@@ -77,11 +77,13 @@ class MovementRepository
 
         foreach ($distinctMonthsYears as $monthYear) {
             [$month, $year] = explode('/', $monthYear);
+            $month = (int) $month;
+            $year = (int) $year;
 
             $financialMovement = \DB::table('financial_movements')
                 ->where('enterprise_id', $enterpriseId)
-                ->whereMonth('month', $month)
-                ->whereYear('year', $year)
+                ->where('month', $month)
+                ->where('year', $year)
                 ->first();
 
             if ($financialMovement) {

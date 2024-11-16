@@ -34,29 +34,28 @@ class FinancialController
         }
     }
 
-    // public function finalize(Request $request)
-    // {
-    //     try {
-    //         DB::beginTransaction();
-    //         $alert = $this->service->update($request);
+    public function finalize(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $delivery = $this->service->finalize($request);
 
-    //         if ($alert) {
-    //             DB::commit();
+            if ($delivery) {
+                DB::commit();
 
-    //             $enterpriseId = $request->user()->enterprise_id;
-    //             $alerts = $this->repository->getAllByEnterprise($enterpriseId);
+                $enterpriseId = $request->user()->enterprise_id;
+                $deliveries = $this->repository->mountDeliveries($enterpriseId);
 
-    //             return response()->json(['alerts' => $alerts, 'message' => 'Alerta atualizada com sucesso'], 200);
-    //         }
+                return response()->json(['deliveries' => $deliveries, 'message' => 'Entrega realizada com sucesso'], 200);
+            }
 
-    //         throw new \Exception('Falha ao atualizar alerta');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
+            throw new \Exception('Falha ao realizar entrega');
+        } catch (\Exception $e) {
+            DB::rollBack();
 
-    //         Log::error('Erro ao atualizar alerta: '.$e->getMessage());
+            Log::error('Erro ao realizar entrega: '.$e->getMessage());
 
-    //         return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
-    //     }
-    // }
-
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
 }
