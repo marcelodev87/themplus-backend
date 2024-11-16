@@ -25,10 +25,11 @@ class CategoryRepository
 
     public function getAllByEnterpriseWithDefaults($enterpriseId, $type = null)
     {
-        return $this->model->where(function ($query) use ($enterpriseId) {
-            $query->where('enterprise_id', $enterpriseId)
-                ->orWhere('enterprise_id', null);
-        })
+        return $this->model->with('alert')
+            ->where(function ($query) use ($enterpriseId) {
+                $query->where('enterprise_id', $enterpriseId)
+                    ->orWhere('enterprise_id', null);
+            })
             ->when($type === 'entrada' || $type === 'saída', function ($query) use ($type) {
                 return $query->where('type', $type);
             })

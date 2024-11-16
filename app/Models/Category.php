@@ -16,5 +16,11 @@ class Category extends Model
         'name',
         'type',
         'enterprise_id',
+        'alert_id',
     ];
+
+    public function alert()
+    {
+        return $this->belongsTo(Alert::class);
+    }
 }

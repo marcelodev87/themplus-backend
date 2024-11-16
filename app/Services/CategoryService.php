@@ -25,6 +25,7 @@ class CategoryService
 
         $data = $request->only(['name', 'type']);
         $data['enterprise_id'] = $request->user()->enterprise_id;
+        $data['alert_id'] = $request->input('alert');
 
         return $this->repository->create($data);
     }
@@ -35,6 +36,7 @@ class CategoryService
 
         $data = $request->only(['name', 'type']);
         $data['enterprise_id'] = $request->user()->enterprise_id;
+        $data['alert_id'] = $request->input('alert');
 
         return $this->repository->update($request->input('id'), $data);
     }
