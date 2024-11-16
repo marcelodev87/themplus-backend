@@ -21,6 +21,7 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [MemberController::class, 'index']);
     Route::post('/', [MemberController::class, 'store']);
+    Route::post('/export', [MemberController::class, 'export']);
     Route::put('/', [MemberController::class, 'update']);
     Route::delete('/{id}', [MemberController::class, 'destroy']);
 });

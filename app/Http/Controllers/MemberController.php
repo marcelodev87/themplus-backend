@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\UserExport;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
@@ -59,6 +60,18 @@ class MemberController
 
             return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $enterpriseId = $request->user()->enterprise_id;
+
+        $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+
+        $dateTime = now()->format('Ymd_His');
+        $fileName = "users_{$enterpriseId}_{$dateTime}.xlsx";
+
+        return (new UserExport($users))->download($fileName);
     }
 
     public function update(Request $request)
