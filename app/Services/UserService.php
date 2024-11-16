@@ -97,7 +97,8 @@ class UserService
     {
         $this->rule->updateData($request);
 
-        $data = $request->only(['name', 'email']);
+        $data = $request->only(['name', 'email', 'phone']);
+        $data['department_id'] = $request->input('department');
 
         return $this->repository->updateData($request->user()->id, $data);
     }
