@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AlertController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
+use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\SchedulingController;
-use App\Http\Controllers\AlertController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -76,6 +77,11 @@ Route::prefix('account')->middleware('auth:sanctum')->group(function () {
     Route::post('/transfer', [AccountController::class, 'createTransfer']);
     Route::put('/', [AccountController::class, 'update']);
     Route::delete('/{id}', [AccountController::class, 'destroy']);
+});
+
+Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [FinancialController::class, 'index']);
+    Route::post('/', [FinancialController::class, 'finalize']);
 });
 
 Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {

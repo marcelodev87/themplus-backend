@@ -65,6 +65,43 @@ class MovementRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getDeliveries($enterpriseId)
+    {
+        $distinctMonthsYears = $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->selectRaw('DISTINCT DATE_FORMAT(date_movement, "%m/%Y") as month_year')
+            ->orderBy('month_year')
+            ->pluck('month_year');
+
+        $results = [];
+
+        foreach ($distinctMonthsYears as $monthYear) {
+            [$month, $year] = explode('/', $monthYear);
+
+            $financialMovement = \DB::table('financial_movements')
+                ->where('enterprise_id', $enterpriseId)
+                ->whereMonth('month', $month)
+                ->whereYear('year', $year)
+                ->first();
+
+            if ($financialMovement) {
+                $status = true;
+                $dateDelivery = $financialMovement->date_delivery;
+            } else {
+                $status = false;
+                $dateDelivery = null;
+            }
+
+            $results[] = [
+                'month_year' => $monthYear,
+                'status' => $status,
+                'date_delivery' => $dateDelivery,
+            ];
+        }
+
+        return $results;
+    }
+
     public function getAllByAccount($enterpriseId, $accountId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)
