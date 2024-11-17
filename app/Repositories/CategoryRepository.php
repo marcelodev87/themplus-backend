@@ -23,6 +23,24 @@ class CategoryRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getAllByEnterpriseWithRelationsWithParams($request)
+    {
+        $createdByMe = $request->has('createdByMe') ? filter_var($request->query('createdByMe'), FILTER_VALIDATE_BOOLEAN) : null;
+        $defaultSystem = $request->has('defaultSystem') ? filter_var($request->query('defaultSystem'), FILTER_VALIDATE_BOOLEAN) : null;
+
+        $query = $this->model->with(['alert']);
+
+        if (! is_null($createdByMe) && $createdByMe) {
+            $query->where('enterprise_id', $request->user()->enterprise_id);
+        }
+
+        if (! is_null($defaultSystem) && $defaultSystem) {
+            $query->where('enterprise_id', null);
+        }
+
+        return $query->get();
+    }
+
     public function getAllByEnterpriseWithDefaults($enterpriseId, $type = null)
     {
         return $this->model->with('alert')

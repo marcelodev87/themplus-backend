@@ -34,6 +34,19 @@ class CategoryController
         }
     }
 
+    public function filterCategories(Request $request)
+    {
+        try {
+            $categories = $this->repository->getAllByEnterpriseWithRelationsWithParams($request);
+
+            return response()->json(['categories' => $categories], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar categorias com base nos filtros: '.$e->getMessage());
+
+            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         try {
