@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
 use App\Http\Controllers\FinancialController;
@@ -83,6 +84,10 @@ Route::prefix('account')->middleware('auth:sanctum')->group(function () {
 Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
     Route::post('/', [FinancialController::class, 'finalize']);
+});
+
+Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
 });
 
 Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
