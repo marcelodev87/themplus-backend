@@ -40,8 +40,21 @@ class DashboardRepository
 
     public function mountDashboard($enterpriseId)
     {
-        // TODO: CRIAR TODO O DATA PARA ALIMENTAR DASHBOARD NO FRONTEND
-        return $this->model->where('enterprise_id', $enterpriseId)->get();
+        $months_years = $this->movementRepository->getMonthYears($enterpriseId);
+        $categories_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId);
+        $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId);
+        $users_dashboard = $this->userRepository->getUsersDashboard($enterpriseId);
+        $schedulings_dashboard = $this->schedulingRepository->getSchedulingsDashboard($enterpriseId);
+        $accounts_dashboard = $this->accountRepository->getAccountsDashboard($enterpriseId);
+
+        return [
+            'months_years' => $months_years,
+            'categories_dashboard' => $categories_dashboard,
+            'movements_dashboard' => $movements_dashboard,
+            'users_dashboard' => $users_dashboard,
+            'schedulings_dashboard' => $schedulings_dashboard,
+            'accounts_dashboard' => $accounts_dashboard,
+        ];
     }
 
     public function findById($id)

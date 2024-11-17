@@ -35,6 +35,27 @@ class UserRepository
         return $this->model->where('department_id', $departmentId)->get();
     }
 
+    public function getUsersDashboard($enterpriseId)
+    {
+        $amountUsers = $this->model->where('enterprise_id', $enterpriseId)->count();
+
+        $amountCommonUsers = $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->where('position', 'common_user')
+            ->count();
+
+        $amountAdmins = $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->where('position', 'admin')
+            ->count();
+
+        return [
+            'amount_users' => $amountUsers,
+            'amount_common_users' => $amountCommonUsers,
+            'amount_admins' => $amountAdmins,
+        ];
+    }
+
     public function findById($id)
     {
         return $this->model->find($id);

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Account;
+use Carbon\Carbon;
 
 class AccountRepository
 {
@@ -21,6 +22,28 @@ class AccountRepository
     public function getAllByEnterprise($enterpriseId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();
+    }
+
+    public function getAccountsDashboard($enterpriseId)
+    {
+        $monthYear = Carbon::now()->format('m/Y');
+
+        $accounts = $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->get(['name', 'balance'])
+            ->sortByDesc('balance')
+            ->take(5)
+            ->map(function ($account) {
+                return [
+                    'name' => $account->name,
+                    'balance' => (float) $account->balance,
+                ];
+            });
+
+        return [
+            'month_year' => $monthYear,
+            'accounts' => $accounts->toArray(),
+        ];
     }
 
     public function findById($id)

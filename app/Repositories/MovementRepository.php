@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Movement;
+use Carbon\Carbon;
 
 class MovementRepository
 {
@@ -102,6 +103,68 @@ class MovementRepository
         }
 
         return $results;
+    }
+
+    public function getMonthYears($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)
+            ->selectRaw('DISTINCT DATE_FORMAT(date_movement, "%m/%Y") as month_year')
+            ->orderBy('date_movement')
+            ->pluck('month_year');
+    }
+
+    public function getMovementsDashboard($enterpriseId)
+    {
+        $currentMonth = Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $monthYear = Carbon::now()->format('m/Y');
+
+        $movements = $this->model
+            ->where('movements.enterprise_id', $enterpriseId)
+            ->whereYear('date_movement', $currentYear)
+            ->whereMonth('date_movement', $currentMonth)
+            ->join('categories', 'movements.category_id', '=', 'categories.id')
+            ->selectRaw('
+                SUM(CASE WHEN categories.type = "entrada" THEN movements.value ELSE 0 END) as entry_value,
+                SUM(CASE WHEN categories.type = "saida" THEN movements.value ELSE 0 END) as out_value
+            ')
+            ->first();
+
+        $entryValue = $movements->entry_value ?? 0;
+        $outValue = $movements->out_value ?? 0;
+        $balance = $entryValue - $outValue;
+
+        return [
+            'entry_value' => $entryValue,
+            'out_value' => $outValue,
+            'balance' => $balance,
+            'month_year' => $monthYear,
+        ];
+    }
+
+    public function getMovementsByCategoriesDashboard($enterpriseId)
+    {
+        $currentMonth = Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+
+        return $this->model
+            ->select('movements.category_id')
+            ->selectRaw('SUM(movements.value) as value')
+            ->join('categories', 'movements.category_id', '=', 'categories.id')
+            ->whereYear('movements.created_at', $currentYear)
+            ->whereMonth('movements.created_at', $currentMonth)
+            ->where('movements.enterprise_id', $enterpriseId)
+            ->groupBy('movements.category_id')
+            ->with(['category:id,name,type'])
+            ->get()
+            ->map(function ($movement) {
+                return [
+                    'category_id' => $movement->category_id,
+                    'name' => $movement->category->name,
+                    'type' => $movement->category->type,
+                    'value' => $movement->value,
+                ];
+            });
     }
 
     public function getAllByAccount($enterpriseId, $accountId)

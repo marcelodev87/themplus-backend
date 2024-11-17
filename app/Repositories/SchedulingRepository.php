@@ -28,6 +28,35 @@ class SchedulingRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getSchedulingsDashboard($enterpriseId)
+    {
+        $currentMonth = Carbon::now()->format('m');
+        $currentYear = Carbon::now()->format('Y');
+        $monthYear = Carbon::now()->format('m/Y');
+
+        $dateColumn = 'created_at';
+
+        $schedulings = $this->model
+            ->where('schedulings.enterprise_id', $enterpriseId)
+            ->whereYear("schedulings.$dateColumn", $currentYear)
+            ->whereMonth("schedulings.$dateColumn", $currentMonth)
+            ->join('categories', 'schedulings.category_id', '=', 'categories.id')
+            ->selectRaw('
+                SUM(CASE WHEN categories.type = "entrada" THEN schedulings.value ELSE 0 END) as entry_value,
+                SUM(CASE WHEN categories.type = "saida" THEN schedulings.value ELSE 0 END) as out_value
+            ')
+            ->first();
+
+        $entryValue = $schedulings->entry_value ?? 0;
+        $outValue = $schedulings->out_value ?? 0;
+
+        return [
+            'entry_value' => number_format($entryValue, 2, '.', ''),
+            'out_value' => number_format($outValue, 2, '.', ''),
+            'month_year' => $monthYear,
+        ];
+    }
+
     public function getAllByEnterpriseWithRelations($enterpriseId)
     {
         return $this->model->with(['account', 'category'])
