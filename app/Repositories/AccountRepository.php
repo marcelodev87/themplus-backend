@@ -30,9 +30,9 @@ class AccountRepository
 
         $accounts = $this->model
             ->where('enterprise_id', $enterpriseId)
-            ->get(['name', 'balance'])
-            ->sortByDesc('balance')
+            ->orderBy('balance', 'desc')
             ->take(5)
+            ->get(['name', 'balance'])
             ->map(function ($account) {
                 return [
                     'name' => $account->name,
