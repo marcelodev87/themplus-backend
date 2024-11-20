@@ -40,7 +40,7 @@ class EnterpriseController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar dados da organização: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -62,7 +62,7 @@ class EnterpriseController
 
             Log::error('Erro ao atualizar organização: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 

@@ -32,7 +32,7 @@ class MemberController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -58,7 +58,7 @@ class MemberController
 
             Log::error('Erro ao registrar membro da organização: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -95,7 +95,7 @@ class MemberController
 
             Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -117,7 +117,7 @@ class MemberController
 
             Log::error('Erro ao deletar membro: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

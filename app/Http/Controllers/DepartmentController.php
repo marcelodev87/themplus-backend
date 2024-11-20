@@ -34,7 +34,7 @@ class DepartmentController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os departamentos: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -59,7 +59,7 @@ class DepartmentController
 
             Log::error('Erro ao registrar departamento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -84,7 +84,7 @@ class DepartmentController
 
             Log::error('Erro ao atualizar departamento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -111,7 +111,7 @@ class DepartmentController
 
             Log::error('Erro ao deletar departamento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

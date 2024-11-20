@@ -32,7 +32,7 @@ class DashboardController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar informações para o dashboard: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

@@ -30,7 +30,7 @@ class FinancialController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as entregas: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -55,7 +55,7 @@ class FinancialController
 
             Log::error('Erro ao realizar entrega: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

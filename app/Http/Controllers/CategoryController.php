@@ -30,7 +30,7 @@ class CategoryController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -43,7 +43,7 @@ class CategoryController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar categorias com base nos filtros: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -68,7 +68,7 @@ class CategoryController
 
             Log::error('Erro ao registrar categoria: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -93,7 +93,7 @@ class CategoryController
 
             Log::error('Erro ao atualizar categoria: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -115,7 +115,7 @@ class CategoryController
 
             Log::error('Erro ao deletar categoria: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }

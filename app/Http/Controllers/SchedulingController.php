@@ -50,7 +50,7 @@ class SchedulingController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os agendamentos: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -63,7 +63,7 @@ class SchedulingController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar agendamentos com base nos filtros: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -95,7 +95,7 @@ class SchedulingController
         } catch (\Exception $e) {
             Log::error('Erro ao buscar informações: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -120,7 +120,7 @@ class SchedulingController
 
             Log::error('Erro ao registrar agendamento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -145,7 +145,7 @@ class SchedulingController
 
             Log::error('Erro ao atualizar agendamento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -171,7 +171,7 @@ class SchedulingController
 
             Log::error('Erro ao finalizar agendamento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -194,7 +194,7 @@ class SchedulingController
 
             Log::error('Erro ao deletar agendamento: '.$e->getMessage());
 
-            return response()->json(['message' => 'Houve erro: '.$e->getMessage()], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 }
