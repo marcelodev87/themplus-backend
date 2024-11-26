@@ -50,9 +50,11 @@ class CategoryService
 
         return $this->repository->update($request->input('id'), $data);
     }
+
     public function updateActive($id)
     {
-         $data['active'] = 1;
+        $data['active'] = 1;
+
         return $this->repository->update($id, $data);
 
     }
@@ -65,17 +67,17 @@ class CategoryService
         if ($movements->isNotEmpty() || $schedulings->isNotEmpty()) {
             $data['active'] = 0;
             $result = $this->repository->update($id, $data);
-            
+
             return [
                 'message' => 'Categoria inativada, pois possui movimentações ou agendamentos vinculados',
-                'data' => $result
+                'data' => $result,
             ];
         } else {
             $result = $this->repository->delete($id);
-            
+
             return [
                 'message' => 'Categoria deletada com sucesso',
-                'data' => $result
+                'data' => $result,
             ];
         }
     }

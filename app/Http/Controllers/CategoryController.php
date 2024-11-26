@@ -96,6 +96,7 @@ class CategoryController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
     public function active(Request $request, $id)
     {
         try {
