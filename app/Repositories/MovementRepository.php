@@ -108,8 +108,9 @@ class MovementRepository
     public function getMonthYears($enterpriseId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)
-            ->selectRaw('DISTINCT DATE_FORMAT(date_movement, "%m/%Y") as month_year')
-            ->orderBy('date_movement')
+            ->selectRaw('DATE_FORMAT(date_movement, "%m/%Y") as month_year')
+            ->groupBy('month_year')
+            ->orderBy('month_year')
             ->pluck('month_year');
     }
 
