@@ -68,41 +68,47 @@ class MovementRepository
 
     public function getDeliveries($enterpriseId)
     {
-        $distinctMonthsYears = $this->model
-            ->where('enterprise_id', $enterpriseId)
-            ->selectRaw('DISTINCT DATE_FORMAT(date_movement, "%m/%Y") as month_year')
-            ->orderBy('date_movement')
-            ->pluck('month_year');
-
-        $results = [];
-
-        foreach ($distinctMonthsYears as $monthYear) {
-            [$month, $year] = explode('/', $monthYear);
-            $month = (int) $month;
-            $year = (int) $year;
-
-            $financialMovement = \DB::table('financial_movements')
+        try {
+            $monthsYears = $this->model
                 ->where('enterprise_id', $enterpriseId)
-                ->where('month', $month)
-                ->where('year', $year)
-                ->first();
+                ->selectRaw("DATE_FORMAT(date_movement, '%Y-%m') as year_month")
+                ->groupBy('year_month')
+                ->orderBy('year_month', 'ASC')
+                ->pluck('year_month')
+                ->toArray();
 
-            if ($financialMovement) {
-                $status = true;
-                $dateDelivery = $financialMovement->date_delivery;
-            } else {
-                $status = false;
-                $dateDelivery = null;
+            if (empty($monthsYears)) {
+                return [];
             }
 
-            $results[] = [
-                'month_year' => $monthYear,
-                'status' => $status,
-                'date_delivery' => $dateDelivery,
-            ];
-        }
+            $financialMovements = \DB::table('financial_movements')
+                ->where('enterprise_id', $enterpriseId)
+                ->whereIn(
+                    \DB::raw("DATE_FORMAT(date_movement, '%Y-%m')"),
+                    $monthsYears
+                )
+                ->get()
+                ->keyBy(fn ($fm) => date('Y-m', strtotime($fm->date_movement)));
 
-        return $results;
+            $results = array_map(function ($yearMonth) use ($financialMovements) {
+                [$year, $month] = explode('-', $yearMonth);
+                $key = "$year-$month";
+                $financialMovement = $financialMovements[$key] ?? null;
+
+                return [
+                    'month_year' => (int) $month.'/'.$year,
+                    'status' => (bool) $financialMovement,
+                    'date_delivery' => $financialMovement->date_delivery ?? null,
+                ];
+            }, $monthsYears);
+
+            return $results;
+
+        } catch (\Exception $e) {
+            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
+
+            return [];
+        }
     }
 
     public function getMonthYears($enterpriseId)
