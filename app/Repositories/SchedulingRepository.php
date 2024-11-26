@@ -28,6 +28,11 @@ class SchedulingRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getAllByCategory($categoryId)
+    {
+        return $this->model->where('category_id', $categoryId)->get();
+    }
+
     public function getSchedulingsDashboard($enterpriseId)
     {
         $currentMonth = Carbon::now()->format('m');

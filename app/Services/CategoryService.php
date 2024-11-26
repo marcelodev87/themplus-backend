@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Repositories\CategoryRepository;
+use App\Repositories\MovementRepository;
+use App\Repositories\SchedulingRepository;
 use App\Rules\CategoryRule;
 
 class CategoryService
@@ -11,12 +13,20 @@ class CategoryService
 
     protected $repository;
 
+    protected $movementRepository;
+
+    protected $schedulingRepository;
+
     public function __construct(
         CategoryRule $rule,
         CategoryRepository $repository,
+        MovementRepository $movementRepository,
+        SchedulingRepository $schedulingRepository,
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
+        $this->movementRepository = $movementRepository;
+        $this->schedulingRepository = $schedulingRepository;
     }
 
     public function create($request)
@@ -39,5 +49,34 @@ class CategoryService
         $data['alert_id'] = $request->input('alert');
 
         return $this->repository->update($request->input('id'), $data);
+    }
+    public function updateActive($id)
+    {
+         $data['active'] = 1;
+        return $this->repository->update($id, $data);
+
+    }
+
+    public function delete($request, $id)
+    {
+        $movements = $this->movementRepository->getAllByCategory($id);
+        $schedulings = $this->schedulingRepository->getAllByCategory($id);
+
+        if ($movements->isNotEmpty() || $schedulings->isNotEmpty()) {
+            $data['active'] = 0;
+            $result = $this->repository->update($id, $data);
+            
+            return [
+                'message' => 'Categoria inativada, pois possui movimentações ou agendamentos vinculados',
+                'data' => $result
+            ];
+        } else {
+            $result = $this->repository->delete($id);
+            
+            return [
+                'message' => 'Categoria deletada com sucesso',
+                'data' => $result
+            ];
+        }
     }
 }

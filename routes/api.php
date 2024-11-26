@@ -33,6 +33,7 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
     Route::get('/filter', [CategoryController::class, 'filterCategories']);
     Route::post('/', [CategoryController::class, 'store']);
+    Route::put('/active/{id}', [CategoryController::class, 'active']);
     Route::put('/', [CategoryController::class, 'update']);
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
 });

@@ -96,17 +96,41 @@ class CategoryController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-
-    public function destroy(string $id)
+    public function active(Request $request, $id)
     {
         try {
             DB::beginTransaction();
-            $category = $this->repository->delete($id);
+            $category = $this->service->updateActive($id);
 
             if ($category) {
                 DB::commit();
 
-                return response()->json(['message' => 'Categoria deletada com sucesso'], 200);
+                $enterpriseId = $request->user()->enterprise_id;
+                $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+
+                return response()->json(['categories' => $categories, 'message' => 'Categoria reativada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao reativar categoria');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao reativar categoria: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $category = $this->service->delete($request, $id);
+
+            if ($category['data']) {
+                DB::commit();
+
+                return response()->json(['message' => $category['message']], 200);
             }
 
             throw new \Exception('Falha ao deletar categoria');
