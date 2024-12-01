@@ -37,7 +37,6 @@ class EnterpriseService
 
     public function update($request)
     {
-        UserHelper::validUser($request->user()->email, $request->input('password'));
         $this->rule->update($request);
 
         $data = [
