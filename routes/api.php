@@ -11,6 +11,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FeedController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login']);
@@ -90,6 +91,10 @@ Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [DashboardController::class, 'index']);
+});
+
+Route::prefix('feed')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [FeedController::class, 'index']);
 });
 
 Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
