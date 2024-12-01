@@ -83,8 +83,8 @@ class MovementController
         try {
             $enterpriseId = $request->user()->enterprise_id;
 
-            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId, $type);
-            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive($enterpriseId, $type);
+            $accounts = $this->accountRepository->getAllByEnterpriseOnlyActive($enterpriseId);
 
             return response()->json(['categories' => CategoryResource::collection($categories),
                 'accounts' => AccountResource::collection($accounts), ], 200);

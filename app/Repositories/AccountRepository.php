@@ -25,6 +25,11 @@ class AccountRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getAllByEnterpriseOnlyActive($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)->where('active', 1)->get();
+    }
+
     public function getAccountsDashboard($enterpriseId)
     {
         $monthYear = Carbon::now()->format('m/Y');

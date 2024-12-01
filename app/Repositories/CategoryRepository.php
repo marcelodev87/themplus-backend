@@ -55,6 +55,20 @@ class CategoryRepository
             ->get();
     }
 
+    public function getAllByEnterpriseWithDefaultsOnlyActive($enterpriseId, $type = null)
+    {
+        return $this->model->with('alert')
+            ->where('active', 1)
+            ->where(function ($query) use ($enterpriseId) {
+                $query->where('enterprise_id', $enterpriseId)
+                    ->orWhere('enterprise_id', null);
+            })
+            ->when($type === 'entrada' || $type === 'saída', function ($query) use ($type) {
+                return $query->where('type', $type);
+            })
+            ->get();
+    }
+
     public function findById($id)
     {
         return $this->model->find($id);
