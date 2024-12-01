@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Helpers\UserHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\UserRepository;
 use App\Rules\EnterpriseRule;
