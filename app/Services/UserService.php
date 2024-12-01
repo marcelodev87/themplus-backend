@@ -6,6 +6,7 @@ use App\Helpers\UserHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\AccountRepository;
 use App\Rules\UserRule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -20,16 +21,20 @@ class UserService
 
     protected $subscriptionRepository;
 
+    protected $accountRepository;
+
     public function __construct(
         UserRule $rule,
         UserRepository $repository,
         EnterpriseRepository $enterpriseRepository,
-        SubscriptionRepository $subscriptionRepository
+        SubscriptionRepository $subscriptionRepository,
+        AccountRepository $accountRepository,
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->accountRepository = $accountRepository;
     }
 
     public function login($request)
@@ -62,6 +67,9 @@ class UserService
 
         $subscription = $this->subscriptionRepository->findByName('free');
         $enterprise = $this->enterpriseRepository->createStart($data['nameEnterprise'], $subscription->id);
+
+        $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
+        $this->accountRepository->create($dataAccount);
 
         $data['enterprise_id'] = $enterprise->id;
         $data['position'] = 'admin';
