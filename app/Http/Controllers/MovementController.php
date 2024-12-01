@@ -151,7 +151,7 @@ class MovementController
             $movement = $this->repository->delete($id);
 
             if ($movement) {
-                $this->service->updateBalanceAccount($request->user()->enterprise_id, $movementActual->account_id);
+                $this->service->updateBalanceAccount($movementActual->account_id);
                 DB::commit();
 
                 return response()->json(['message' => 'Movimentação deletada com sucesso'], 200);

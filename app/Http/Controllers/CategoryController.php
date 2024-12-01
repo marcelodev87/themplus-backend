@@ -122,11 +122,11 @@ class CategoryController
         }
     }
 
-    public function destroy(Request $request, string $id)
+    public function destroy($id)
     {
         try {
             DB::beginTransaction();
-            $category = $this->service->delete($request, $id);
+            $category = $this->service->delete($id);
 
             if ($category['data']) {
                 DB::commit();

@@ -122,11 +122,11 @@ class AccountController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, $id)
     {
         try {
             DB::beginTransaction();
-            $category = $this->repository->delete($id);
+            $category = $this->service->delete($request, $id);
 
             if ($category) {
                 DB::commit();

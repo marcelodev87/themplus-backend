@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\MovementRepository;
+use App\Repositories\SchedulingRepository;
 use App\Rules\AccountRule;
 use Carbon\Carbon;
 
@@ -15,18 +17,25 @@ class AccountService
 
     protected $movementService;
 
+    protected $movementRepository;
+
+    protected $schedulingRepository;
+
     protected $categoryRepository;
 
     public function __construct(
         AccountRule $rule,
         AccountRepository $repository,
         MovementService $movementService,
-        CategoryRepository $categoryRepository
+        CategoryRepository $categoryRepository,
+        MovementRepository $movementRepository,
+        SchedulingRepository $schedulingRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
         $this->movementService = $movementService;
         $this->categoryRepository = $categoryRepository;
+        $this->schedulingRepository = $schedulingRepository;
     }
 
     public function create($request)
@@ -85,5 +94,28 @@ class AccountService
         ];
 
         return $this->repository->update($request->input('id'), $data);
+    }
+
+    public function delete($request, $id)
+    {
+        $movements = $this->movementRepository->getAllByAccount($id);
+        $schedulings = $this->schedulingRepository->getAllByAccount($id);
+
+        if ($movements->isNotEmpty() || $schedulings->isNotEmpty()) {
+            $data['active'] = 0;
+            $result = $this->repository->update($id, $data);
+
+            return [
+                'message' => 'Conta inativada, pois possui movimentações ou agendamentos vinculados',
+                'data' => $result,
+            ];
+        } else {
+            $result = $this->repository->delete($id);
+
+            return [
+                'message' => 'Conta deletada com sucesso',
+                'data' => $result,
+            ];
+        }
     }
 }

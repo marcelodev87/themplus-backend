@@ -52,7 +52,7 @@ class MovementService
 
         $movement = $this->repository->create($data);
         if ($movement) {
-            return $this->updateBalanceAccount($request->user()->enterprise_id, $request->input('account'));
+            return $this->updateBalanceAccount($request->input('account'));
         }
 
         return null;
@@ -64,8 +64,8 @@ class MovementService
         $out = $this->repository->create($dataOut);
         $entry = $this->repository->create($dataEntry);
         if ($out && $entry) {
-            $movementsOut = $this->repository->getAllByAccount($dataOut['enterprise_id'], $dataOut['account_id']);
-            $movementsEntry = $this->repository->getAllByAccount($dataEntry['enterprise_id'], $dataEntry['account_id']);
+            $movementsOut = $this->repository->getAllByAccount($dataOut['account_id']);
+            $movementsEntry = $this->repository->getAllByAccount($dataEntry['account_id']);
 
             $newValueAccountOut = $this->calculateValueAccount($movementsOut);
             $newValueAccountEntry = $this->calculateValueAccount($movementsEntry);
@@ -102,7 +102,7 @@ class MovementService
         $movement = $this->repository->update($request->input('id'), $data);
 
         if ($movement) {
-            return $this->updateBalanceAccount($request->user()->enterprise_id, $request->input('account'));
+            return $this->updateBalanceAccount($request->input('account'));
         }
 
         return null;
@@ -125,7 +125,7 @@ class MovementService
         $movement = $this->repository->create($data);
 
         if ($movement) {
-            return $this->updateBalanceAccount($scheduling['enterprise_id'], $scheduling['account_id']);
+            return $this->updateBalanceAccount($scheduling['account_id']);
         }
 
         return null;
@@ -153,9 +153,9 @@ class MovementService
         return $value;
     }
 
-    public function updateBalanceAccount($enterpriseId, $accountId)
+    public function updateBalanceAccount($accountId)
     {
-        $movements = $this->repository->getAllByAccount($enterpriseId, $accountId);
+        $movements = $this->repository->getAllByAccount($accountId);
         $newValueAccount = $this->calculateValueAccount($movements);
 
         return $this->accountRepository->updateBalance($accountId, $newValueAccount);

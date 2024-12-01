@@ -179,11 +179,9 @@ class MovementRepository
             });
     }
 
-    public function getAllByAccount($enterpriseId, $accountId)
+    public function getAllByAccount($accountId)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)
-            ->where('account_id', $accountId)
-            ->get();
+        return $this->model->where('account_id', $accountId)->get();
     }
 
     public function findById($id)

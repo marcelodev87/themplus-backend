@@ -59,7 +59,7 @@ class CategoryService
 
     }
 
-    public function delete($request, $id)
+    public function delete($id)
     {
         $movements = $this->movementRepository->getAllByCategory($id);
         $schedulings = $this->schedulingRepository->getAllByCategory($id);
