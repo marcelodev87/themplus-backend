@@ -20,8 +20,7 @@ class EnterpriseHelper
                        $enterprise->neighborhood !== null &&
                        $enterprise->address !== null &&
                        $enterprise->number_address !== null &&
-                       $enterprise->email !== null &&
-                       $enterprise->phone !== null;
+                       $enterprise->email !== null;
 
             return $fieldsFilled;
         }
