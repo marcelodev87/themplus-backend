@@ -122,6 +122,31 @@ class AccountController
         }
     }
 
+     public function active(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+            $category = $this->service->updateActive($id);
+
+            if ($category) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $categories = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['categories' => $categories, 'message' => 'Conta reativada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao reativar conta');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao reativar conta: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function destroy(Request $request, $id)
     {
         try {

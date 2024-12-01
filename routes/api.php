@@ -79,6 +79,7 @@ Route::prefix('account')->middleware('auth:sanctum')->group(function () {
     Route::post('/export', [AccountController::class, 'export']);
     Route::post('/transfer', [AccountController::class, 'createTransfer']);
     Route::put('/', [AccountController::class, 'update']);
+    Route::put('/active/{id}', [AccountController::class, 'active']);
     Route::delete('/{id}', [AccountController::class, 'destroy']);
 });
 

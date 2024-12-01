@@ -96,6 +96,14 @@ class AccountService
         return $this->repository->update($request->input('id'), $data);
     }
 
+    public function updateActive($id)
+    {
+        $data['active'] = 1;
+
+        return $this->repository->update($id, $data);
+
+    }
+
     public function delete($request, $id)
     {
         $movements = $this->movementRepository->getAllByAccount($id);
