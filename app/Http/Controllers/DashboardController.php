@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\DashboardRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -20,6 +21,7 @@ class DashboardController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $dashboard = $this->repository->mountDashboard($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
             return response()->json([
                 'months_years' => $dashboard['months_years'],
@@ -28,6 +30,7 @@ class DashboardController
                 'users_dashboard' => $dashboard['users_dashboard'],
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],
                 'accounts_dashboard' => $dashboard['accounts_dashboard'],
+                'filledData' => $filledData,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar informações para o dashboard: '.$e->getMessage());

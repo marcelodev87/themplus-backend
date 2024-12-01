@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\SchedulingExport;
+use App\Helpers\EnterpriseHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
@@ -45,8 +46,9 @@ class SchedulingController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['schedulings' => $schedulings], 200);
+            return response()->json(['schedulings' => $schedulings, 'filledData' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os agendamentos: '.$e->getMessage());
 

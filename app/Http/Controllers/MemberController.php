@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\UserExport;
+use App\Helpers\EnterpriseHelper;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
@@ -27,8 +28,9 @@ class MemberController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['users' => UserResource::collection($users)], 200);
+            return response()->json(['users' => UserResource::collection($users), 'filledData' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
 

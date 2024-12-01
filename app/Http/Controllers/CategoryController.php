@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\CategoryRepository;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
@@ -25,8 +26,9 @@ class CategoryController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['categories' => $categories], 200);
+            return response()->json(['categories' => $categories,  'filledData' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
 

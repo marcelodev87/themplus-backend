@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\DepartmentRepository;
 use App\Rules\DepartmentRule;
 use App\Services\DepartmentService;
@@ -29,8 +30,9 @@ class DepartmentController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $departments = $this->repository->getAllByEnterprise($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['departments' => $departments], 200);
+            return response()->json(['departments' => $departments, 'filledData' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os departamentos: '.$e->getMessage());
 

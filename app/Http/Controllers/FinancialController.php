@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\FinancialRepository;
 use App\Services\FinancialService;
 use Illuminate\Http\Request;
@@ -25,8 +26,9 @@ class FinancialController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $deliveries = $this->repository->mountDeliveries($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['deliveries' => $deliveries], 200);
+            return response()->json(['deliveries' => $deliveries, 'filledData' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as entregas: '.$e->getMessage());
 

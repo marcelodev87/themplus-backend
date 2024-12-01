@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\AlertRepository;
 use App\Rules\AlertRule;
 use App\Services\AlertService;
@@ -29,8 +30,9 @@ class AlertController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $alerts = $this->repository->getAllByEnterprise($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['alerts' => $alerts], 200);
+            return response()->json(['alerts' => $alerts, 'filledData' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as alertas: '.$e->getMessage());
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AccountExport;
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\AccountRepository;
 use App\Services\AccountService;
 use Illuminate\Http\Request;
@@ -26,8 +27,9 @@ class AccountController
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['accounts' => $accounts], 200);
+            return response()->json(['accounts' => $accounts, 'filledData' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as contas: '.$e->getMessage());
 
