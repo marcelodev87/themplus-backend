@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\CategoryHelper;
 use App\Repositories\CategoryRepository;
 use App\Repositories\MovementRepository;
 use App\Repositories\SchedulingRepository;
@@ -33,6 +34,12 @@ class CategoryService
     {
         $this->rule->create($request);
 
+        CategoryHelper::existsCategory(
+            $request->input('name'),
+            $request->input('type'),
+            $request->user()->enterprise_id
+        );
+
         $data = $request->only(['name', 'type']);
         $data['enterprise_id'] = $request->user()->enterprise_id;
         $data['alert_id'] = $request->input('alert');
@@ -43,6 +50,12 @@ class CategoryService
     public function update($request)
     {
         $this->rule->update($request);
+
+        CategoryHelper::existsCategory(
+            $request->input('name'),
+            $request->input('type'),
+            $request->user()->enterprise_id
+        );
 
         $data = $request->only(['name', 'type']);
         $data['enterprise_id'] = $request->user()->enterprise_id;

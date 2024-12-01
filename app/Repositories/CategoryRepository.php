@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class CategoryRepository
 {
@@ -62,6 +63,18 @@ class CategoryRepository
     public function findByName($name, $type)
     {
         return $this->model->where('name', $name)->where('type', $type)->first();
+    }
+
+    public function findByNameAndType($name, $type, $enterpriseId)
+    {
+        return $this->model
+            ->where(DB::raw('LOWER(name)'), '=', strtolower($name))
+            ->where('type', $type)
+            ->where(function ($query) use ($enterpriseId) {
+                $query->where('enterprise_id', $enterpriseId)
+                    ->orWhereNull('enterprise_id');
+            })
+            ->first();
     }
 
     public function create(array $data)

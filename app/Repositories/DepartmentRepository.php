@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Department;
+use Illuminate\Support\Facades\DB;
 
 class DepartmentRepository
 {
@@ -29,6 +30,14 @@ class DepartmentRepository
     public function findById($id)
     {
         return $this->model->find($id);
+    }
+
+    public function findByName($name, $enterpriseId)
+    {
+        return $this->model
+            ->where(DB::raw('LOWER(name)'), '=', strtolower($name))
+            ->where('enterprise_id', $enterpriseId)
+            ->first();
     }
 
     public function create(array $data)

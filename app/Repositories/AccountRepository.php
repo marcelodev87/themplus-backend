@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Account;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AccountRepository
 {
@@ -49,6 +50,24 @@ class AccountRepository
     public function findById($id)
     {
         return $this->model->find($id);
+    }
+
+    public function findByName($name, $enterpriseId)
+    {
+        return $this->model
+            ->where(DB::raw('LOWER(name)'), '=', strtolower($name))
+            ->where('enterprise_id', $enterpriseId)
+            ->first();
+    }
+
+    public function findByParams($name, $enterpriseId, $agencyNumber, $accountNumber)
+    {
+        return $this->model
+            ->where(DB::raw('LOWER(name)'), '=', strtolower($name))
+            ->where('enterprise_id', $enterpriseId)
+            ->where('agency_number', $agencyNumber)
+            ->where('account_number', $accountNumber)
+            ->first();
     }
 
     public function create(array $data)

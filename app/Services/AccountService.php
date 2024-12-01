@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\AccountHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\MovementRepository;
@@ -42,6 +43,15 @@ class AccountService
     public function create($request)
     {
         $this->rule->create($request);
+
+        AccountHelper::existsAccount(
+            $request->input('name'),
+            $request->user()->enterprise_id,
+            $request->input('agencyNumber'),
+            $request->input('accountNumber'),
+            'create',
+            null
+        );
 
         $data = [
             'name' => $request->input('name'),
@@ -85,6 +95,15 @@ class AccountService
     public function update($request)
     {
         $this->rule->update($request);
+
+        AccountHelper::existsAccount(
+            $request->input('name'),
+            $request->user()->enterprise_id,
+            $request->input('agencyNumber'),
+            $request->input('accountNumber'),
+            'update',
+            $request->input('id')
+        );
 
         $data = [
             'name' => $request->input('name'),
