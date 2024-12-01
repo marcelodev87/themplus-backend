@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 
 class FeedController
 {
-
     public function index(Request $request)
     {
         try {

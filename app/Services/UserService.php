@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Helpers\UserHelper;
+use App\Repositories\AccountRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
-use App\Repositories\AccountRepository;
 use App\Rules\UserRule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;

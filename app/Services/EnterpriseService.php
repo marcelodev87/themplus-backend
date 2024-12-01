@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\UserRepository;
 use App\Rules\EnterpriseRule;
@@ -37,6 +38,8 @@ class EnterpriseService
     public function update($request)
     {
         $this->rule->update($request);
+
+        EnterpriseHelper::existsEnterpriseCpfOrCnpj($request);
 
         $data = [
             'name' => $request->input('name'),

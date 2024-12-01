@@ -23,6 +23,16 @@ class EnterpriseRepository
         return $this->model->find($id);
     }
 
+    public function findByCpf($cpf)
+    {
+        return $this->model->where('cpf', $cpf)->first();
+    }
+
+    public function findByCnpj($cnpj)
+    {
+        return $this->model->where('cnpj', $cnpj)->first();
+    }
+
     public function createStart($name, $subscriptionId)
     {
         $data = ['name' => $name, 'subscription_id' => $subscriptionId];
