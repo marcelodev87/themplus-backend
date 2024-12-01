@@ -36,6 +36,7 @@ class AccountService
         $this->movementService = $movementService;
         $this->categoryRepository = $categoryRepository;
         $this->schedulingRepository = $schedulingRepository;
+        $this->movementRepository = $movementRepository;
     }
 
     public function create($request)
@@ -104,7 +105,7 @@ class AccountService
 
     }
 
-    public function delete($request, $id)
+    public function delete($id)
     {
         $movements = $this->movementRepository->getAllByAccount($id);
         $schedulings = $this->schedulingRepository->getAllByAccount($id);

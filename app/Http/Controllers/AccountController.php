@@ -122,19 +122,19 @@ class AccountController
         }
     }
 
-     public function active(Request $request, $id)
+    public function active(Request $request, $id)
     {
         try {
             DB::beginTransaction();
-            $category = $this->service->updateActive($id);
+            $account = $this->service->updateActive($id);
 
-            if ($category) {
+            if ($account) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $categories = $this->repository->getAllByEnterprise($enterpriseId);
+                $accounts = $this->repository->getAllByEnterprise($enterpriseId);
 
-                return response()->json(['categories' => $categories, 'message' => 'Conta reativada com sucesso'], 200);
+                return response()->json(['accounts' => $accounts, 'message' => 'Conta reativada com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao reativar conta');
@@ -151,12 +151,15 @@ class AccountController
     {
         try {
             DB::beginTransaction();
-            $category = $this->service->delete($request, $id);
+            $account = $this->service->delete($id);
 
-            if ($category) {
+            if ($account['data']) {
                 DB::commit();
 
-                return response()->json(['message' => 'Conta deletada com sucesso'], 200);
+                $enterpriseId = $request->user()->enterprise_id;
+                $accounts = $this->repository->getAllByEnterprise($enterpriseId);
+
+                return response()->json(['accounts' => $accounts, 'message' => $account['message']], 200);
             }
 
             throw new \Exception('Falha ao deletar conta');

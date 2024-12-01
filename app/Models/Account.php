@@ -19,6 +19,6 @@ class Account extends Model
         'agency_number',
         'account_number',
         'description',
-        'account'
+        'active',
     ];
 }

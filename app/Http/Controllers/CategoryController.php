@@ -122,7 +122,7 @@ class CategoryController
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             DB::beginTransaction();
@@ -131,7 +131,10 @@ class CategoryController
             if ($category['data']) {
                 DB::commit();
 
-                return response()->json(['message' => $category['message']], 200);
+                $enterpriseId = $request->user()->enterprise_id;
+                $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+
+                return response()->json(['categories' => $categories, 'message' => $category['message']], 200);
             }
 
             throw new \Exception('Falha ao deletar categoria');
