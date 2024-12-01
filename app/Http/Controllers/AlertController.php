@@ -32,7 +32,7 @@ class AlertController
             $alerts = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['alerts' => $alerts, 'filledData' => $filledData], 200);
+            return response()->json(['alerts' => $alerts, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as alertas: '.$e->getMessage());
 

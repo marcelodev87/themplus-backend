@@ -48,7 +48,7 @@ class SchedulingController
             $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['schedulings' => $schedulings, 'filledData' => $filledData], 200);
+            return response()->json(['schedulings' => $schedulings, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os agendamentos: '.$e->getMessage());
 

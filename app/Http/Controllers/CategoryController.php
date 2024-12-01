@@ -28,7 +28,7 @@ class CategoryController
             $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['categories' => $categories,  'filledData' => $filledData], 200);
+            return response()->json(['categories' => $categories,  'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
 

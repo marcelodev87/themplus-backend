@@ -30,7 +30,7 @@ class MemberController
             $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['users' => UserResource::collection($users), 'filledData' => $filledData], 200);
+            return response()->json(['users' => UserResource::collection($users), 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
 

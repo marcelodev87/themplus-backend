@@ -29,7 +29,7 @@ class AccountController
             $accounts = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['accounts' => $accounts, 'filledData' => $filledData], 200);
+            return response()->json(['accounts' => $accounts, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as contas: '.$e->getMessage());
 

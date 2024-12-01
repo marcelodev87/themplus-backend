@@ -28,7 +28,7 @@ class FinancialController
             $deliveries = $this->repository->mountDeliveries($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['deliveries' => $deliveries, 'filledData' => $filledData], 200);
+            return response()->json(['deliveries' => $deliveries, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as entregas: '.$e->getMessage());
 

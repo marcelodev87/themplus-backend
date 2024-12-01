@@ -30,7 +30,7 @@ class DashboardController
                 'users_dashboard' => $dashboard['users_dashboard'],
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],
                 'accounts_dashboard' => $dashboard['accounts_dashboard'],
-                'filledData' => $filledData,
+                'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar informações para o dashboard: '.$e->getMessage());

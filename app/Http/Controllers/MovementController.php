@@ -43,7 +43,7 @@ class MovementController
             $movements = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['movements' => $movements, 'filledData' => $filledData], 200);
+            return response()->json(['movements' => $movements, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as movimentações: '.$e->getMessage());
 

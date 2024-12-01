@@ -32,7 +32,7 @@ class DepartmentController
             $departments = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['departments' => $departments, 'filledData' => $filledData], 200);
+            return response()->json(['departments' => $departments, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os departamentos: '.$e->getMessage());
 
