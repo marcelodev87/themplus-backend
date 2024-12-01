@@ -23,10 +23,10 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [MemberController::class, 'index']);
-    Route::post('/', [MemberController::class, 'store']);
+    Route::post('/', [MemberController::class, 'store'])->middleware('admin');
     Route::post('/export', [MemberController::class, 'export']);
-    Route::put('/', [MemberController::class, 'update']);
-    Route::delete('/{id}', [MemberController::class, 'destroy']);
+    Route::put('/', [MemberController::class, 'update'])->middleware('admin');
+    Route::delete('/{id}', [MemberController::class, 'destroy'])->middleware('admin');
 });
 
 Route::prefix('category')->middleware('auth:sanctum')->group(function () {
@@ -40,9 +40,9 @@ Route::prefix('category')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('department')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [DepartmentController::class, 'index']);
-    Route::post('/', [DepartmentController::class, 'store']);
-    Route::put('/', [DepartmentController::class, 'update']);
-    Route::delete('/{id}', [DepartmentController::class, 'destroy']);
+    Route::post('/', [DepartmentController::class, 'store'])->middleware('admin');
+    Route::put('/', [DepartmentController::class, 'update'])->middleware('admin');
+    Route::delete('/{id}', [DepartmentController::class, 'destroy'])->middleware('admin');
 });
 
 Route::prefix('alert')->middleware('auth:sanctum')->group(function () {
@@ -75,17 +75,17 @@ Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('account')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [AccountController::class, 'index']);
-    Route::post('/', [AccountController::class, 'store']);
+    Route::post('/', [AccountController::class, 'store'])->middleware('admin');
     Route::post('/export', [AccountController::class, 'export']);
     Route::post('/transfer', [AccountController::class, 'createTransfer']);
-    Route::put('/', [AccountController::class, 'update']);
+    Route::put('/', [AccountController::class, 'update'])->middleware('admin');
     Route::put('/active/{id}', [AccountController::class, 'active']);
-    Route::delete('/{id}', [AccountController::class, 'destroy']);
+    Route::delete('/{id}', [AccountController::class, 'destroy'])->middleware('admin');
 });
 
 Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
-    Route::post('/', [FinancialController::class, 'finalize']);
+    Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
 });
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
@@ -96,7 +96,7 @@ Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [EnterpriseController::class, 'show']);
     // TODO: Veriicar depois a criação da orgnização por rota controller
     // Route::post('/', [EnterpriseController::class, 'store']);
-    Route::put('/', [EnterpriseController::class, 'update']);
+    Route::put('/', [EnterpriseController::class, 'update'])->middleware('admin');
     // TODO: Veriicar depois a logica de exclusão da orgnização
     // Route::delete('/{id}', [EnterpriseController::class, 'destroy']);
 });
