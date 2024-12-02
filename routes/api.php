@@ -97,6 +97,10 @@ Route::prefix('feed')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FeedController::class, 'index']);
 });
 
+Route::prefix('feedback')->middleware('auth:sanctum')->group(function () {
+    Route::post('/', [FeedbackController::class, 'store']);
+});
+
 Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [EnterpriseController::class, 'show']);
     // TODO: Veriicar depois a criação da orgnização por rota controller
