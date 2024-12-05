@@ -39,23 +39,31 @@ class MovementService
             $filePath = $request->file('file')->store('receipts');
         }
 
-        $data = [
-            'type' => $request->input('type'),
-            'value' => $request->input('value'),
-            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
-            'description' => $request->input('description'),
-            'receipt' => $filePath,
-            'category_id' => $request->input('category'),
-            'account_id' => $request->input('account'),
-            'enterprise_id' => $request->user()->enterprise_id,
-        ];
+        $programed = $request->input('programmed');
+        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
 
-        $movement = $this->repository->create($data);
-        if ($movement) {
-            return $this->updateBalanceAccount($request->input('account'));
+        for ($i = 0; $i <= $programed; $i++) {
+            $data = [
+                'type' => $request->input('type'),
+                'value' => $request->input('value'),
+                'date_movement' => $initialDate->format('Y-m-d'),
+                'description' => $request->input('description'),
+                'receipt' => $filePath,
+                'category_id' => $request->input('category'),
+                'account_id' => $request->input('account'),
+                'enterprise_id' => $request->user()->enterprise_id,
+            ];
+
+            $movement = $this->repository->create($data);
+            if ($movement) {
+                $this->updateBalanceAccount($request->input('account'));
+            }
+
+            $initialDate->addMonth();
+            $initialDate->endOfMonth();
         }
 
-        return null;
+        return $movement ?? null;
     }
 
     public function createTransfer($dataOut, $dataEntry)

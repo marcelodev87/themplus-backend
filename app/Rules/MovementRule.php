@@ -11,6 +11,7 @@ class MovementRule
     {
         $rules = [
             'type' => 'required|string',
+            'programmed' => 'required|numeric',
             'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
             'category' => 'required|string',
             'account' => 'required|string',
@@ -19,6 +20,8 @@ class MovementRule
         $messages = [
             'type.required' => 'O tipo de movimentação é obrigatório',
             'type.string' => 'O tipo de movimentação deve ser uma string',
+            'programmed.required' => 'O tipo de criação é obrigatório',
+            'programmed.numeric' => 'O tipo de criação deve ser número',
             'value.required' => 'O valor é obrigatório',
             'value.numeric' => 'O valor deve ser um número',
             'value.regex' => 'O valor deve ter no máximo duas casas decimais',

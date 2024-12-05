@@ -29,18 +29,32 @@ class SchedulingService
             $filePath = $request->file('file')->store('receipts');
         }
 
-        $data = [
-            'type' => $request->input('type'),
-            'value' => $request->input('value'),
-            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
-            'description' => $request->input('description'),
-            'receipt' => $filePath,
-            'category_id' => $request->input('category'),
-            'account_id' => $request->input('account'),
-            'enterprise_id' => $request->user()->enterprise_id,
-        ];
+        $programmed = (int) $request->input('programmed');
+        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
 
-        return $this->repository->create($data);
+        $createdSchedulings = [];
+
+        for ($i = 0; $i <= $programmed; $i++) {
+            $data = [
+                'type' => $request->input('type'),
+                'value' => $request->input('value'),
+                'date_movement' => $initialDate->format('Y-m-d'),
+                'description' => $request->input('description'),
+                'receipt' => $filePath,
+                'category_id' => $request->input('category'),
+                'account_id' => $request->input('account'),
+                'enterprise_id' => $request->user()->enterprise_id,
+            ];
+
+            $scheduling = $this->repository->create($data);
+            if ($scheduling) {
+                $createdSchedulings[] = $scheduling;
+            }
+
+            $initialDate->addMonthNoOverflow();
+        }
+
+        return $createdSchedulings;
     }
 
     public function update($request)

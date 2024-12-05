@@ -6,13 +6,13 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\FeedbackController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login']);
