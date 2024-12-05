@@ -94,7 +94,7 @@ class AlertController
     {
         try {
             DB::beginTransaction();
-            
+
             $this->rule->delete($id);
             $alert = $this->repository->delete($id);
 

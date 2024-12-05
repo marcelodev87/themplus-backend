@@ -181,7 +181,7 @@ class SchedulingController
     {
         try {
             DB::beginTransaction();
-            
+
             $this->rule->delete($id);
             $scheduling = $this->repository->delete($id);
 

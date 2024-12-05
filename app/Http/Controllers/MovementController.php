@@ -9,8 +9,8 @@ use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\MovementRepository;
-use App\Services\MovementService;
 use App\Rules\MovementRule;
+use App\Services\MovementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -156,7 +156,7 @@ class MovementController
             DB::beginTransaction();
 
             $this->rule->delete($id);
-            
+
             $movementActual = $this->repository->findById($id);
             $movement = $this->repository->delete($id);
 
