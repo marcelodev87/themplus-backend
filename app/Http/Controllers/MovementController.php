@@ -10,6 +10,7 @@ use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\MovementRepository;
 use App\Services\MovementService;
+use App\Rules\MovementRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,16 +25,20 @@ class MovementController
 
     private $accountRepository;
 
+    private $rule;
+
     public function __construct(
         MovementService $service,
         MovementRepository $repository,
         AccountRepository $accountRepository,
         CategoryRepository $categoryRepository,
+        MovementRule $rule
     ) {
         $this->service = $service;
         $this->repository = $repository;
         $this->categoryRepository = $categoryRepository;
         $this->accountRepository = $accountRepository;
+        $this->rule = $rule;
     }
 
     public function index(Request $request)
@@ -149,6 +154,9 @@ class MovementController
     {
         try {
             DB::beginTransaction();
+
+            $this->rule->delete($id);
+            
             $movementActual = $this->repository->findById($id);
             $movement = $this->repository->delete($id);
 

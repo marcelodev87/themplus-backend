@@ -188,4 +188,25 @@ class UserRule
 
         return true;
     }
+
+    public function delete($id)
+    {
+        $rules = [
+            'id' => 'required|string|exists:users,id',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID do usuário é obrigatório',
+            'id.string' => 'O ID do usuário deve ser uma string',
+            'id.exists' => 'O ID do usuário não existe',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

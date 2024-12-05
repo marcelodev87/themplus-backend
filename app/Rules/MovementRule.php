@@ -76,4 +76,25 @@ class MovementRule
 
         return true;
     }
+
+    public function delete($id)
+    {
+        $rules = [
+            'id' => 'required|string|exists:movements,id',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID da movimentação é obrigatória',
+            'id.string' => 'O ID da movimentação deve ser uma string',
+            'id.exists' => 'O ID da movimentação não existe',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

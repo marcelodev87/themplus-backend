@@ -84,4 +84,25 @@ class AccountRule
 
         return true;
     }
+
+    public function delete($id)
+    {
+        $rules = [
+            'id' => 'required|string|exists:accounts,id',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID da conta é obrigatória',
+            'id.string' => 'O ID da conta deve ser uma string',
+            'id.exists' => 'O ID da conta não existe',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

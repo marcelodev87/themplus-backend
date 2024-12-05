@@ -60,4 +60,25 @@ class CategoryRule
 
         return true;
     }
+
+    public function delete($id)
+    {
+        $rules = [
+            'id' => 'required|string|exists:categories,id',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID da categoria é obrigatória',
+            'id.string' => 'O ID da categoria deve ser uma string',
+            'id.exists' => 'O ID da categoria não existe',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

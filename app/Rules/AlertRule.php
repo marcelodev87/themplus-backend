@@ -55,24 +55,24 @@ class AlertRule
         return true;
     }
 
-    // public function delete($id)
-    // {
-    //     $rules = [
-    //         'id' => 'required|string|exists:departments,id',
-    //     ];
+    public function delete($id)
+    {
+        $rules = [
+            'id' => 'required|string|exists:alerts,id',
+        ];
 
-    //     $messages = [
-    //         'id.required' => 'O ID do departamento é obrigatório.',
-    //         'id.string' => 'O ID do departamento deve ser uma string.',
-    //         'id.exists' => 'O ID do departamento não existe.',
-    //     ];
+        $messages = [
+            'id.required' => 'O ID da alerta é obrigatória',
+            'id.string' => 'O ID da alerta deve ser uma string',
+            'id.exists' => 'O ID da alerta não existe',
+        ];
 
-    //     $validator = Validator::make(['id' => $id], $rules, $messages);
+        $validator = Validator::make(['id' => $id], $rules, $messages);
 
-    //     if ($validator->fails()) {
-    //         throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
-    //     }
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
 
-    //     return true;
-    // }
+        return true;
+    }
 }

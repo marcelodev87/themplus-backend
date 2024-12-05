@@ -7,6 +7,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use App\Services\UserService;
+use App\Rules\UserRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,10 +18,13 @@ class MemberController
 
     private $repository;
 
-    public function __construct(UserService $service, UserRepository $repository)
+    private $rule;
+
+    public function __construct(UserService $service, UserRepository $repository, UserRule $rule)
     {
         $this->service = $service;
         $this->repository = $repository;
+        $this->rule = $rule;
     }
 
     public function index(Request $request)
@@ -105,6 +109,8 @@ class MemberController
     {
         try {
             DB::beginTransaction();
+
+            $this->rule->delete($id);
             $member = $this->repository->delete($id);
 
             if ($member) {

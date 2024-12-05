@@ -126,6 +126,8 @@ class AccountService
 
     public function delete($id)
     {
+        $this->rule->delete($id);
+
         $movements = $this->movementRepository->getAllByAccount($id);
         $schedulings = $this->schedulingRepository->getAllByAccount($id);
 

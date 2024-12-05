@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\CategoryRepository;
 use App\Services\CategoryService;
+use App\Rules\CategoryRule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -15,10 +16,13 @@ class CategoryController
 
     private $repository;
 
-    public function __construct(CategoryService $service, CategoryRepository $repository)
+    private $rule;
+
+    public function __construct(CategoryService $service, CategoryRepository $repository, CategoryRul $rule)
     {
         $this->service = $service;
         $this->repository = $repository;
+        $this->rule = $rule;
     }
 
     public function index(Request $request)
@@ -128,6 +132,8 @@ class CategoryController
     {
         try {
             DB::beginTransaction();
+
+            $this->rule->delete($id);
             $category = $this->service->delete($id);
 
             if ($category['data']) {
