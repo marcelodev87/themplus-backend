@@ -114,7 +114,7 @@ class MovementService
         $data = [
             'type' => $scheduling['type'],
             'value' => $scheduling['value'],
-            'date_movement' => $scheduling['date_movement'],
+            'date_movement' => Carbon::now('America/Sao_Paulo')->format('Y-m-d'),
             'description' => $scheduling['description'],
             'receipt' => $scheduling['receipt'],
             'category_id' => $scheduling['category_id'],
