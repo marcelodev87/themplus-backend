@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\MovementExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
@@ -104,9 +105,19 @@ class MovementController
     {
         try {
             DB::beginTransaction();
-            $movement = $this->service->create($request);
 
-            if ($movement) {
+            $movement = $this->service->create($request);
+            $movementData = $this->repository->findByIdWithRelations($movement->id);
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'movement',
+                $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name
+            );
+
+            if ($movement && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -129,9 +140,18 @@ class MovementController
     {
         try {
             DB::beginTransaction();
+            $movementData = $this->repository->findByIdWithRelations($request->input('id'));
             $movement = $this->service->update($request);
 
-            if ($movement) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'movement',
+                $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name
+            );
+
+            if ($movement && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -160,7 +180,15 @@ class MovementController
             $movementActual = $this->repository->findById($id);
             $movement = $this->repository->delete($id);
 
-            if ($movement) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'movement',
+                $movementActual->value.'|'.$movementActual->type.'|'.$movementActual->account->name.'|'.$movementActual->category->name
+            );
+
+            if ($movement && $register) {
                 $this->service->updateBalanceAccount($movementActual->account_id);
                 DB::commit();
 

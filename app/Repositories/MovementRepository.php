@@ -189,6 +189,11 @@ class MovementRepository
         return $this->model->find($id);
     }
 
+    public function findByIdWithRelations($id)
+    {
+        return $this->model->with(['account', 'category'])->find($id);
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);

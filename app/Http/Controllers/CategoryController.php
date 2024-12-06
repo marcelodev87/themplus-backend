@@ -65,7 +65,7 @@ class CategoryController
                 $request->user()->enterprise_id,
                 'created',
                 'category',
-                "$category->name | $category->type"
+                "$category->name|$category->type"
             );
 
             if ($category && $register) {
@@ -100,7 +100,7 @@ class CategoryController
                 $request->user()->enterprise_id,
                 'updated',
                 'category',
-                $categoryData->name.' | '.$categoryData->type
+                $categoryData->name.'|'.$categoryData->type
             );
 
             if ($category && $register) {
@@ -133,7 +133,7 @@ class CategoryController
                 $request->user()->enterprise_id,
                 'reactivated',
                 'category',
-                "$category->name | $category->type"
+                "$category->name|$category->type"
             );
 
             if ($category && $register) {
@@ -169,7 +169,7 @@ class CategoryController
                 $request->user()->enterprise_id,
                 $category['inactivated'] ? 'inactivated' : 'deleted',
                 'category',
-                $categoryData->name.' | '.$categoryData->type
+                $categoryData->name.'|'.$categoryData->type
             );
 
             if ($category['data'] && $register) {
