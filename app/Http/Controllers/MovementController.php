@@ -106,18 +106,20 @@ class MovementController
         try {
             DB::beginTransaction();
 
-            $movement = $this->service->create($request);
-            $movementData = $this->repository->findByIdWithRelations($movement->id);
+            $movements = $this->service->create($request);
+            foreach ($movements as $movement) {
+                $movementData = $this->repository->findByIdWithRelations($movement->id);
 
-            $register = RegisterHelper::create(
-                $request->user()->id,
-                $request->user()->enterprise_id,
-                'created',
-                'movement',
-                $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name
-            );
+                $register = RegisterHelper::create(
+                    $request->user()->id,
+                    $request->user()->enterprise_id,
+                    'created',
+                    'movement',
+                    $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name.'|'.$movementData->date_movement
+                );
+            }
 
-            if ($movement && $register) {
+            if ($movements && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -148,7 +150,7 @@ class MovementController
                 $request->user()->enterprise_id,
                 'updated',
                 'movement',
-                $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name
+                $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name.'|'.$movementData->date_movement
             );
 
             if ($movement && $register) {
@@ -185,7 +187,7 @@ class MovementController
                 $request->user()->enterprise_id,
                 'deleted',
                 'movement',
-                $movementActual->value.'|'.$movementActual->type.'|'.$movementActual->account->name.'|'.$movementActual->category->name
+                $movementActual->value.'|'.$movementActual->type.'|'.$movementActual->account->name.'|'.$movementActual->category->name.'|'.$movementActual->date_movement
             );
 
             if ($movement && $register) {

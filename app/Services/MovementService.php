@@ -42,6 +42,8 @@ class MovementService
         $programed = $request->input('programmed');
         $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
 
+        $createdMovements = [];
+
         for ($i = 0; $i <= $programed; $i++) {
             $data = [
                 'type' => $request->input('type'),
@@ -56,6 +58,7 @@ class MovementService
 
             $movement = $this->repository->create($data);
             if ($movement) {
+                $createdMovements[] = $movement;
                 $this->updateBalanceAccount($request->input('account'));
             }
 
@@ -63,7 +66,7 @@ class MovementService
             $initialDate->endOfMonth();
         }
 
-        return $movement ?? null;
+        return $createdMovements;
     }
 
     public function createTransfer($dataOut, $dataEntry)

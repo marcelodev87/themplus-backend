@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\SchedulingExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
@@ -105,9 +106,20 @@ class SchedulingController
     {
         try {
             DB::beginTransaction();
-            $scheduling = $this->service->create($request);
+            $schedulings = $this->service->create($request);
 
-            if ($scheduling) {
+            foreach ($schedulings as $scheduling) {
+                $schedulingData = $this->repository->findByIdWithRelations($scheduling->id);
+                $register = RegisterHelper::create(
+                    $request->user()->id,
+                    $request->user()->enterprise_id,
+                    'created',
+                    'scheduling',
+                    $schedulingData->value.'|'.$schedulingData->type.'|'.$schedulingData->account->name.'|'.$schedulingData->category->name.'|'.$schedulingData->date_movement
+                );
+            }
+
+            if ($schedulings && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -130,9 +142,18 @@ class SchedulingController
     {
         try {
             DB::beginTransaction();
+            $schedulingData = $this->repository->findByIdWithRelations($request->input('id'));
             $scheduling = $this->service->update($request);
 
-            if ($scheduling) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'scheduling',
+                $schedulingData->value.'|'.$schedulingData->type.'|'.$schedulingData->account->name.'|'.$schedulingData->category->name.'|'.$schedulingData->date_movement
+            );
+
+            if ($scheduling && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -155,10 +176,20 @@ class SchedulingController
     {
         try {
             DB::beginTransaction();
+
             $this->rule->finalize($id);
+            $schedulingData = $this->repository->findByIdWithRelations($id);
             $movement = $this->repository->finalize($id);
 
-            if ($movement) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'finalize',
+                'scheduling',
+                $schedulingData->value.'|'.$schedulingData->type.'|'.$schedulingData->account->name.'|'.$schedulingData->category->name.'|'.$schedulingData->date_movement
+            );
+
+            if ($movement && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -177,15 +208,25 @@ class SchedulingController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
 
             $this->rule->delete($id);
+
+            $schedulingActual = $this->repository->findById($id);
             $scheduling = $this->repository->delete($id);
 
-            if ($scheduling) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'movement',
+                $schedulingActual->value.'|'.$schedulingActual->type.'|'.$schedulingActual->account->name.'|'.$schedulingActual->category->name.'|'.$schedulingActual->date_movement
+            );
+
+            if ($scheduling && $register) {
                 DB::commit();
 
                 return response()->json(['message' => 'Agendamento deletado com sucesso'], 200);

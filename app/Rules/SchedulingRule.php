@@ -101,7 +101,7 @@ class SchedulingRule
     public function delete($id)
     {
         $rules = [
-            'id' => 'required|string|exists:departments,id',
+            'id' => 'required|string|exists:schedulings,id',
         ];
 
         $messages = [
