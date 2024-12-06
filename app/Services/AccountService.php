@@ -138,6 +138,7 @@ class AccountService
             return [
                 'message' => 'Conta inativada, pois possui movimentações ou agendamentos vinculados',
                 'data' => $result,
+                'inactivated' => true,
             ];
         } else {
             $result = $this->repository->delete($id);
@@ -145,6 +146,7 @@ class AccountService
             return [
                 'message' => 'Conta deletada com sucesso',
                 'data' => $result,
+                'inactivated' => false,
             ];
         }
     }

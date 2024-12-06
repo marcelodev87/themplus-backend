@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\AccountExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
 use App\Repositories\AccountRepository;
 use App\Services\AccountService;
 use Illuminate\Http\Request;
@@ -42,8 +43,15 @@ class AccountController
         try {
             DB::beginTransaction();
             $account = $this->service->create($request);
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'account',
+                $account->name
+            );
 
-            if ($account) {
+            if ($account && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -80,7 +88,18 @@ class AccountController
             DB::beginTransaction();
             $transfer = $this->service->createTransfer($request);
 
-            if ($transfer['out'] && $transfer['entry']) {
+            $accountNameEntry = $this->repository->findById($request->input('accountEntry'));
+            $accountNameOut = $this->repository->findById($request->input('accountOut'));
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'create',
+                'transfer',
+                "$accountNameOut->name >> $accountNameEntry->name"
+            );
+
+            if ($transfer['out'] && $transfer['entry'] && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -105,7 +124,15 @@ class AccountController
             DB::beginTransaction();
             $account = $this->service->update($request);
 
-            if ($account) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'account',
+                $account->name
+            );
+
+            if ($account && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -130,7 +157,15 @@ class AccountController
             DB::beginTransaction();
             $account = $this->service->updateActive($id);
 
-            if ($account) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'reactivated',
+                'account',
+                $account->name
+            );
+
+            if ($account && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -153,9 +188,18 @@ class AccountController
     {
         try {
             DB::beginTransaction();
+            $accountData = $this->repository->findById($id);
             $account = $this->service->delete($id);
 
-            if ($account['data']) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                $account['inactivated'] ? 'inactivated' : 'deleted',
+                'account',
+                $accountData->name
+            );
+
+            if ($account['data'] && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;

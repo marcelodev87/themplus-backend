@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\CategoryRepository;
+use App\Rules\CategoryRule;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class CategoryController
 
     private $rule;
 
-    public function __construct(CategoryService $service, CategoryRepository $repository, CategoryRul $rule)
+    public function __construct(CategoryService $service, CategoryRepository $repository, CategoryRule $rule)
     {
         $this->service = $service;
         $this->repository = $repository;
