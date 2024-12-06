@@ -84,6 +84,7 @@ class CategoryService
             return [
                 'message' => 'Categoria inativada, pois possui movimentações ou agendamentos vinculados',
                 'data' => $result,
+                'inactivated' => true,
             ];
         } else {
             $result = $this->repository->delete($id);
@@ -91,6 +92,7 @@ class CategoryService
             return [
                 'message' => 'Categoria deletada com sucesso',
                 'data' => $result,
+                'inactivated' => false,
             ];
         }
     }

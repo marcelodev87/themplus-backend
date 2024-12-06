@@ -122,6 +122,7 @@ class AccountController
     {
         try {
             DB::beginTransaction();
+            $AccountData = $this->repository->findById($request->input('id'));
             $account = $this->service->update($request);
 
             $register = RegisterHelper::create(
@@ -129,7 +130,7 @@ class AccountController
                 $request->user()->enterprise_id,
                 'updated',
                 'account',
-                $account->name
+                $AccountData->name
             );
 
             if ($account && $register) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
 use App\Repositories\CategoryRepository;
 use App\Rules\CategoryRule;
 use App\Services\CategoryService;
@@ -57,9 +58,17 @@ class CategoryController
     {
         try {
             DB::beginTransaction();
-            $category = $this->service->create($request);
 
-            if ($category) {
+            $category = $this->service->create($request);
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'category',
+                "$category->name | $category->type"
+            );
+
+            if ($category && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -82,9 +91,19 @@ class CategoryController
     {
         try {
             DB::beginTransaction();
+
+            $categoryData = $this->repository->findById($request->input('id'));
             $category = $this->service->update($request);
 
-            if ($category) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'category',
+                $categoryData->name.' | '.$categoryData->type
+            );
+
+            if ($category && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -109,7 +128,15 @@ class CategoryController
             DB::beginTransaction();
             $category = $this->service->updateActive($id);
 
-            if ($category) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'reactivated',
+                'category',
+                "$category->name | $category->type"
+            );
+
+            if ($category && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -134,9 +161,18 @@ class CategoryController
             DB::beginTransaction();
 
             $this->rule->delete($id);
+            $categoryData = $this->repository->findById($id);
             $category = $this->service->delete($id);
 
-            if ($category['data']) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                $category['inactivated'] ? 'inactivated' : 'deleted',
+                'category',
+                $categoryData->name.' | '.$categoryData->type
+            );
+
+            if ($category['data'] && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
