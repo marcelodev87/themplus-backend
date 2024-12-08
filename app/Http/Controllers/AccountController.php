@@ -96,7 +96,7 @@ class AccountController
                 $request->user()->enterprise_id,
                 'create',
                 'transfer',
-                "$accountNameOut->name >> $accountNameEntry->name"
+                "$accountNameOut->name|$accountNameEntry->name|".$request->input('value')
             );
 
             if ($transfer['out'] && $transfer['entry'] && $register) {
