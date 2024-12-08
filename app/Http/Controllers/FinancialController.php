@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
 use App\Repositories\FinancialRepository;
 use App\Services\FinancialService;
 use Illuminate\Http\Request;
@@ -42,7 +43,15 @@ class FinancialController
             DB::beginTransaction();
             $delivery = $this->service->finalize($request);
 
-            if ($delivery) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'delivered',
+                'movement',
+                $request->user()->name.' entregou o relatório de movimentações de '.$request->input('monthYear')
+            );
+
+            if ($delivery && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
