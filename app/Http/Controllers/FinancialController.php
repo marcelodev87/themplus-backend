@@ -47,7 +47,7 @@ class FinancialController
                 $request->user()->id,
                 $request->user()->enterprise_id,
                 'delivered',
-                'movement',
+                'report',
                 $request->user()->name.' entregou o relatório de movimentações de '.$request->input('monthYear')
             );
 

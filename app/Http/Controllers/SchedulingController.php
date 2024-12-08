@@ -93,8 +93,10 @@ class SchedulingController
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive($enterpriseId, $type);
             $accounts = $this->accountRepository->getAllByEnterpriseOnlyActive($enterpriseId);
 
-            return response()->json(['categories' => CategoryResource::collection($categories),
-                'accounts' => AccountResource::collection($accounts), ], 200);
+            return response()->json([
+                'categories' => CategoryResource::collection($categories),
+                'accounts' => AccountResource::collection($accounts),
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar informações: '.$e->getMessage());
 
@@ -222,7 +224,7 @@ class SchedulingController
                 $request->user()->id,
                 $request->user()->enterprise_id,
                 'deleted',
-                'movement',
+                'scheduling',
                 $schedulingActual->value.'|'.$schedulingActual->type.'|'.$schedulingActual->account->name.'|'.$schedulingActual->category->name.'|'.$schedulingActual->date_movement
             );
 

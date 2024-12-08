@@ -20,7 +20,10 @@ class RegisterRepository
 
     public function getAllByEnterprise($enterpriseId)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)->get();
+        return $this->model
+            ->with('user', 'enterprise')
+            ->where('enterprise_id', $enterpriseId)
+            ->get();
     }
 
     public function getAllByEnterpriseAndUser($enterpriseId, $userId)

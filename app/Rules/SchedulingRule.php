@@ -105,9 +105,9 @@ class SchedulingRule
         ];
 
         $messages = [
-            'id.required' => 'O ID do agendamento é obrigatório.',
-            'id.string' => 'O ID do agendamento deve ser uma string.',
-            'id.exists' => 'O ID do agendamento não existe.',
+            'id.required' => 'O ID do agendamento é obrigatório',
+            'id.string' => 'O ID do agendamento deve ser uma string',
+            'id.exists' => 'O ID do agendamento não existe',
         ];
 
         $validator = Validator::make(['id' => $id], $rules, $messages);

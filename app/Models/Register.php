@@ -20,4 +20,14 @@ class Register extends Model
         'identification',
         'date_register',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function enterprise()
+    {
+        return $this->belongsTo(Enterprise::class);
+    }
 }

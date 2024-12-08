@@ -41,4 +41,25 @@ class RegisterRule
 
         return true;
     }
+
+    public function show($id)
+    {
+        $rules = [
+            'id' => 'required|string|exists:registers,id',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID do registro é obrigatório',
+            'id.string' => 'O ID do registro deve ser uma string',
+            'id.exists' => 'O ID do registro não existe',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

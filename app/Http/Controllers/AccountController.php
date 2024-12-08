@@ -94,8 +94,8 @@ class AccountController
             $register = RegisterHelper::create(
                 $request->user()->id,
                 $request->user()->enterprise_id,
-                'create',
                 'transfer',
+                'account',
                 "$accountNameOut->name|$accountNameEntry->name|".$request->input('value')
             );
 
