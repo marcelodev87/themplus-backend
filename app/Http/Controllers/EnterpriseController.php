@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Services\EnterpriseService;
 use Illuminate\Http\Request;
@@ -50,7 +51,15 @@ class EnterpriseController
             DB::beginTransaction();
             $enterprise = $this->service->update($request);
 
-            if ($enterprise) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'enterprise',
+                $request->user()->name.' atualizou os dados da organização'
+            );
+
+            if ($enterprise && $register) {
                 DB::commit();
 
                 return response()->json(['enterprise' => $enterprise, 'message' => 'Organização atualizada com sucesso'], 200);

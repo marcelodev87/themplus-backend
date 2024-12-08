@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\UserExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use App\Rules\UserRule;
@@ -48,8 +49,15 @@ class MemberController
             DB::beginTransaction();
 
             $user = $this->service->include($request);
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'member',
+                $request->user()->name.' adicionou usuário(a) '.$user->name.' | '.$user->email
+            );
 
-            if ($user) {
+            if ($user && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -84,7 +92,15 @@ class MemberController
     {
         try {
             DB::beginTransaction();
+            $member = $this->repository->findById($request->input('id'));
             $user = $this->service->updateMember($request);
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'member',
+                $request->user()->name.' atualizou usuário(a) '.$member->name.' | '.$member->email
+            );
 
             if ($user) {
                 DB::commit();
@@ -105,13 +121,22 @@ class MemberController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
 
             $this->rule->delete($id);
+            $memberDelete = $this->repository->findById($id);
             $member = $this->repository->delete($id);
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'member',
+                $request->user()->name.' deletou usuário(a) '.$memberDelete->name.' | '.$memberDelete->email
+            );
 
             if ($member) {
                 DB::commit();
