@@ -91,7 +91,7 @@ Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/{date}', [DashboardController::class, 'index']);
 });
 
 Route::prefix('feed')->middleware('auth:sanctum')->group(function () {

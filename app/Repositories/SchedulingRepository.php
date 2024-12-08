@@ -38,18 +38,19 @@ class SchedulingRepository
         return $this->model->where('account_id', $accountId)->get();
     }
 
-    public function getSchedulingsDashboard($enterpriseId)
+    public function getSchedulingsDashboard($enterpriseId, $date)
     {
-        $currentMonth = Carbon::now()->format('m');
-        $currentYear = Carbon::now()->format('Y');
-        $monthYear = Carbon::now()->format('m/Y');
+        $carbonDate = Carbon::createFromFormat('m-Y', $date);
+
+        $month = $carbonDate->month;
+        $year = $carbonDate->year;
 
         $dateColumn = 'created_at';
 
         $schedulings = $this->model
             ->where('schedulings.enterprise_id', $enterpriseId)
-            ->whereYear("schedulings.$dateColumn", $currentYear)
-            ->whereMonth("schedulings.$dateColumn", $currentMonth)
+            ->whereYear("schedulings.$dateColumn", $year)
+            ->whereMonth("schedulings.$dateColumn", $month)
             ->join('categories', 'schedulings.category_id', '=', 'categories.id')
             ->selectRaw('
                 SUM(CASE WHEN categories.type = "entrada" THEN schedulings.value ELSE 0 END) as entry_value,
@@ -63,7 +64,7 @@ class SchedulingRepository
         return [
             'entry_value' => number_format($entryValue, 2, '.', ''),
             'out_value' => number_format($outValue, 2, '.', ''),
-            'month_year' => $monthYear,
+            'month_year' => $date,
         ];
     }
 

@@ -14,6 +14,8 @@ class DashboardRepository
 
     protected $schedulingRepository;
 
+    protected $model;
+
     public function __construct(
         MovementRepository $movementRepository,
         CategoryRepository $categoryRepository,
@@ -38,13 +40,13 @@ class DashboardRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
-    public function mountDashboard($enterpriseId)
+    public function mountDashboard($enterpriseId, $date)
     {
         $months_years = $this->movementRepository->getMonthYears($enterpriseId);
-        $categories_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId);
-        $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId);
+        $categories_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId, $date);
+        $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId, $date);
         $users_dashboard = $this->userRepository->getUsersDashboard($enterpriseId);
-        $schedulings_dashboard = $this->schedulingRepository->getSchedulingsDashboard($enterpriseId);
+        $schedulings_dashboard = $this->schedulingRepository->getSchedulingsDashboard($enterpriseId, $date);
         $accounts_dashboard = $this->accountRepository->getAccountsDashboard($enterpriseId);
 
         return [

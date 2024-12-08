@@ -125,16 +125,18 @@ class MovementRepository
             ->pluck('month_year');
     }
 
-    public function getMovementsDashboard($enterpriseId)
+    public function getMovementsDashboard($enterpriseId, $date)
     {
-        $currentMonth = Carbon::now()->format('m');
-        $currentYear = Carbon::now()->format('Y');
-        $monthYear = Carbon::now()->format('m/Y');
+
+        $carbonDate = Carbon::createFromFormat('m-Y', $date);
+
+        $month = $carbonDate->month;
+        $year = $carbonDate->year;
 
         $movements = $this->model
             ->where('movements.enterprise_id', $enterpriseId)
-            ->whereYear('date_movement', $currentYear)
-            ->whereMonth('date_movement', $currentMonth)
+            ->whereYear('date_movement', $year)
+            ->whereMonth('date_movement', $month)
             ->join('categories', 'movements.category_id', '=', 'categories.id')
             ->selectRaw('
                 SUM(CASE WHEN categories.type = "entrada" THEN movements.value ELSE 0 END) as entry_value,
@@ -150,21 +152,23 @@ class MovementRepository
             'entry_value' => $entryValue,
             'out_value' => $outValue,
             'balance' => $balance,
-            'month_year' => $monthYear,
+            'month_year' => $date,
         ];
     }
 
-    public function getMovementsByCategoriesDashboard($enterpriseId)
+    public function getMovementsByCategoriesDashboard($enterpriseId, $date)
     {
-        $currentMonth = Carbon::now()->format('m');
-        $currentYear = Carbon::now()->format('Y');
+        $carbonDate = Carbon::createFromFormat('m-Y', $date);
+
+        $month = $carbonDate->month;
+        $year = $carbonDate->year;
 
         return $this->model
             ->select('movements.category_id')
             ->selectRaw('SUM(movements.value) as value')
             ->join('categories', 'movements.category_id', '=', 'categories.id')
-            ->whereYear('movements.created_at', $currentYear)
-            ->whereMonth('movements.created_at', $currentMonth)
+            ->whereYear('movements.date_movement', $year)
+            ->whereMonth('movements.date_movement', $month)
             ->where('movements.enterprise_id', $enterpriseId)
             ->groupBy('movements.category_id')
             ->with(['category:id,name,type'])
