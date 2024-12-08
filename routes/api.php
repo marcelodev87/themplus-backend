@@ -101,6 +101,7 @@ Route::prefix('feed')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('register')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [RegisterController::class, 'index'])->middleware('admin');
+    Route::get('/{id}', [RegisterController::class, 'show'])->middleware('admin');
 });
 
 Route::prefix('feedback')->middleware('auth:sanctum')->group(function () {

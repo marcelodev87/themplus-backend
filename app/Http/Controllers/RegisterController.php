@@ -29,7 +29,7 @@ class RegisterController
             $register = $this->repository->findById($id);
 
             return response()->json([
-                'register' => $this->treatRegister($register),
+                'register' => ($this->treatRegister([$register])[0]),
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
