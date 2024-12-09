@@ -42,14 +42,15 @@ class MovementController
         $this->rule = $rule;
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $date)
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $movements = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+            $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $date);
+            $months_years = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['movements' => $movements, 'filled_data' => $filledData], 200);
+            return response()->json(['movements' => $movements, 'filled_data' => $filledData, 'months_years' => $months_years], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as movimentações: '.$e->getMessage());
 
@@ -57,12 +58,13 @@ class MovementController
         }
     }
 
-    public function filterMovements(Request $request)
+    public function filterMovements(Request $request, $date)
     {
         try {
-            $movements = $this->repository->getAllByEnterpriseWithRelationsWithParams($request);
+            $movements = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
+            $months_years = $this->repository->getMonthYears($request->user()->enterprise_id);
 
-            return response()->json(['movements' => $movements], 200);
+            return response()->json(['movements' => $movements, 'months_years' => $months_years], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar movimentações com base nos filtros: '.$e->getMessage());
 
@@ -70,13 +72,13 @@ class MovementController
         }
     }
 
-    public function export(Request $request)
+    public function export(Request $request, $date)
     {
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
         $enterpriseId = $request->user()->enterprise_id;
 
-        $movements = $this->repository->export($out, $entry, $enterpriseId);
+        $movements = $this->repository->export($out, $entry, $date, $enterpriseId);
 
         $dateTime = now()->format('Ymd_His');
         $fileName = "movements_{$enterpriseId}_{$dateTime}.xlsx";
@@ -92,8 +94,10 @@ class MovementController
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive($enterpriseId, $type);
             $accounts = $this->accountRepository->getAllByEnterpriseOnlyActive($enterpriseId);
 
-            return response()->json(['categories' => CategoryResource::collection($categories),
-                'accounts' => AccountResource::collection($accounts), ], 200);
+            return response()->json([
+                'categories' => CategoryResource::collection($categories),
+                'accounts' => AccountResource::collection($accounts),
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar informações: '.$e->getMessage());
 
@@ -115,7 +119,7 @@ class MovementController
                     $request->user()->enterprise_id,
                     'created',
                     'movement',
-                    $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name.'|'.$movementData->date_movement
+                    "{$$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->category->name}|{$movementData->date_movement}"
                 );
             }
 
@@ -123,9 +127,13 @@ class MovementController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $movements = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+                $now = now()->setTimezone('America/Sao_Paulo');
+                $currentDate = $now->format('m-Y');
 
-                return response()->json(['movements' => $movements, 'message' => 'Movimentação cadastrada com sucesso'], 201);
+                $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
+                $months_years = $this->repository->getMonthYears($enterpriseId);
+
+                return response()->json(['movements' => $movements, 'message' => 'Movimentação cadastrada com sucesso', 'months_years' => $months_years], 201);
             }
 
             throw new \Exception('Falha ao criar movimentação');
@@ -150,16 +158,20 @@ class MovementController
                 $request->user()->enterprise_id,
                 'updated',
                 'movement',
-                $movementData->value.'|'.$movementData->type.'|'.$movementData->account->name.'|'.$movementData->category->name.'|'.$movementData->date_movement
+                "{$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->category->name}|{$movementData->date_movement}"
             );
 
             if ($movement && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $movements = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+                $now = now()->setTimezone('America/Sao_Paulo');
+                $currentDate = $now->format('m-Y');
 
-                return response()->json(['movements' => $movements, 'message' => 'Movimentação atualizada com sucesso'], 200);
+                $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
+                $months_years = $this->repository->getMonthYears($enterpriseId);
+
+                return response()->json(['movements' => $movements, 'message' => 'Movimentação atualizada com sucesso', 'months_years' => $months_years], 200);
             }
 
             throw new \Exception('Falha ao atualizar movimentação');
@@ -187,7 +199,7 @@ class MovementController
                 $request->user()->enterprise_id,
                 'deleted',
                 'movement',
-                $movementActual->value.'|'.$movementActual->type.'|'.$movementActual->account->name.'|'.$movementActual->category->name.'|'.$movementActual->date_movement
+                "{$movementActual->value}|{$movementActual->type}|{$movementActual->account->name}|{$movementActual->category->name}|{$movementActual->date_movement}"
             );
 
             if ($movement && $register) {

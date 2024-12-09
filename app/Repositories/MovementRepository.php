@@ -19,6 +19,23 @@ class MovementRepository
         return $this->model->all();
     }
 
+    public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date)
+    {
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $enterpriseId);
+
+        [$month, $year] = explode('-', $date);
+
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            return collect();
+        }
+
+        $query->whereMonth('date_movement', $month)
+            ->whereYear('date_movement', $year);
+
+        return $query->get();
+    }
+
     public function getAllByEnterpriseWithRelations($enterpriseId)
     {
         return $this->model->with(['account', 'category'])
@@ -45,7 +62,37 @@ class MovementRepository
         return $query->get();
     }
 
-    public function export($out, $entry, $enterpriseId)
+    public function getAllByEnterpriseWithRelationsWithParamsByDate($request, $date)
+    {
+        $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
+        $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
+
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $request->user()->enterprise_id);
+
+        if ($out !== null && $out) {
+            $query->where('type', 'saída');
+        }
+
+        if ($entry !== null && $entry) {
+            $query->where('type', 'entrada');
+        }
+
+        if ($date) {
+            [$month, $year] = explode('-', $date);
+
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+                return collect();
+            }
+
+            $query->whereMonth('date_movement', $month)
+                ->whereYear('date_movement', $year);
+        }
+
+        return $query->get();
+    }
+
+    public function export($out, $entry, $date, $enterpriseId)
     {
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $enterpriseId);
@@ -56,6 +103,17 @@ class MovementRepository
 
         if ($entry) {
             $query->where('type', 'entrada');
+        }
+
+        if ($date) {
+            [$month, $year] = explode('-', $date);
+
+            if (is_numeric($month) && is_numeric($year) && strlen($month) === 2 && strlen($year) === 4) {
+                $query->whereMonth('date_movement', $month)
+                    ->whereYear('date_movement', $year);
+            } else {
+                throw new \InvalidArgumentException('Formato de data inválida, use MM/YYYY.');
+            }
         }
 
         return $query->get();

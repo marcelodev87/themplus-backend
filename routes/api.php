@@ -56,21 +56,21 @@ Route::prefix('alert')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [MovementController::class, 'index']);
-    Route::get('/filter', [MovementController::class, 'filterMovements']);
+    Route::get('/{date}', [MovementController::class, 'index']);
+    Route::get('/filter/{date}', [MovementController::class, 'filterMovements']);
     Route::get('/informations/{type}', [MovementController::class, 'getFormInformations']);
-    Route::post('/export', [MovementController::class, 'export']);
+    Route::post('/export/{date}', [MovementController::class, 'export']);
     Route::post('/', [MovementController::class, 'store']);
     Route::put('/', [MovementController::class, 'update']);
     Route::delete('/{id}', [MovementController::class, 'destroy']);
 });
 
 Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [SchedulingController::class, 'index']);
-    Route::get('/filter', [SchedulingController::class, 'filterSchedulings']);
+    Route::get('/{date}', [SchedulingController::class, 'index']);
+    Route::get('/filter/{date}', [SchedulingController::class, 'filterSchedulings']);
     Route::get('/informations/{type}', [SchedulingController::class, 'getFormInformations']);
     Route::post('/', [SchedulingController::class, 'store']);
-    Route::post('/export', [SchedulingController::class, 'export']);
+    Route::post('/export/{date}', [SchedulingController::class, 'export']);
     Route::put('/', [SchedulingController::class, 'update']);
     Route::put('/finalize/{id}', [SchedulingController::class, 'finalize']);
     Route::delete('/{id}', [SchedulingController::class, 'destroy']);

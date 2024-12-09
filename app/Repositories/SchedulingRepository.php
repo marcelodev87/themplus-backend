@@ -84,20 +84,82 @@ class SchedulingRepository
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
-        if (! is_null($out) && $out) {
+        if ($out !== null && $out) {
             $query->where('type', 'saída');
         }
 
-        if (! is_null($entry) && $entry) {
+        if ($entry !== null && $entry) {
             $query->where('type', 'entrada');
         }
 
-        if (! is_null($expired) && $expired) {
+        if ($expired !== null && $expired) {
             $yesterday = Carbon::yesterday()->format('Y-m-d');
             $query->where('date_movement', '<', $yesterday);
         }
 
         return $query->get();
+    }
+
+    public function getAllByEnterpriseWithRelationsWithParamsByDate($request, $date)
+    {
+        $expired = $request->has('expired') ? filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN) : null;
+        $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
+        $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
+
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $request->user()->enterprise_id);
+
+        if ($out !== null && $out) {
+            $query->where('type', 'saída');
+        }
+
+        if ($entry !== null && $entry) {
+            $query->where('type', 'entrada');
+        }
+
+        if ($expired !== null && $expired) {
+            $yesterday = Carbon::yesterday()->format('Y-m-d');
+            $query->where('date_movement', '<', $yesterday);
+        }
+
+        if ($date) {
+            [$month, $year] = explode('-', $date);
+
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+                return collect();
+            }
+
+            $query->whereMonth('date_movement', $month)
+                ->whereYear('date_movement', $year);
+        }
+
+        return $query->get();
+    }
+
+    public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date)
+    {
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $enterpriseId);
+
+        [$month, $year] = explode('-', $date);
+
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            return collect();
+        }
+
+        $query->whereMonth('date_movement', $month)
+            ->whereYear('date_movement', $year);
+
+        return $query->get();
+    }
+
+    public function getMonthYears($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)
+            ->selectRaw('DATE_FORMAT(date_movement, "%m/%Y") as month_year')
+            ->groupBy('month_year')
+            ->orderBy('month_year')
+            ->pluck('month_year');
     }
 
     public function findById($id)
@@ -125,7 +187,7 @@ class SchedulingRepository
         return null;
     }
 
-    public function export($out, $entry, $expired, $enterpriseId)
+    public function export($out, $entry, $expired, $date, $enterpriseId)
     {
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $enterpriseId);
@@ -140,6 +202,17 @@ class SchedulingRepository
 
         if ($expired) {
             $query->whereDate('date_movement', '<', now()->toDateString());
+        }
+
+        if ($date) {
+            [$month, $year] = explode('-', $date);
+
+            if (is_numeric($month) && is_numeric($year) && strlen($month) === 2 && strlen($year) === 4) {
+                $query->whereMonth('date_movement', $month)
+                    ->whereYear('date_movement', $year);
+            } else {
+                throw new \InvalidArgumentException('Formato de data inválida, use MM/YYYY.');
+            }
         }
 
         return $query->get();

@@ -42,14 +42,15 @@ class SchedulingController
         $this->accountRepository = $accountRepository;
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $date)
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+            $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $date);
+            $monthsYears = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['schedulings' => $schedulings, 'filled_data' => $filledData], 200);
+            return response()->json(['schedulings' => $schedulings, 'filled_data' => $filledData, 'months_years' => $monthsYears], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os agendamentos: '.$e->getMessage());
 
@@ -57,12 +58,13 @@ class SchedulingController
         }
     }
 
-    public function filterSchedulings(Request $request)
+    public function filterSchedulings(Request $request, $date)
     {
         try {
-            $schedulings = $this->repository->getAllByEnterpriseWithRelationsWithParams($request);
+            $schedulings = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
+            $monthsYears = $this->repository->getMonthYears($request->user()->enterprise_id);
 
-            return response()->json(['schedulings' => $schedulings], 200);
+            return response()->json(['schedulings' => $schedulings, 'months_years' => $monthsYears], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar agendamentos com base nos filtros: '.$e->getMessage());
 
@@ -70,14 +72,14 @@ class SchedulingController
         }
     }
 
-    public function export(Request $request)
+    public function export(Request $request, $date)
     {
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
         $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
         $enterpriseId = $request->user()->enterprise_id;
 
-        $schedulings = $this->repository->export($out, $entry, $expired, $enterpriseId);
+        $schedulings = $this->repository->export($out, $entry, $expired, $date, $enterpriseId);
 
         $dateTime = now()->format('Ymd_His');
         $fileName = "schedulings_{$enterpriseId}_{$dateTime}.xlsx";
@@ -125,9 +127,13 @@ class SchedulingController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+                $now = now()->setTimezone('America/Sao_Paulo');
+                $currentDate = $now->format('m-Y');
 
-                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento cadastrado com sucesso'], 201);
+                $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
+                $monthsYears = $this->repository->getMonthYears($enterpriseId);
+
+                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento cadastrado com sucesso', 'months_years' => $monthsYears], 201);
             }
 
             throw new \Exception('Falha ao criar agendamento');
@@ -157,11 +163,14 @@ class SchedulingController
 
             if ($scheduling && $register) {
                 DB::commit();
+                $now = now()->setTimezone('America/Sao_Paulo');
+                $currentDate = $now->format('m-Y');
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $schedulings = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+                $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
+                $monthsYears = $this->repository->getMonthYears($enterpriseId);
 
-                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento atualizado com sucesso'], 200);
+                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento atualizado com sucesso', 'months_years' => $monthsYears], 200);
             }
 
             throw new \Exception('Falha ao atualizar agendamento');
@@ -195,9 +204,13 @@ class SchedulingController
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $schedulings = $this->repository->getAllByEnterprise($enterpriseId);
+                $now = now()->setTimezone('America/Sao_Paulo');
+                $currentDate = $now->format('m-Y');
 
-                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento finalizado com sucesso'], 200);
+                $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
+                $monthsYears = $this->repository->getMonthYears($enterpriseId);
+
+                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento finalizado com sucesso', 'months_years' => $monthsYears], 200);
             }
 
             throw new \Exception('Falha ao finalizar agendamento');
