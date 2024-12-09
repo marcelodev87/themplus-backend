@@ -6,6 +6,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Repositories\RegisterRepository;
 use App\Rules\RegisterRule;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class RegisterController
@@ -32,7 +33,7 @@ class RegisterController
                 'register' => $this->treatTextRegister($register),
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
+            Log::error('Erro ao buscar todas os registros: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -50,7 +51,7 @@ class RegisterController
                 'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
+            Log::error('Erro ao buscar todas os registros: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -321,7 +322,7 @@ class RegisterController
                 $type = $parts[1];
                 $account = $parts[2];
                 $category = $parts[3];
-                $date_movement = $parts[4];
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[4])->format('d-m-Y');
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou uma nova movimentação que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na conta {$account} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
 
@@ -332,7 +333,7 @@ class RegisterController
                 $type = $parts[1];
                 $account = $parts[2];
                 $category = $parts[3];
-                $date_movement = $parts[4];
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[4])->format('d-m-Y');
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou uma movimentação que continha o valor de R$ {$value} com categoria {$category} do tipo {$type} na conta {$account} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
             }
@@ -342,7 +343,7 @@ class RegisterController
                 $type = $parts[1];
                 $account = $parts[2];
                 $category = $parts[3];
-                $date_movement = $parts[4];
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[4])->format('d-m-Y');
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu uma movimentação que continha o valor de R$ {$value} com categoria {$category} do tipo {$type} na conta {$account} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
             }
@@ -475,7 +476,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = $parts[6];
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d-m-Y');
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou um novo agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
             }
@@ -487,7 +488,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = $parts[6];
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d-m-Y');
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
             }
@@ -499,7 +500,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = $parts[6];
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d-m-Y');
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
             }
@@ -511,7 +512,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = $parts[6];
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d-m-Y');
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
             }
