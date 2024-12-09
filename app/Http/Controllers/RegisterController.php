@@ -29,7 +29,7 @@ class RegisterController
             $register = $this->repository->findById($id);
 
             return response()->json([
-                'register' => ($this->treatRegister([$register])[0]),
+                'register' => $this->treatTextRegister($register),
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
@@ -309,5 +309,222 @@ class RegisterController
 
         return $dataProcessed;
 
+    }
+
+    public function treatTextRegister($register)
+    {
+        $text = '';
+        if ($register->target === 'movement') {
+            if ($register->action === 'created') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $account = $parts[2];
+                $category = $parts[3];
+                $date_movement = $parts[4];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou uma nova movimentação que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na conta {$account} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
+
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $account = $parts[2];
+                $category = $parts[3];
+                $date_movement = $parts[4];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou uma movimentação que continha o valor de R$ {$value} com categoria {$category} do tipo {$type} na conta {$account} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $account = $parts[2];
+                $category = $parts[3];
+                $date_movement = $parts[4];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu uma movimentação que continha o valor de R$ {$value} com categoria {$category} do tipo {$type} na conta {$account} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
+            }
+        }
+        if ($register->target === 'account') {
+            if ($register->action === 'created') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $account_number = $parts[1] === '' ? 'Não definido' : $parts[1];
+                $agency_number = $parts[2] === '' ? 'Não definido' : $parts[2];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou uma conta com o nome de {$name} com número de conta {$account_number} e agência {$agency_number}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $account_number = $parts[1] === '' ? 'Não definido' : $parts[1];
+                $agency_number = $parts[2] === '' ? 'Não definido' : $parts[2];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou a conta que contém o nome de {$name} com número de conta {$account_number} e agência {$agency_number}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'transfer') {
+                $parts = explode('|', $register->identification);
+                $outName = $parts[0];
+                $outAccountNumber = $parts[1] === '' ? 'Não definido' : $parts[1];
+                $outAgencyNumber = $parts[2] === '' ? 'Não definido' : $parts[2];
+                $entryName = $parts[3];
+                $entryAccountNumber = $parts[4] === '' ? 'Não definido' : $parts[4];
+                $entryAgencyNumber = $parts[5] === '' ? 'Não definido' : $parts[5];
+                $value = number_format($parts[6], 2, ',', '.');
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} realizou uma transferência da Conta: {$outName} / Número conta: {$outAccountNumber} / Agência: {$outAgencyNumber} para a Conta {$entryName} / Número conta: {$entryAccountNumber} / Agência: {$entryAgencyNumber} no valor R$ {$value}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'reactivated') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $account_number = $parts[1] === '' ? 'Não definido' : $parts[1];
+                $agency_number = $parts[2] === '' ? 'Não definido' : $parts[2];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} reativou uma conta que contém o nome de {$name} com número de conta {$account_number} e agência {$agency_number}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'inactivated') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $account_number = $parts[1] === '' ? 'Não definido' : $parts[1];
+                $agency_number = $parts[2] === '' ? 'Não definido' : $parts[2];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} inativou uma conta que contém o nome de {$name} com número de conta {$account_number} e agência {$agency_number}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $account_number = $parts[1] === '' ? 'Não definido' : $parts[1];
+                $agency_number = $parts[2] === '' ? 'Não definido' : $parts[2];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu uma conta que contém o nome de {$name} com número de conta {$account_number} e agência {$agency_number}. Momento de registro: {$register->date_register}";
+            }
+        }
+        if ($register->target === 'enterprise') {
+            if ($register->action === 'updated') {
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou os dados da organização {$register->identification}. Momento de registro: {$register->date_register}";
+            }
+        }
+        if ($register->target === 'category') {
+            if ($register->action === 'created') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $type = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou uma categoria com o nome de {$name} do tipo {$type}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $type = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou uma categoria com o nome de {$name} do tipo {$type}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'reactivated') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $type = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} reativou uma categoria com o nome de {$name} do tipo {$type}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'inactivated') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $type = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} inativou uma categoria com o nome de {$name} do tipo {$type}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $type = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu uma categoria com o nome de {$name} cdo tipo {$type}. Momento de registro: {$register->date_register}";
+            }
+        }
+        if ($register->target === 'member') {
+            if ($register->action === 'created') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $email = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} adicionou um usuário {$name} de e-mail {$email}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $email = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou um usuário {$name} de e-mail {$email}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $name = $parts[0];
+                $email = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um usuário {$name} de e-mail {$email}. Momento de registro: {$register->date_register}";
+            }
+        }
+        if ($register->target === 'scheduling') {
+            if ($register->action === 'created') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $accountName = $parts[2];
+                $accountNumber = $parts[3];
+                $accountAgency = $parts[4];
+                $category = $parts[5];
+                $date_movement = $parts[6];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou um novo agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $accountName = $parts[2];
+                $accountNumber = $parts[3];
+                $accountAgency = $parts[4];
+                $category = $parts[5];
+                $date_movement = $parts[6];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'finalize') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $accountName = $parts[2];
+                $accountNumber = $parts[3];
+                $accountAgency = $parts[4];
+                $category = $parts[5];
+                $date_movement = $parts[6];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $accountName = $parts[2];
+                $accountNumber = $parts[3];
+                $accountAgency = $parts[4];
+                $category = $parts[5];
+                $date_movement = $parts[6];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento de registro: {$register->date_register}";
+            }
+        }
+        if ($register->target === 'report') {
+            if ($register->action === 'delivered') {
+                $parts = explode('|', $register->identification);
+                $monthYear = $parts[0];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} finalizou um encerramento do período {$monthYear}. Momento de registro: {$register->date_register}";
+            }
+        }
+
+        return $text;
     }
 }

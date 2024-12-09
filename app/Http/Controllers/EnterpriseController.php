@@ -56,7 +56,7 @@ class EnterpriseController
                 $request->user()->enterprise_id,
                 'updated',
                 'enterprise',
-                $request->user()->name.' atualizou os dados da organização'
+                "{$request->user()->enterprise->name}"
             );
 
             if ($enterprise && $register) {

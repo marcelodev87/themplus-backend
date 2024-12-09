@@ -48,7 +48,7 @@ class AccountController
                 $request->user()->enterprise_id,
                 'created',
                 'account',
-                $account->name
+                "{$account->name}|{$account->account_number}|{$account->agency_number}"
             );
 
             if ($account && $register) {
@@ -96,7 +96,7 @@ class AccountController
                 $request->user()->enterprise_id,
                 'transfer',
                 'account',
-                "$accountNameOut->name|$accountNameEntry->name|".$request->input('value')
+                "{$accountNameOut->name}|{$accountNameOut->account_number}|{$accountNameOut->agency_number}|{$accountNameEntry->name}|{$accountNameEntry->account_number}|{$accountNameEntry->agency_number}|{$request->input('value')}"
             );
 
             if ($transfer['out'] && $transfer['entry'] && $register) {
@@ -122,7 +122,7 @@ class AccountController
     {
         try {
             DB::beginTransaction();
-            $AccountData = $this->repository->findById($request->input('id'));
+            $accountData = $this->repository->findById($request->input('id'));
             $account = $this->service->update($request);
 
             $register = RegisterHelper::create(
@@ -130,7 +130,7 @@ class AccountController
                 $request->user()->enterprise_id,
                 'updated',
                 'account',
-                $AccountData->name
+                "{$accountData->name}|{$accountData->account_number}|{$accountData->agency_number}"
             );
 
             if ($account && $register) {
@@ -163,7 +163,7 @@ class AccountController
                 $request->user()->enterprise_id,
                 'reactivated',
                 'account',
-                $account->name
+                "{$account->name}|{$account->account_number}|{$account->agency_number}"
             );
 
             if ($account && $register) {
@@ -197,7 +197,7 @@ class AccountController
                 $request->user()->enterprise_id,
                 $account['inactivated'] ? 'inactivated' : 'deleted',
                 'account',
-                $accountData->name
+                "{$accountData->name}|{$accountData->account_number}|{$accountData->agency_number}"
             );
 
             if ($account['data'] && $register) {

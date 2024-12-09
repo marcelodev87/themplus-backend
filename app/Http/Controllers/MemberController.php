@@ -54,7 +54,7 @@ class MemberController
                 $request->user()->enterprise_id,
                 'created',
                 'member',
-                $request->user()->name.' adicionou usuário(a) '.$user->name.' | '.$user->email
+                "{$user->name}|{$user->email}"
             );
 
             if ($user && $register) {
@@ -99,10 +99,10 @@ class MemberController
                 $request->user()->enterprise_id,
                 'updated',
                 'member',
-                $request->user()->name.' atualizou usuário(a) '.$member->name.' | '.$member->email
+                "{$member->name}|{$member->email}"
             );
 
-            if ($user) {
+            if ($user && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -135,10 +135,10 @@ class MemberController
                 $request->user()->enterprise_id,
                 'deleted',
                 'member',
-                $request->user()->name.' deletou usuário(a) '.$memberDelete->name.' | '.$memberDelete->email
+                "{$memberDelete->name}|{$memberDelete->email}"
             );
 
-            if ($member) {
+            if ($member && $register) {
                 DB::commit();
 
                 return response()->json(['message' => 'Membro deletado com sucesso'], 200);

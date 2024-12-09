@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens,HasFactory, HasUuid, Notifiable;
+    use HasApiTokens, HasFactory, HasUuid, Notifiable;
 
     protected $table = 'users';
 
@@ -42,5 +42,10 @@ class User extends Authenticatable
     public function department()
     {
         return $this->belongsTo(Department::class);
+    }
+
+    public function enterprise()
+    {
+        return $this->belongsTo(Enterprise::class);
     }
 }

@@ -117,7 +117,7 @@ class SchedulingController
                     $request->user()->enterprise_id,
                     'created',
                     'scheduling',
-                    $schedulingData->value.'|'.$schedulingData->type.'|'.$schedulingData->account->name.'|'.$schedulingData->category->name.'|'.$schedulingData->date_movement
+                    "{$schedulingData->value}|{$schedulingData->type}|{$schedulingData->account->name}|{$schedulingData->account->account_number}|{$schedulingData->account->agency_number}|{$schedulingData->category->name}|{$schedulingData->date_movement}"
                 );
             }
 
@@ -152,7 +152,7 @@ class SchedulingController
                 $request->user()->enterprise_id,
                 'updated',
                 'scheduling',
-                $schedulingData->value.'|'.$schedulingData->type.'|'.$schedulingData->account->name.'|'.$schedulingData->category->name.'|'.$schedulingData->date_movement
+                "{$schedulingData->value}|{$schedulingData->type}|{$schedulingData->account->name}|{$schedulingData->account->account_number}|{$schedulingData->account->agency_number}|{$schedulingData->category->name}|{$schedulingData->date_movement}"
             );
 
             if ($scheduling && $register) {
@@ -188,7 +188,7 @@ class SchedulingController
                 $request->user()->enterprise_id,
                 'finalize',
                 'scheduling',
-                $schedulingData->value.'|'.$schedulingData->type.'|'.$schedulingData->account->name.'|'.$schedulingData->category->name.'|'.$schedulingData->date_movement
+                "{$schedulingData->value}|{$schedulingData->type}|{$schedulingData->account->name}|{$schedulingData->account->account_number}|{$schedulingData->account->agency_number}|{$schedulingData->category->name}|{$schedulingData->date_movement}"
             );
 
             if ($movement && $register) {
@@ -225,7 +225,7 @@ class SchedulingController
                 $request->user()->enterprise_id,
                 'deleted',
                 'scheduling',
-                $schedulingActual->value.'|'.$schedulingActual->type.'|'.$schedulingActual->account->name.'|'.$schedulingActual->category->name.'|'.$schedulingActual->date_movement
+                "{$schedulingActual->value}|{$schedulingActual->type}|{$schedulingActual->account->name}|{$schedulingActual->account->account_number}|{$schedulingActual->account->agency_number}|{$schedulingActual->category->name}|{$schedulingActual->date_movement}"
             );
 
             if ($scheduling && $register) {
