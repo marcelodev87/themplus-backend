@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\RegisterRepository;
 use App\Rules\RegisterRule;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class RegisterController
@@ -33,7 +33,7 @@ class RegisterController
                 'register' => $this->treatTextRegister($register),
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os registros: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -51,7 +51,7 @@ class RegisterController
                 'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os registros: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
