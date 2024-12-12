@@ -11,13 +11,9 @@ class MovementInsertExample
     {
         $exampleData = [
             [
-                'TIPO' => 'Ex: entrada ou saída',
-                'CATEGORIA' => 'Ex: Campanha',
-                'VALOR' => 'Ex: 5000.00',
-                'CONTA' => 'Ex: Nubank',
-                'NÚMERO DA CONTA' => 'Ex: 1234567',
-                'NÚMERO DA AGÊNCIA' => 'Ex: 8',
                 'DATA DE MOVIMENTAÇÃO' => Carbon::now('America/Sao_Paulo')->format('d/m/Y'),
+                'TIPO' => 'Ex: entrada ou saída',
+                'VALOR' => 'Ex: 5000.00',
                 'DESCRIÇÃO' => 'Ex: Alguma descrição',
             ],
         ];

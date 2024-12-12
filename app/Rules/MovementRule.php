@@ -39,6 +39,21 @@ class MovementRule
 
         return true;
     }
+    public function insert($request)
+    {
+        $rules = ['file' => 'required | mimes:xls,xlsx'];
+        $messages = [
+            'file.required' => 'O arquivo é obrigatório',
+            'file.mimes' => 'O arquivo deve ser uma planilha Excel (xls ou xlsx).',
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
 
     public function update($request)
     {
