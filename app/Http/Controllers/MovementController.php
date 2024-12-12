@@ -53,7 +53,7 @@ class MovementController
 
             return response()->json(['movements' => $movements, 'filled_data' => $filledData, 'months_years' => $months_years], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as movimentações: '.$e->getMessage());
+            Log::error('Erro ao buscar todas as movimentações: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -67,7 +67,7 @@ class MovementController
 
             return response()->json(['movements' => $movements, 'months_years' => $months_years], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar movimentações com base nos filtros: '.$e->getMessage());
+            Log::error('Erro ao buscar movimentações com base nos filtros: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -94,12 +94,57 @@ class MovementController
         return (new MovementInsertExample)->download($fileName);
     }
 
+    public function insert(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $movements = $this->service->insert($request);
+            // foreach ($movements as $movement) {
+            //     $movementData = $this->repository->findByIdWithRelations($movement->id);
+
+            //     $register = RegisterHelper::create(
+            //         $request->user()->id,
+            //         $request->user()->enterprise_id,
+            //         'created',
+            //         'movement',
+            //         "{$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->category->name}|{$movementData->date_movement}"
+            //     );
+            // }
+
+            // if ($movements && $register) {
+            if ($movements) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $now = now()->setTimezone('America/Sao_Paulo');
+                $currentDate = $now->format('m-Y');
+
+                $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
+                $months_years = $this->repository->getMonthYears($enterpriseId);
+
+                return response()->json(['movements' => $movements, 'message' => 'Movimentação cadastrada com sucesso', 'months_years' => $months_years], 201);
+            }
+
+            throw new \Exception('Falha ao criar movimentação');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar movimentação: ' . $e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function getFormInformations(Request $request, $type)
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
 
-            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive($enterpriseId, $type);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive(
+                $enterpriseId,
+                $type === 'all' ? null : $type
+            );
             $accounts = $this->accountRepository->getAllByEnterpriseOnlyActive($enterpriseId);
 
             return response()->json([
@@ -107,7 +152,7 @@ class MovementController
                 'accounts' => AccountResource::collection($accounts),
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar informações: '.$e->getMessage());
+            Log::error('Erro ao buscar informações: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -148,7 +193,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar movimentação: '.$e->getMessage());
+            Log::error('Erro ao registrar movimentação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -186,7 +231,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar movimentação: '.$e->getMessage());
+            Log::error('Erro ao atualizar movimentação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -221,7 +266,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar movimentação: '.$e->getMessage());
+            Log::error('Erro ao deletar movimentação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

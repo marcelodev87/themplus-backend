@@ -39,6 +39,7 @@ class MovementRule
 
         return true;
     }
+
     public function insert($request)
     {
         $rules = ['file' => 'required | mimes:xls,xlsx'];

@@ -68,6 +68,29 @@ class MovementService
 
         return $createdMovements;
     }
+    // public function insert($request)
+    // {
+    //     $this->rule->insert($request);
+    //     $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
+
+    //     $createdMovements = [];
+
+    //     foreach () {
+    //         $data = [
+    //             'type' => $request->input('type'),
+    //             'value' => $request->input('value'),
+    //             'date_movement' => $initialDate->format('Y-m-d'),
+    //             'description' => $request->input('description'),
+    //             'receipt' => null,
+    //             'category_id' => $request->input('category'),
+    //             'account_id' => $request->input('account'),
+    //             'enterprise_id' => $request->user()->enterprise_id,
+    //         ];
+
+    //     }
+
+    //     return $createdMovements;
+    // }
 
     public function createTransfer($dataOut, $dataEntry)
     {
