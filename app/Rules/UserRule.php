@@ -81,7 +81,7 @@ class UserRule
     public function resetPassword($request)
     {
         $rules = [
-            'email' => 'required|string|email|max:50|unique:users',
+            'email' => 'required|string|email|max:50',
             'password' => 'required|string|min:8',
         ];
 
@@ -90,7 +90,6 @@ class UserRule
             'email.string' => 'O e-mail deve ser uma string',
             'email.email' => 'O e-mail deve ser um endereço de e-mail válido',
             'email.max' => 'O e-mail não pode ter mais de 50 caracteres',
-            'email.unique' => 'Este e-mail já está registrado',
             'password.required' => 'A senha é obrigatória',
             'password.string' => 'A senha deve ser uma string',
             'password.min' => 'A senha deve ter pelo menos 8 caracteres',

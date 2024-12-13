@@ -46,12 +46,12 @@ class UserService
         $data = $request->only(['password', 'email']);
 
         $user = $this->repository->findByEmail($data['email']);
-        if (! $user) {
+        if (!$user) {
             throw ValidationException::withMessages([
                 'email' => ['Credenciais não constam em nosso registro'],
             ]);
         }
-        if (! Hash::check($data['password'], $user->password)) {
+        if (!Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'password' => ['Credenciais não constam em nosso registro'],
             ]);
@@ -68,9 +68,13 @@ class UserService
         if ($user) {
             $token = app('auth.password.broker')->createToken($user);
             SendResetPasswordEmail::dispatch($user, $token);
+        } else {
+            throw ValidationException::withMessages([
+                'email' => ['O e-mail não está cadastrado.'],
+            ]);
         }
 
-        return 'Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha';
+        return 'O e-mail informado receberá um código para redefinir sua senha';
     }
 
     public function verify($request)
@@ -89,9 +93,16 @@ class UserService
     {
         $this->rule->resetPassword($request);
 
-        $data = ['password' => Hash::make($request->input('passwordNew'))];
+        $data = ['password' => Hash::make($request->input('password'))];
 
-        return $this->repository->updatePassword($request->user()->id, $data);
+        $result = $this->repository->resetPassword($request->input('email'), $data);
+
+        $register = PasswordReset::where('email', $request->input('email'))->first();
+        if ($register) {
+            $register->delete();
+        }
+
+        return $result;
     }
 
     public function create($request)

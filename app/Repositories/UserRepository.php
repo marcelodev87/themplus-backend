@@ -112,6 +112,17 @@ class UserRepository
 
         return null;
     }
+    public function resetPassword($email, array $data)
+    {
+        $user = $this->findByEmail($email);
+        if ($user) {
+            $user->update($data);
+
+            return $user;
+        }
+
+        return null;
+    }
 
     public function updateDepartment($departmentId)
     {
