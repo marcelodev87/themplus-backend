@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Helpers\UserHelper;
+use App\Jobs\SendResetPasswordEmail;
+use App\Models\PasswordReset;
 use App\Repositories\AccountRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\SubscriptionRepository;
@@ -56,6 +58,40 @@ class UserService
         }
 
         return $user;
+    }
+
+    public function reset($request)
+    {
+        $this->rule->reset($request);
+        $user = $this->repository->findByEmail($request->input('email'));
+
+        if ($user) {
+            $token = app('auth.password.broker')->createToken($user);
+            SendResetPasswordEmail::dispatch($user, $token);
+        }
+
+        return 'Se o e-mail estiver cadastrado, você receberá um link para redefinir sua senha';
+    }
+
+    public function verify($request)
+    {
+        $this->rule->verify($request);
+        $reset = PasswordReset::where('email', $request->input('email'))->first();
+
+        if ($reset && $reset->code === $request->input('code')) {
+            return ['valid' => true, 'message' => 'Código verificado com sucesso'];
+        }
+
+        return ['valid' => false, 'message' => 'Código incorreto ou expirado'];
+    }
+
+    public function resetPassword($request)
+    {
+        $this->rule->resetPassword($request);
+
+        $data = ['password' => Hash::make($request->input('passwordNew'))];
+
+        return $this->repository->updatePassword($request->user()->id, $data);
     }
 
     public function create($request)
