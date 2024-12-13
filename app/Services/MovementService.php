@@ -68,29 +68,40 @@ class MovementService
 
         return $createdMovements;
     }
-    // public function insert($request)
-    // {
-    //     $this->rule->insert($request);
-    //     $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
 
-    //     $createdMovements = [];
+    public function insert($request)
+    {
+        $this->rule->insert($request);
 
-    //     foreach () {
-    //         $data = [
-    //             'type' => $request->input('type'),
-    //             'value' => $request->input('value'),
-    //             'date_movement' => $initialDate->format('Y-m-d'),
-    //             'description' => $request->input('description'),
-    //             'receipt' => null,
-    //             'category_id' => $request->input('category'),
-    //             'account_id' => $request->input('account'),
-    //             'enterprise_id' => $request->user()->enterprise_id,
-    //         ];
+        $createdMovements = [];
 
-    //     }
+        foreach ($request->input('movements') as $movementData) {
+            $filePath = null;
+            if ($movementData['receipt']) {
+                $filePath = $movementData['receipt']->store('receipts');
+            }
 
-    //     return $createdMovements;
-    // }
+            $data = [
+                'type' => $movementData['type'],
+                'date_movement' => Carbon::createFromFormat('d/m/Y', $movementData['date']),
+                'value' => $movementData['value'],
+                'description' => $movementData['description'],
+                'receipt' => $filePath,
+                'category_id' => $movementData['category'],
+                'account_id' => $movementData['account'],
+                'enterprise_id' => $request->user()->enterprise_id,
+            ];
+
+            $movement = $this->repository->create($data);
+            if ($movement) {
+                $createdMovements[] = $movement;
+                $this->updateBalanceAccount($movementData['account']);
+            }
+        }
+
+        return $createdMovements;
+
+    }
 
     public function createTransfer($dataOut, $dataEntry)
     {

@@ -42,10 +42,10 @@ class MovementRule
 
     public function insert($request)
     {
-        $rules = ['file' => 'required | mimes:xls,xlsx'];
+        $rules = ['movements' => 'required|array'];
         $messages = [
-            'file.required' => 'O arquivo é obrigatório',
-            'file.mimes' => 'O arquivo deve ser uma planilha Excel (xls ou xlsx).',
+            'movements.required' => 'A lista de movimentações é obrigatória',
+            'movements.array' => 'A lista de movimentações deve ser um array',
         ];
         $validator = Validator::make($request->all(), $rules, $messages);
 
