@@ -112,6 +112,7 @@ class UserRepository
 
         return null;
     }
+
     public function resetPassword($email, array $data)
     {
         $user = $this->findByEmail($email);

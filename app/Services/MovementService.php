@@ -36,7 +36,7 @@ class MovementService
 
         $filePath = null;
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('receipts');
+            $filePath = $request->file('file')->storeAs('/receipts', $request->file('file')->getClientOriginalName(), 'local');
         }
 
         $programed = $request->input('programmed');
@@ -134,11 +134,16 @@ class MovementService
     {
         $this->rule->update($request);
 
+        $filePath = null;
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->storeAs('/receipts', $request->file('file')->getClientOriginalName(), 'local');
+        }
+
         $data = [
             'type' => $request->input('type'),
             'value' => $request->input('value'),
             'description' => $request->input('description'),
-            'receipt' => $request->input('file'),
+            'receipt' => $filePath,
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
             'enterprise_id' => $request->user()->enterprise_id,

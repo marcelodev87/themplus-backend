@@ -62,6 +62,7 @@ Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
     Route::get('/{date}', [MovementController::class, 'index']);
     Route::get('/filter/{date}', [MovementController::class, 'filterMovements']);
     Route::get('/informations/{type}', [MovementController::class, 'getFormInformations']);
+    Route::get('/download/{file}', [MovementController::class, 'downloadFile']);
     Route::post('/insert-example', [MovementController::class, 'insertExample']);
     Route::post('/insert', [MovementController::class, 'insert']);
     Route::post('/export/{date}', [MovementController::class, 'export']);
