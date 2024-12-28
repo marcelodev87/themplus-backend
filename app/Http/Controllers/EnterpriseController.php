@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Services\EnterpriseService;
@@ -21,14 +22,44 @@ class EnterpriseController
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        //
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $offices = $this->repository->getAllOfficesByEnterprise($enterpriseId);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
+
+            return response()->json(['offices' => $offices, 'filled_data' => $filledData], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as filiais: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
-    public function store(Request $request)
+    public function storeOffice(Request $request)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $office = $this->service->createOffice($request);
+
+            if ($office) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $offices = $this->repository->getAllOfficesByEnterprise($enterpriseId);
+
+                return response()->json(['offices' => $offices, 'message' => 'Filial cadastrada com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar filial');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar filial: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function show(Request $request)

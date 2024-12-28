@@ -26,5 +26,6 @@ class Enterprise extends Model
         'phone',
         'subscription_id',
         'number_address',
+        'created_by',
     ];
 }

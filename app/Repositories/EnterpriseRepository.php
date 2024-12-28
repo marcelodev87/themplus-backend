@@ -18,6 +18,11 @@ class EnterpriseRepository
         return $this->model->all();
     }
 
+    public function getAllOfficesByEnterprise($enterpriseId)
+    {
+        return $this->model->where('created_by', $enterpriseId)->get();
+    }
+
     public function findById($id)
     {
         return $this->model->find($id);
@@ -37,6 +42,11 @@ class EnterpriseRepository
     {
         $data = ['name' => $name, 'subscription_id' => $subscriptionId];
 
+        return $this->model->create($data);
+    }
+
+    public function createOffice(array $data)
+    {
         return $this->model->create($data);
     }
 

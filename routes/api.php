@@ -122,3 +122,7 @@ Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     // TODO: Veriicar depois a logica de exclusão da orgnização
     // Route::delete('/{id}', [EnterpriseController::class, 'destroy']);
 });
+Route::prefix('office')->middleware('auth:sanctum')->group(function () {
+    Route::get('/', [EnterpriseController::class, 'indexOffices']);
+    Route::post('/', [EnterpriseController::class, 'storeOffice'])->middleware('admin');
+});
