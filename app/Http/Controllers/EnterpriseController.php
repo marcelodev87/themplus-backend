@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
+use App\Http\Resources\OfficeResource;
 use App\Repositories\EnterpriseRepository;
 use App\Services\EnterpriseService;
 use Illuminate\Http\Request;
@@ -22,14 +23,14 @@ class EnterpriseController
         $this->repository = $repository;
     }
 
-    public function index(Request $request)
+    public function indexOffices(Request $request)
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
             $offices = $this->repository->getAllOfficesByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['offices' => $offices, 'filled_data' => $filledData], 200);
+            return response()->json(['offices' => OfficeResource::collection($offices), 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as filiais: '.$e->getMessage());
 

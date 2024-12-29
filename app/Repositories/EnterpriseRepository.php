@@ -20,7 +20,9 @@ class EnterpriseRepository
 
     public function getAllOfficesByEnterprise($enterpriseId)
     {
-        return $this->model->where('created_by', $enterpriseId)->get();
+        return $this->model->with('users')
+            ->where('created_by', $enterpriseId)
+            ->get();
     }
 
     public function findById($id)

@@ -28,4 +28,9 @@ class Enterprise extends Model
         'number_address',
         'created_by',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'enterprise_id');
+    }
 }
