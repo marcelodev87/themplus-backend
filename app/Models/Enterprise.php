@@ -27,6 +27,7 @@ class Enterprise extends Model
         'subscription_id',
         'number_address',
         'created_by',
+        'position',
     ];
 
     public function users()

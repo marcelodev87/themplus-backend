@@ -109,11 +109,16 @@ class UserService
     {
         $this->rule->create($request);
 
-        $data = $request->only(['name', 'password', 'email', 'nameEnterprise']);
+        $data = $request->only(['name', 'password', 'email', 'nameEnterprise', 'position']);
         $data['password'] = Hash::make($data['password']);
 
         $subscription = $this->subscriptionRepository->findByName('free');
-        $enterprise = $this->enterpriseRepository->createStart($data['nameEnterprise'], $subscription->id);
+        $dataEnterprise = [
+            'name' => $data['nameEnterprise'],
+            'subscription_id' => $subscription->id,
+            'position' => $data['position'],
+        ];
+        $enterprise = $this->enterpriseRepository->createStart($dataEnterprise);
 
         $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
         $this->accountRepository->create($dataAccount);

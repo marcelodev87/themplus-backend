@@ -32,7 +32,7 @@ class UserController
 
             $token = $user->createToken('my-app-token')->plainTextToken;
 
-            return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by], 200);
+            return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by, 'enterprise_position' => $enterprise->position], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao logar com usuário: '.$e->getMessage());
 

@@ -40,10 +40,8 @@ class EnterpriseRepository
         return $this->model->where('cnpj', $cnpj)->first();
     }
 
-    public function createStart($name, $subscriptionId)
+    public function createStart($data)
     {
-        $data = ['name' => $name, 'subscription_id' => $subscriptionId];
-
         return $this->model->create($data);
     }
 
