@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\EnterpriseRepository;
 use App\Rules\UserRule;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -14,20 +15,24 @@ class UserController
 
     private $rule;
 
-    public function __construct(UserService $service, UserRule $rule)
+    protected $enterpriseRepository;
+
+    public function __construct(UserService $service, UserRule $rule, EnterpriseRepository $enterpriseRepository)
     {
         $this->service = $service;
         $this->rule = $rule;
+        $this->enterpriseRepository = $enterpriseRepository;
     }
 
     public function login(Request $request)
     {
         try {
             $user = $this->service->login($request);
+            $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
 
             $token = $user->createToken('my-app-token')->plainTextToken;
 
-            return response()->json(['user' => $user, 'token' => $token], 200);
+            return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao logar com usuário: '.$e->getMessage());
 
