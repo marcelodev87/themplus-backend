@@ -30,6 +30,7 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [MemberController::class, 'index']);
     Route::post('/', [MemberController::class, 'store'])->middleware('admin');
+    Route::post('/start-office', [MemberController::class, 'startOfficeNewUser'])->middleware('admin');
     Route::post('/export', [MemberController::class, 'export']);
     Route::put('/', [MemberController::class, 'update'])->middleware('admin');
     Route::delete('/{id}', [MemberController::class, 'destroy'])->middleware('admin');

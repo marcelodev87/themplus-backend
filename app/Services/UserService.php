@@ -138,6 +138,18 @@ class UserService
         return $this->repository->create($data);
     }
 
+    public function startOfficeNewUser($request)
+    {
+        $this->rule->startOfficeNewUser($request);
+
+        $data = $request->only(['name', 'email', 'position', 'phone']);
+        $data['password'] = Hash::make($request->input('password'));
+        $data['department_id'] = $request->input('department');
+        $data['enterprise_id'] = $request->input('enterpriseId');
+
+        return $this->repository->create($data);
+    }
+
     public function updateMember($request)
     {
         $this->rule->updateMember($request);

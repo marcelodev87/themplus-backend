@@ -46,7 +46,7 @@ class EnterpriseService
             'city' => $request->input('city'),
             'neighborhood' => $request->input('neighborhood'),
             'address' => $request->input('address'),
-            'number_address' => $request->input('number_address'),
+            'number_address' => $request->input('numberAddress'),
             'complement' => $request->input('complement'),
             'phone' => $request->input('phone'),
             'created_by' => $request->user()->enterprise_id,

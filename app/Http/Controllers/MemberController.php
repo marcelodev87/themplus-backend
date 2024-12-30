@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Exports\UserExport;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
+use App\Http\Resources\OfficeResource;
 use App\Http\Resources\UserResource;
+use App\Repositories\EnterpriseRepository;
 use App\Repositories\UserRepository;
 use App\Rules\UserRule;
 use App\Services\UserService;
@@ -21,10 +23,13 @@ class MemberController
 
     private $rule;
 
-    public function __construct(UserService $service, UserRepository $repository, UserRule $rule)
+    private $enterpriseRepository;
+
+    public function __construct(UserService $service, UserRepository $repository, UserRule $rule, EnterpriseRepository $enterpriseRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
+        $this->enterpriseRepository = $enterpriseRepository;
         $this->rule = $rule;
     }
 
@@ -71,6 +76,32 @@ class MemberController
             DB::rollBack();
 
             Log::error('Erro ao registrar membro da organização: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function startOfficeNewUser(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = $this->service->startOfficeNewUser($request);
+
+            if ($user) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $offices = $this->enterpriseRepository->getAllOfficesByEnterprise($enterpriseId);
+
+                return response()->json(['offices' => OfficeResource::collection($offices), 'message' => 'Membro adicionado á filial com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar membro para filial');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar membro da filial: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
