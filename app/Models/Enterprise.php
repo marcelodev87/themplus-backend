@@ -28,6 +28,7 @@ class Enterprise extends Model
         'number_address',
         'created_by',
         'position',
+        'counter_enterprise_id'
     ];
 
     public function users()

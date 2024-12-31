@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Services;
+
+use App\Repositories\OrderRepository;
+use App\Repositories\EnterpriseRepository;
+use App\Rules\OrderRule;
+
+class OrderService
+{
+    protected $rule;
+
+    protected $repository;
+
+    protected $enterpriseRepository;
+
+    public function __construct(
+        OrderRule $rule,
+        OrderRepository $repository,
+        EnterpriseRepository $enterpriseRepository
+    ) {
+        $this->rule = $rule;
+        $this->repository = $repository;
+        $this->enterpriseRepository = $enterpriseRepository;
+    }
+
+    public function create($request)
+    {
+        $this->rule->create($request);
+        $this->checkLimitOrders($request->input('userId'));
+
+        $data = [
+            'user_id' => $request->input('userId'),
+            'user_counter_id' => $request->user()->id,
+        ];
+
+        return $this->repository->create($data);
+    }
+
+    public function bindCounter($request)
+    {
+        $this->rule->update($request);
+        if ($request->input('status') === 'accepted') {
+            $order = $this->repository->findById($request->input('id'));
+            $this->repository->delete($request->input('id'));
+            $this->enterpriseRepository->update($request->user()->enterprise_id, ['enterprise_counter_id' => $order->user_counter_id]);
+        } else {
+            $this->enterpriseRepository->update($request->user()->enterprise_id, ['enterprise_counter_id' => null]);
+        }
+
+        $data = $request->only(['name']);
+        $data['parent_id'] = $request->input('parentId') ?? null;
+
+        return $this->repository->update($request->input('id'), $data);
+    }
+
+    public function checkLimitOrders($userId)
+    {
+        $results = $this->repository->getAllByUser($userId);
+
+        if (count($results) >= 5) {
+            throw new \Exception('Não foi possível finalizar a solicitação, pois o usuário solicitado está com a caixa de solicitações cheia');
+        }
+    }
+
+}
