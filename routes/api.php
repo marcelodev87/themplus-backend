@@ -117,6 +117,7 @@ Route::prefix('feedback')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [EnterpriseController::class, 'show']);
+    Route::get('/search/{text}', [EnterpriseController::class, 'search']);
     // TODO: Veriicar depois a criação da orgnização por rota controller
     // Route::post('/', [EnterpriseController::class, 'store']);
     Route::put('/', [EnterpriseController::class, 'update'])->middleware('admin');

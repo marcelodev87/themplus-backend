@@ -34,7 +34,7 @@ class UserController
 
             return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by, 'enterprise_position' => $enterprise->position], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao logar com usuário: ' . $e->getMessage());
+            Log::error('Erro ao logar com usuário: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -59,7 +59,7 @@ class UserController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar usuário: ' . $e->getMessage());
+            Log::error('Erro ao registrar usuário: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -72,7 +72,7 @@ class UserController
 
             return response()->json(['message' => $result], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao solicitar redefinição de senha: ' . $e->getMessage());
+            Log::error('Erro ao solicitar redefinição de senha: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -85,7 +85,7 @@ class UserController
 
             return response()->json(['valid' => $result['valid'], 'message' => $result['message']], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao verificar código: ' . $e->getMessage());
+            Log::error('Erro ao verificar código: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -107,7 +107,7 @@ class UserController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao redefinir senha do usuário atual: ' . $e->getMessage());
+            Log::error('Erro ao redefinir senha do usuário atual: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -129,7 +129,7 @@ class UserController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar dados do usuário atual: ' . $e->getMessage());
+            Log::error('Erro ao atualizar dados do usuário atual: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -151,10 +151,9 @@ class UserController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar senha do usuário atual: ' . $e->getMessage());
+            Log::error('Erro ao atualizar senha do usuário atual: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-
 }

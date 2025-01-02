@@ -77,6 +77,20 @@ class EnterpriseController
         }
     }
 
+    public function search(Request $request, $text)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $enterprises = $this->repository->searchEnterprise($enterpriseId, $text);
+
+            return response()->json(['enterprise' => $enterprise], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar dados da organização: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function update(Request $request)
     {
         try {

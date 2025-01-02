@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\OrderRepository;
 use App\Helpers\EnterpriseHelper;
-use App\Services\OrderService;
+use App\Repositories\OrderRepository;
 use App\Rules\OrderRule;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,11 +34,12 @@ class OrderController
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as solicitações: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as solicitações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
     public function indexViewClient(Request $request)
     {
         try {
@@ -48,7 +49,7 @@ class OrderController
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as solicitações: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as solicitações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -72,7 +73,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao enviar solicitação: ' . $e->getMessage());
+            Log::error('Erro ao enviar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -91,7 +92,7 @@ class OrderController
                 $request->user()->enterprise_id,
                 'updated',
                 'category',
-                $categoryData->name . '|' . $categoryData->type
+                $categoryData->name.'|'.$categoryData->type
             );
 
             if ($category && $register) {
@@ -107,7 +108,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar categoria: ' . $e->getMessage());
+            Log::error('Erro ao atualizar categoria: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -131,7 +132,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar solicitação: ' . $e->getMessage());
+            Log::error('Erro ao deletar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

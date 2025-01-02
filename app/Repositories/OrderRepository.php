@@ -22,6 +22,7 @@ class OrderRepository
     {
         return $this->model->where('user_id', $userId)->get();
     }
+
     public function getAllByCounter($counterId)
     {
         return $this->model->where('user_counter_id', $counterId)->get();

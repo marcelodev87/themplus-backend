@@ -14,13 +14,14 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'user_counter_id'
+        'user_counter_id',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
     public function counter()
     {
         return $this->belongsTo(User::class, 'user_counter_id');

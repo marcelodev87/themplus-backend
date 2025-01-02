@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Repositories\OrderRepository;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\OrderRepository;
 use App\Rules\OrderRule;
 
 class OrderService
@@ -62,5 +62,4 @@ class OrderService
             throw new \Exception('Não foi possível finalizar a solicitação, pois o usuário solicitado está com a caixa de solicitações cheia');
         }
     }
-
 }
