@@ -10,8 +10,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users');
-            $table->foreignUuid('user_counter_id')->constrained('users');
+            $table->foreignUuid('enterprise_id')->constrained('enterprises');
+            $table->foreignUuid('enterprise_counter_id')->constrained('enterprises');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

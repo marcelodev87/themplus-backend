@@ -6,6 +6,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\OfficeResource;
 use App\Repositories\EnterpriseRepository;
+use App\Rules\EnterpriseRule;
 use App\Services\EnterpriseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,10 +18,13 @@ class EnterpriseController
 
     private $repository;
 
-    public function __construct(EnterpriseService $service, EnterpriseRepository $repository)
+    private $rule;
+
+    public function __construct(EnterpriseService $service, EnterpriseRepository $repository, EnterpriseRule $rule)
     {
         $this->service = $service;
         $this->repository = $repository;
+        $this->rule = $rule;
     }
 
     public function indexOffices(Request $request)
@@ -83,7 +87,7 @@ class EnterpriseController
             $enterpriseId = $request->user()->enterprise_id;
             $enterprises = $this->repository->searchEnterprise($enterpriseId, $text);
 
-            return response()->json(['enterprise' => $enterprise], 200);
+            return response()->json(['enterprises' => $enterprises], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar dados da organização: '.$e->getMessage());
 
@@ -119,10 +123,5 @@ class EnterpriseController
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
-    }
-
-    public function destroy(string $id)
-    {
-        //
     }
 }

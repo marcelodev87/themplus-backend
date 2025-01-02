@@ -13,17 +13,18 @@ class Order extends Model
     protected $table = 'orders';
 
     protected $fillable = [
-        'user_id',
-        'user_counter_id',
+        'enterprise_id',
+        'enterprise_counter_id',
+        'description',
     ];
 
-    public function user()
+    public function enterprise()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Enterprise::class, 'enterprise_id');
     }
 
     public function counter()
     {
-        return $this->belongsTo(User::class, 'user_counter_id');
+        return $this->belongsTo(Enterprise::class, 'enterprise_counter_id');
     }
 }

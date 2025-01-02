@@ -114,6 +114,41 @@ class OrderController
         }
     }
 
+    public function actionClient(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $orderData = $this->repository->findById($request->input('id'));
+            $order = $this->service->update($request);
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'category',
+                $categoryData->name.'|'.$categoryData->type
+            );
+
+            if ($category && $register) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+
+                return response()->json(['categories' => $categories, 'message' => 'Categoria atualizada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar categoria');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar categoria: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function destroy(string $id)
     {
         try {

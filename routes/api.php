@@ -11,6 +11,7 @@ use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\UserController;
@@ -91,6 +92,15 @@ Route::prefix('account')->middleware('auth:sanctum')->group(function () {
     Route::put('/', [AccountController::class, 'update'])->middleware('admin');
     Route::put('/active/{id}', [AccountController::class, 'active']);
     Route::delete('/{id}', [AccountController::class, 'destroy'])->middleware('admin');
+});
+
+Route::prefix('order')->middleware('auth:sanctum')->group(function () {
+    Route::get('/client', [OrderController::class, 'indexViewClient']);
+    Route::get('/counter', [OrderController::class, 'indexViewCounter']);
+    Route::post('/sendRequest', [OrderController::class, 'store']);
+    Route::post('/responseClient', [OrderController::class, 'actionClient']);
+    Route::put('/', [OrderController::class, 'update']);
+    Route::delete('/{id}', [OrderController::class, 'destroy']);
 });
 
 Route::prefix('financial')->middleware('auth:sanctum')->group(function () {

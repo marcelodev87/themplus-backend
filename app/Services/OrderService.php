@@ -30,8 +30,9 @@ class OrderService
         $this->checkLimitOrders($request->input('userId'));
 
         $data = [
-            'user_id' => $request->input('userId'),
-            'user_counter_id' => $request->user()->id,
+            'enterprise_id' => $request->input('enterpriseId'),
+            'enterprise_counter_id' => $request->user()->enterprise_id,
+            'description' => $request->input('description'),
         ];
 
         return $this->repository->create($data);

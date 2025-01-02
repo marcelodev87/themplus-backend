@@ -10,15 +10,19 @@ class OrderRule
     public function create($request)
     {
         $rules = [
-            'userId' => 'required|string|min:1|max:2000|exists:users,id',
+            'enterpriseId' => 'required|string|min:1|max:2000|exists:enterprises,id',
+            'description' => 'string|min:1|max:5000',
         ];
 
         $messages = [
-            'userId.required' => 'A descrição da alerta é obrigatório',
-            'userId.string' => 'A descrição da alerta deve ser uma string',
-            'userId.min' => 'A descrição da alerta não pode ter menos de 1 caracteres',
-            'userId.max' => 'A descrição da alerta não pode ter mais de 2000 caracteres',
-            'id.exists' => 'O ID do usuário não existe',
+            'enterpriseId.required' => 'A descrição da solicitação é obrigatório',
+            'enterpriseId.string' => 'A descrição da solicitação deve ser uma string',
+            'enterpriseId.min' => 'A descrição da solicitação não pode ter menos de 1 caracteres',
+            'enterpriseId.max' => 'A descrição da solicitação não pode ter mais de 2000 caracteres',
+            'enterpriseId.exists' => 'O ID da orgqanização não existe',
+            'description.string' => 'A descrição da solicitação deve ser uma string',
+            'description.min' => 'A descrição da solicitação não pode ter menos de 1 caracteres',
+            'description.max' => 'A descrição da solicitação não pode ter mais de 5000 caracteres',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

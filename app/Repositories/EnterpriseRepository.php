@@ -25,6 +25,20 @@ class EnterpriseRepository
             ->get();
     }
 
+    public function searchEnterprise($enterpriseId, $text)
+    {
+        return $this->model->where('id', '!=', $enterpriseId)
+            ->whereNull('counter_enterprise_id')
+            ->where(function ($query) use ($text) {
+                $query->where('cpf', 'like', "%{$text}%")
+                    ->orWhere('cnpj', 'like', "%{$text}%")
+                    ->orWhere('name', 'like', "%{$text}%")
+                    ->orWhere('email', 'like', "%{$text}%");
+            })
+            ->select('id', 'name', 'email', 'cpf', 'cnpj')
+            ->get();
+    }
+
     public function findById($id)
     {
         return $this->model->find($id);
