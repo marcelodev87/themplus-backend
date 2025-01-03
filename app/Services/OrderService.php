@@ -27,7 +27,8 @@ class OrderService
     public function create($request)
     {
         $this->rule->create($request);
-        $this->checkLimitOrders($request->input('userId'));
+        $this->checkLimitOrders($request->input('enterpriseId'));
+        $this->checkExists($request->input('enterpriseId'), $request->user()->enterprise_id);
 
         $data = [
             'enterprise_id' => $request->input('enterpriseId'),
@@ -36,6 +37,13 @@ class OrderService
         ];
 
         return $this->repository->create($data);
+    }
+
+    public function update($request)
+    {
+        $this->rule->update($request);
+
+        return $this->repository->update($request->input('id'), ['description' => $request->input('description')]);
     }
 
     public function bindCounter($request)
@@ -55,12 +63,21 @@ class OrderService
         return $this->repository->update($request->input('id'), $data);
     }
 
-    public function checkLimitOrders($userId)
+    public function checkLimitOrders($enterpriseId)
     {
-        $results = $this->repository->getAllByUser($userId);
+        $results = $this->repository->getAllByUser($enterpriseId);
 
-        if (count($results) >= 5) {
-            throw new \Exception('Não foi possível finalizar a solicitação, pois o usuário solicitado está com a caixa de solicitações cheia');
+        if (count($results) >= 10) {
+            throw new \Exception('Não foi possível finalizar a solicitação, pois a organização solicitada está com a caixa de solicitações cheia');
+        }
+    }
+
+    public function checkExists($enterpriseId, $enterpriseCounterId)
+    {
+        $results = $this->repository->checkExistOrders($enterpriseId, $enterpriseCounterId);
+
+        if (count($results) >= 1) {
+            throw new \Exception('Já existe uma solicitação para esta organização');
         }
     }
 }

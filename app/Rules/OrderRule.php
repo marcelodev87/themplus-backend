@@ -11,7 +11,7 @@ class OrderRule
     {
         $rules = [
             'enterpriseId' => 'required|string|min:1|max:2000|exists:enterprises,id',
-            'description' => 'string|min:1|max:5000',
+            'description' => 'nullable|string|min:1|max:5000',
         ];
 
         $messages = [
@@ -19,7 +19,7 @@ class OrderRule
             'enterpriseId.string' => 'A descrição da solicitação deve ser uma string',
             'enterpriseId.min' => 'A descrição da solicitação não pode ter menos de 1 caracteres',
             'enterpriseId.max' => 'A descrição da solicitação não pode ter mais de 2000 caracteres',
-            'enterpriseId.exists' => 'O ID da orgqanização não existe',
+            'enterpriseId.exists' => 'O ID da organização não existe',
             'description.string' => 'A descrição da solicitação deve ser uma string',
             'description.min' => 'A descrição da solicitação não pode ter menos de 1 caracteres',
             'description.max' => 'A descrição da solicitação não pode ter mais de 5000 caracteres',
@@ -35,6 +35,33 @@ class OrderRule
     }
 
     public function update($request)
+    {
+        $rules = [
+            'id' => 'required|string|min:1|max:2000|exists:orders,id',
+            'description' => 'nullable|string|min:1|max:5000',
+        ];
+
+        $messages = [
+            'id.required' => 'A descrição da solicitação é obrigatório',
+            'id.string' => 'A descrição da solicitação deve ser uma string',
+            'id.min' => 'A descrição da solicitação não pode ter menos de 1 caracteres',
+            'id.max' => 'A descrição da solicitação não pode ter mais de 2000 caracteres',
+            'id.exists' => 'O ID da solicitação não existe',
+            'description.string' => 'A descrição da solicitação deve ser uma string',
+            'description.min' => 'A descrição da solicitação não pode ter menos de 1 caracteres',
+            'description.max' => 'A descrição da solicitação não pode ter mais de 5000 caracteres',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
+
+    public function actionClient($request)
     {
         $rules = [
             'id' => 'required|string|exists:orders,id',
@@ -61,7 +88,7 @@ class OrderRule
     public function delete($id)
     {
         $rules = [
-            'id' => 'required|string|exists:alerts,id',
+            'id' => 'required|string|exists:orders,id',
         ];
 
         $messages = [

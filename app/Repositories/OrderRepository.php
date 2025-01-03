@@ -18,14 +18,25 @@ class OrderRepository
         return $this->model->all();
     }
 
-    public function getAllByUser($userId)
+    public function getAllByUser($enterpriseId)
     {
-        return $this->model->where('user_id', $userId)->get();
+        return $this->model->with(['counter:id,name,email,cpf,cnpj'])
+            ->where('enterprise_id', $enterpriseId)
+            ->get();
     }
 
-    public function getAllByCounter($counterId)
+    public function checkExistOrders($enterpriseId, $enterpriseCounterId)
     {
-        return $this->model->where('user_counter_id', $counterId)->get();
+        return $this->model->where('enterprise_id', $enterpriseId)
+            ->where('enterprise_counter_id', $enterpriseCounterId)
+            ->get();
+    }
+
+    public function getAllByCounter($enterpriseCounterId)
+    {
+        return $this->model->with(['enterprise:id,name,email,cpf,cnpj'])
+            ->where('enterprise_counter_id', $enterpriseCounterId)
+            ->get();
     }
 
     public function findById($id)

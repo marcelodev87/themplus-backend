@@ -29,7 +29,7 @@ class OrderController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $orders = $this->repository->getAllByCounter($request->user()->id);
+            $orders = $this->repository->getAllByCounter($request->user()->enterprise_id);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
@@ -44,7 +44,7 @@ class OrderController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
-            $orders = $this->repository->getAllByUser($request->user()->id);
+            $orders = $this->repository->getAllByUser($request->user()->enterprise_id);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
@@ -64,7 +64,7 @@ class OrderController
             if ($order) {
                 DB::commit();
 
-                $orders = $this->repository->getAllByCounter($request->user()->id);
+                $orders = $this->repository->getAllByCounter($request->user()->enterprise_id);
 
                 return response()->json(['orders' => $orders, 'message' => 'Solicitação enviada com sucesso'], 201);
             }
@@ -84,31 +84,21 @@ class OrderController
         try {
             DB::beginTransaction();
 
-            $orderData = $this->repository->findById($request->input('id'));
             $order = $this->service->update($request);
 
-            $register = RegisterHelper::create(
-                $request->user()->id,
-                $request->user()->enterprise_id,
-                'updated',
-                'category',
-                $categoryData->name.'|'.$categoryData->type
-            );
-
-            if ($category && $register) {
+            if ($order) {
                 DB::commit();
 
-                $enterpriseId = $request->user()->enterprise_id;
-                $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+                $orders = $this->repository->getAllByCounter($request->user()->enterprise_id);
 
-                return response()->json(['categories' => $categories, 'message' => 'Categoria atualizada com sucesso'], 200);
+                return response()->json(['orders' => $orders, 'message' => 'Solicitação atualizada com sucesso'], 200);
             }
 
-            throw new \Exception('Falha ao atualizar categoria');
+            throw new \Exception('Falha ao atualizar solicitação');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar categoria: '.$e->getMessage());
+            Log::error('Erro ao atualizar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
