@@ -30,6 +30,21 @@ class OrderController
         $this->enterpriseRepository = $enterpriseRepository;
     }
 
+    public function indexBonds(Request $request)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $bonds = $this->enterpriseRepository->getBonds($request->user()->enterprise_id);
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
+
+            return response()->json(['bonds' => $bonds, 'filled_data' => $filledData], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas os vínculos: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function indexViewCounter(Request $request)
     {
         try {

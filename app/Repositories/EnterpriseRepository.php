@@ -25,6 +25,12 @@ class EnterpriseRepository
             ->get();
     }
 
+    public function getBonds($enterpriseId)
+    {
+        return $this->model->select('id', 'name', 'cnpj', 'cpf', 'email', 'phone')
+            ->where('counter_enterprise_id', $enterpriseId)->get();
+    }
+
     public function searchEnterprise($enterpriseId, $text)
     {
         return $this->model->where('id', '!=', $enterpriseId)

@@ -97,6 +97,7 @@ Route::prefix('account')->middleware('auth:sanctum')->group(function () {
 Route::prefix('order')->middleware('auth:sanctum')->group(function () {
     Route::get('/client', [OrderController::class, 'indexViewClient']);
     Route::get('/counter', [OrderController::class, 'indexViewCounter']);
+    Route::get('/bonds', [OrderController::class, 'indexBonds']);
     Route::post('/sendRequest', [OrderController::class, 'store']);
     Route::post('/responseClient', [OrderController::class, 'actionClient']);
     Route::put('/', [OrderController::class, 'update']);
