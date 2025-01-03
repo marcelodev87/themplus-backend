@@ -81,6 +81,19 @@ class EnterpriseController
         }
     }
 
+    public function filter($id)
+    {
+        try {
+            $enterprise = $this->repository->findById($id);
+
+            return response()->json(['counter' => $enterprise], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar dados da organização de contabilidade: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function search(Request $request, $text)
     {
         try {
@@ -120,6 +133,36 @@ class EnterpriseController
             DB::rollBack();
 
             Log::error('Erro ao atualizar organização: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function unlink(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $enterprise = $this->repository->update($request->user()->enterprise_id, ['counter_enterprise_id' => null]);
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'unlink',
+                'order',
+                "{$request->user()->enterprise->name}"
+            );
+
+            if ($enterprise && $register) {
+                DB::commit();
+
+                return response()->json(['message' => 'Organização de contabilidade removida com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao remover organização de contabilidade');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao remover organização de contabilidade: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

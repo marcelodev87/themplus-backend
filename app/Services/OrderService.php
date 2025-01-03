@@ -48,19 +48,12 @@ class OrderService
 
     public function bindCounter($request)
     {
-        $this->rule->update($request);
         if ($request->input('status') === 'accepted') {
             $order = $this->repository->findById($request->input('id'));
-            $this->repository->delete($request->input('id'));
-            $this->enterpriseRepository->update($request->user()->enterprise_id, ['enterprise_counter_id' => $order->user_counter_id]);
-        } else {
-            $this->enterpriseRepository->update($request->user()->enterprise_id, ['enterprise_counter_id' => null]);
+            $this->enterpriseRepository->update($request->user()->enterprise_id, ['counter_enterprise_id' => $order->enterprise_counter_id]);
         }
+        $this->repository->delete($request->input('id'));
 
-        $data = $request->only(['name']);
-        $data['parent_id'] = $request->input('parentId') ?? null;
-
-        return $this->repository->update($request->input('id'), $data);
     }
 
     public function checkLimitOrders($enterpriseId)

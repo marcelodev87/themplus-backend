@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
+use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
 use App\Services\FinancialService;
 use Illuminate\Http\Request;
@@ -16,10 +17,13 @@ class FinancialController
 
     private $repository;
 
-    public function __construct(FinancialService $service, FinancialRepository $repository)
+    private $enterpriseRepository;
+
+    public function __construct(FinancialService $service, FinancialRepository $repository, EnterpriseRepository $enterpriseRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
+        $this->enterpriseRepository = $enterpriseRepository;
     }
 
     public function index(Request $request)
@@ -28,8 +32,9 @@ class FinancialController
             $enterpriseId = $request->user()->enterprise_id;
             $deliveries = $this->repository->mountDeliveries($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $enterprise = $this->enterpriseRepository->findById($request->user()->enterprise_id);
 
-            return response()->json(['deliveries' => $deliveries, 'filled_data' => $filledData], 200);
+            return response()->json(['deliveries' => $deliveries, 'counter' => $enterprise->counter_enterprise_id, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as entregas: '.$e->getMessage());
 

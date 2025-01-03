@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
+use App\Repositories\EnterpriseRepository;
 use App\Repositories\OrderRepository;
 use App\Rules\OrderRule;
 use App\Services\OrderService;
@@ -18,11 +20,14 @@ class OrderController
 
     private $service;
 
-    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service)
+    private $enterpriseRepository;
+
+    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service, EnterpriseRepository $enterpriseRepository)
     {
         $this->repository = $repository;
         $this->rule = $rule;
         $this->service = $service;
+        $this->enterpriseRepository = $enterpriseRepository;
     }
 
     public function indexViewCounter(Request $request)
@@ -109,31 +114,33 @@ class OrderController
         try {
             DB::beginTransaction();
 
-            $orderData = $this->repository->findById($request->input('id'));
-            $order = $this->service->update($request);
+            $this->rule->actionClient($request);
+            $orderData = $this->repository->findByIdWithCounter($request->input('id'));
+            $this->service->bindCounter($request);
 
             $register = RegisterHelper::create(
                 $request->user()->id,
                 $request->user()->enterprise_id,
-                'updated',
-                'category',
-                $categoryData->name.'|'.$categoryData->type
+                'invite',
+                'order',
+                $request->input('status').'|'.$orderData->counter->name
             );
 
-            if ($category && $register) {
+            if ($register) {
                 DB::commit();
 
-                $enterpriseId = $request->user()->enterprise_id;
-                $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+                $orders = $this->repository->getAllByUser($request->user()->enterprise_id);
+                $enteprise = $this->enterpriseRepository->findById($request->user()->enterprise_id);
+                $message = $request->input('status') === 'accepted' ? 'Solicitação aceita com sucesso' : 'Solicitação rejeitada com sucesso';
 
-                return response()->json(['categories' => $categories, 'message' => 'Categoria atualizada com sucesso'], 200);
+                return response()->json(['orders' => $orders, 'counter' => $enteprise->counter_enterprise_id, 'message' => $message], 200);
             }
 
-            throw new \Exception('Falha ao atualizar categoria');
+            throw new \Exception('Falha ao Aceitar/Rejeitar solicitação');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar categoria: '.$e->getMessage());
+            Log::error('Erro ao Aceitar/Rejeitar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

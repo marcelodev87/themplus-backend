@@ -44,6 +44,11 @@ class OrderRepository
         return $this->model->find($id);
     }
 
+    public function findByIdWithCounter($id)
+    {
+        return $this->model->with(['counter:id,name,email,cpf,cnpj'])->find($id);
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);
