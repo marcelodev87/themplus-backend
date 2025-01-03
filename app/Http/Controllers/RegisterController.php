@@ -33,7 +33,7 @@ class RegisterController
                 'register' => $this->treatTextRegister($register),
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
+            Log::error('Erro ao buscar todas os registros: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -51,7 +51,7 @@ class RegisterController
                 'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os registros: '.$e->getMessage());
+            Log::error('Erro ao buscar todas os registros: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -306,6 +306,29 @@ class RegisterController
                     ];
                 }
             }
+            if ($register->target === 'order') {
+                if ($register->action === 'invite') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} aceitou/rejeitou uma solicitação de vínculo com organização de contabilidade",
+                    ];
+                }
+                if ($register->action === 'unlink') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} desvinculou a própria organização de uma organização de contabilidade.",
+                    ];
+                }
+            }
+
         }
 
         return $dataProcessed;
@@ -523,6 +546,18 @@ class RegisterController
                 $monthYear = $parts[0];
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} finalizou um encerramento do período {$monthYear}. Momento de registro: {$register->date_register}";
+            }
+        }
+        if ($register->target === 'order') {
+            if ($register->action === 'invite') {
+                $parts = explode('|', $register->identification);
+                $actionBond = $parts[0] === 'accepted' ? 'aceitou' : 'rejeitou';
+                $counter = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} {$actionBond} a solicitação da organização de contabilidade nomeada de  {$counter}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'unlink') {
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} desvinculou-se da organização de contabilidade nomeada de{$register->identification}. Momento de registro: {$register->date_register}";
             }
         }
 
