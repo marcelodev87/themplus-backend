@@ -29,6 +29,7 @@ class EnterpriseRepository
     {
         return $this->model->where('id', '!=', $enterpriseId)
             ->whereNull('counter_enterprise_id')
+            ->where('position', 'client')
             ->where(function ($query) use ($text) {
                 $query->where('cpf', 'like', "%{$text}%")
                     ->orWhere('cnpj', 'like', "%{$text}%")
