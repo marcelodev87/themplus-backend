@@ -143,7 +143,7 @@ class EnterpriseController
         try {
             DB::beginTransaction();
 
-            $enterprise = $this->repository->update($request->user()->enterprise_id, ['counter_enterprise_id' => null]);
+            $enterprise = $this->service->unlink($request);
             $register = RegisterHelper::create(
                 $request->user()->id,
                 $request->user()->enterprise_id,

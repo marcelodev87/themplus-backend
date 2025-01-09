@@ -35,6 +35,7 @@ class EnterpriseRepository
     {
         return $this->model->where('id', '!=', $enterpriseId)
             ->whereNull('counter_enterprise_id')
+            ->whereNull('created_by')
             ->where('position', 'client')
             ->where(function ($query) use ($text) {
                 $query->where('cpf', 'like', "%{$text}%")

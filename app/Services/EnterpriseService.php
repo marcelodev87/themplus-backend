@@ -35,12 +35,11 @@ class EnterpriseService
         $this->rule->createOffice($request);
 
         $subscription = $this->subscriptionRepository->findByName('free');
+        $entepriseActual = $this->repository->findById($request->user()->enterprise_id);
 
         $data = [
             'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'cnpj' => $request->input('cnpj'),
-            'cpf' => $request->input('cpf'),
+            'email' => $request->input('email') ?? $entepriseActual->email,
             'cep' => $request->input('cep'),
             'state' => $request->input('state'),
             'city' => $request->input('city'),
@@ -48,10 +47,16 @@ class EnterpriseService
             'address' => $request->input('address'),
             'number_address' => $request->input('numberAddress'),
             'complement' => $request->input('complement'),
-            'phone' => $request->input('phone'),
+            'phone' => $request->input('phone') ?? $entepriseActual->phone,
             'created_by' => $request->user()->enterprise_id,
             'subscription_id' => $subscription->id,
+            'counter_enterprise_id' => $entepriseActual->counter_enterprise_id,
         ];
+
+        if ($request->input('cnpj') === null && $request->input('cpf') === null) {
+            $data['cpf'] = $entepriseActual->cpf !== null ? $entepriseActual->cpf : null;
+            $data['cnpj'] = $entepriseActual->cnpj !== null ? $entepriseActual->cnpj : null;
+        }
 
         return $this->repository->createOffice($data);
     }
@@ -78,5 +83,17 @@ class EnterpriseService
         ];
 
         return $this->repository->update($request->input('id'), $data);
+    }
+
+    public function unlink($request)
+    {
+        $enterprise = $this->repository->update($request->user()->enterprise_id, ['counter_enterprise_id' => null]);
+        $offices = $this->repository->getAllOfficesByEnterprise($request->user()->enterprise_id);
+
+        foreach ($offices as $office) {
+            $office->update(['counter_enterprise_id' => null]);
+        }
+
+        return $enterprise;
     }
 }

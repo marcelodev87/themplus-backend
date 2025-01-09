@@ -50,7 +50,13 @@ class OrderService
     {
         if ($request->input('status') === 'accepted') {
             $order = $this->repository->findById($request->input('id'));
+            $offices = $this->enterpriseRepository->getAllOfficesByEnterprise($request->user()->enterprise_id);
+
             $this->enterpriseRepository->update($request->user()->enterprise_id, ['counter_enterprise_id' => $order->enterprise_counter_id]);
+
+            foreach ($offices as $office) {
+                $office->update(['counter_enterprise_id' => $order->enterprise_counter_id]);
+            }
         }
         $this->repository->delete($request->input('id'));
 
