@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\FinancialMovement;
-use App\Repositories\MovementRepository;
 
 class FinancialRepository
 {

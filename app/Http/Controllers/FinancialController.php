@@ -38,10 +38,10 @@ class FinancialController
                 'deliveries' => $deliveries,
                 'counter' => $enterprise->counter_enterprise_id,
                 'filled_data' => $filledData,
-                'is_headquarters' => $enterprise->created_by === null ? true : false
+                'is_headquarters' => $enterprise->created_by === null ? true : false,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as entregas: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as entregas: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -74,7 +74,7 @@ class FinancialController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao realizar entrega: ' . $e->getMessage());
+            Log::error('Erro ao realizar entrega: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

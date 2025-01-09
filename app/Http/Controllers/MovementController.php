@@ -47,11 +47,18 @@ class MovementController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
+
             $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $date);
             $months_years = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $delivered = $this->repository->checkDelivered($enterpriseId, $date);
 
-            return response()->json(['movements' => $movements, 'filled_data' => $filledData, 'months_years' => $months_years], 200);
+            return response()->json([
+                'movements' => $movements,
+                'filled_data' => $filledData,
+                'months_years' => $months_years,
+                'delivered' => $delivered,
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as movimentações: '.$e->getMessage());
 
@@ -62,10 +69,17 @@ class MovementController
     public function filterMovements(Request $request, $date)
     {
         try {
+            $enterpriseId = $request->user()->enterprise_id;
+
             $movements = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
             $months_years = $this->repository->getMonthYears($request->user()->enterprise_id);
+            $delivered = $this->repository->checkDelivered($enterpriseId, $date);
 
-            return response()->json(['movements' => $movements, 'months_years' => $months_years], 200);
+            return response()->json([
+                'movements' => $movements,
+                'months_years' => $months_years,
+                'delivered' => $delivered,
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar movimentações com base nos filtros: '.$e->getMessage());
 
@@ -132,8 +146,14 @@ class MovementController
 
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
+                $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
 
-                return response()->json(['movements' => $movements, 'message' => 'Inserção de movimentações em lote realizada com sucesso', 'months_years' => $months_years], 201);
+                return response()->json([
+                    'movements' => $movements,
+                    'message' => 'Inserção de movimentações em lote realizada com sucesso',
+                    'months_years' => $months_years,
+                    'delivered' => $delivered,
+                ], 201);
             }
 
             throw new \Exception('Falha ao criar movimentação');
@@ -195,8 +215,14 @@ class MovementController
 
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
+                $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
 
-                return response()->json(['movements' => $movements, 'message' => 'Movimentação cadastrada com sucesso', 'months_years' => $months_years], 201);
+                return response()->json([
+                    'movements' => $movements,
+                    'message' => 'Movimentação cadastrada com sucesso',
+                    'months_years' => $months_years,
+                    'delivered' => $delivered,
+                ], 201);
             }
 
             throw new \Exception('Falha ao criar movimentação');
@@ -233,8 +259,14 @@ class MovementController
 
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
+                $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
 
-                return response()->json(['movements' => $movements, 'message' => 'Movimentação atualizada com sucesso', 'months_years' => $months_years], 200);
+                return response()->json([
+                    'movements' => $movements,
+                    'message' => 'Movimentação atualizada com sucesso',
+                    'months_years' => $months_years,
+                    'delivered' => $delivered,
+                ], 200);
             }
 
             throw new \Exception('Falha ao atualizar movimentação');

@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Movement;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MovementRepository
 {
@@ -19,6 +20,19 @@ class MovementRepository
         return $this->model->all();
     }
 
+    public function checkDelivered($enterpriseId, $date)
+    {
+        [$month, $year] = explode('-', $date);
+
+        $exists = DB::table('financial_movements')
+            ->where('enterprise_id', $enterpriseId)
+            ->where('year', $year)
+            ->where('month', $month)
+            ->exists();
+
+        return $exists;
+    }
+
     public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date)
     {
         $query = $this->model->with(['account', 'category'])
@@ -26,7 +40,7 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
@@ -51,11 +65,11 @@ class MovementRepository
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
-        if (!is_null($out) && $out) {
+        if (! is_null($out) && $out) {
             $query->where('type', 'saída');
         }
 
-        if (!is_null($entry) && $entry) {
+        if (! is_null($entry) && $entry) {
             $query->where('type', 'entrada');
         }
 
@@ -81,7 +95,7 @@ class MovementRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -153,10 +167,10 @@ class MovementRepository
             foreach ($monthsYears as $monthYear) {
                 [$year, $month] = explode('-', $monthYear);
 
-                $financialRecords = \DB::table('financial_movements')
+                $financialRecords = DB::table('financial_movements')
                     ->where('enterprise_id', $enterpriseId)
-                    ->whereYear('date_delivery', $year)
-                    ->whereMonth('date_delivery', $month)
+                    ->where('year', $year)
+                    ->where('month', $month)
                     ->get();
 
                 $status = false;
@@ -177,11 +191,11 @@ class MovementRepository
             return $resultArray;
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
+            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
+
             return [];
         }
     }
-
 
     public function getMonthYears($enterpriseId)
     {
