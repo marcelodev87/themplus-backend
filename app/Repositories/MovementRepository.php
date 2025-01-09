@@ -26,7 +26,7 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
@@ -51,11 +51,11 @@ class MovementRepository
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
-        if (! is_null($out) && $out) {
+        if (!is_null($out) && $out) {
             $query->where('type', 'saída');
         }
 
-        if (! is_null($entry) && $entry) {
+        if (!is_null($entry) && $entry) {
             $query->where('type', 'entrada');
         }
 
@@ -81,7 +81,7 @@ class MovementRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -134,45 +134,100 @@ class MovementRepository
         try {
             $monthsYears = $this->model
                 ->where('enterprise_id', $enterpriseId)
-                ->selectRaw("DATE_FORMAT(date_movement, '%Y-%m') as year_month")
-                ->groupBy('year_month')
-                ->orderBy('year_month', 'ASC')
-                ->pluck('year_month')
+                ->whereNotNull('date_movement')
+                ->get(['date_movement'])
+                ->pluck('date_movement')
+                ->map(function ($date) {
+                    return Carbon::parse($date)->format('Y-m');
+                })
+                ->unique()
+                ->sort()
+                ->values()
                 ->toArray();
 
             if (empty($monthsYears)) {
                 return [];
             }
+            $resultArray = [];
 
-            $financialMovements = \DB::table('financial_movements')
-                ->where('enterprise_id', $enterpriseId)
-                ->whereIn(
-                    \DB::raw("DATE_FORMAT(date_movement, '%Y-%m')"),
-                    $monthsYears
-                )
-                ->get()
-                ->keyBy(fn ($fm) => date('Y-m', strtotime($fm->date_movement)));
+            foreach ($monthsYears as $monthYear) {
+                list($year, $month) = explode('-', $monthYear);
 
-            $results = array_map(function ($yearMonth) use ($financialMovements) {
-                [$year, $month] = explode('-', $yearMonth);
-                $key = "$year-$month";
-                $financialMovement = $financialMovements[$key] ?? null;
+                $financialRecords = \DB::table('financial_movements')
+                    ->where('enterprise_id', $enterpriseId)
+                    ->whereYear('date_delivery', $year)
+                    ->whereMonth('date_delivery', $month)
+                    ->get();
 
-                return [
-                    'month_year' => (int) $month.'/'.$year,
-                    'status' => (bool) $financialMovement,
-                    'date_delivery' => $financialMovement->date_delivery ?? null,
+                $status = false;
+                $dateDelivery = null;
+
+                if ($financialRecords->isNotEmpty()) {
+                    $status = true;
+                    $dateDelivery = $financialRecords->first()->date_delivery;
+                }
+
+                $resultArray[] = [
+                    'month_year' => $monthYear,
+                    'status' => $status,
+                    'date_delivery' => $dateDelivery,
                 ];
-            }, $monthsYears);
+            }
 
-            return $results;
+            return $resultArray;
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
-
+            \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
             return [];
         }
     }
+
+
+    // public function getDeliveries($enterpriseId)
+    // {
+    //     try {
+    //         $monthsYears = $this->model->where('enterprise_id', $enterpriseId)
+    //             ->whereNotNull('date_movement') // Opcional: filtro para evitar nulos
+    //             ->selectRaw("DISTINCT DATE_FORMAT(date_movement, '%Y-%m') as year_month")
+    //             ->orderBy(\DB::raw("DATE_FORMAT(date_movement, '%Y-%m')"), 'ASC') // Usar DB::raw para ordenação com a mesma função
+    //             ->pluck('year_month')
+    //             ->toArray();
+
+
+
+    //         if (empty($monthsYears)) {
+    //             return [];
+    //         }
+
+    //         $financialMovements = \DB::table('financial_movements')
+    //             ->where('enterprise_id', $enterpriseId)
+    //             ->whereIn(
+    //                 \DB::raw("DATE_FORMAT(date_movement, '%Y-%m')"),
+    //                 $monthsYears
+    //             )
+    //             ->get()
+    //             ->keyBy(fn($fm) => date('Y-m', strtotime($fm->date_movement)));
+
+    //         $results = array_map(function ($yearMonth) use ($financialMovements) {
+    //             [$year, $month] = explode('-', $yearMonth);
+    //             $key = "$year-$month";
+    //             $financialMovement = $financialMovements[$key] ?? null;
+
+    //             return [
+    //                 'month_year' => (int) $month . '/' . $year,
+    //                 'status' => (bool) $financialMovement,
+    //                 'date_delivery' => $financialMovement->date_delivery ?? null,
+    //             ];
+    //         }, $monthsYears);
+
+    //         return $results;
+
+    //     } catch (\Exception $e) {
+    //         \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
+
+    //         return [];
+    //     }
+    // }
 
     public function getMonthYears($enterpriseId)
     {
