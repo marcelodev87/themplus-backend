@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\RegisterHelper;
 use App\Repositories\FinancialRepository;
+use App\Repositories\MovementRepository;
 use App\Rules\ReportRule;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
@@ -18,11 +19,14 @@ class ReportController
 
     private $financialRepository;
 
-    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule)
+    private $movementRepository;
+
+    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule, MovementRepository $movementRepository)
     {
         $this->service = $service;
-        $this->financialRepository = $financialRepository;
         $this->rule = $rule;
+        $this->financialRepository = $financialRepository;
+        $this->movementRepository = $movementRepository;
     }
 
     public function index(Request $request, $id)
@@ -36,6 +40,26 @@ class ReportController
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar relatório do cliente: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function details($id)
+    {
+        try {
+            $this->rule->details($id);
+
+            $financial = $this->financialRepository->findById($id);
+            $month = str_pad($financial->month, 2, '0', STR_PAD_LEFT);
+            $data = "{$month}-{$financial->year}";
+            $movements = $this->movementRepository->getAllByEnterpriseWithRelationsByDate($financial->enterprise_id, $data);
+
+            return response()->json([
+                'movements' => $movements,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar detalhes do relatório do cliente: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
