@@ -42,7 +42,7 @@ class FinancialRepository
 
     public function findById($id)
     {
-        return $this->model->find($id);
+        return $this->model->with('enterprise')->find($id);
     }
 
     public function create(array $data)

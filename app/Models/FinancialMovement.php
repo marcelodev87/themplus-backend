@@ -17,5 +17,11 @@ class FinancialMovement extends Model
         'month',
         'year',
         'enterprise_id',
+        'check_counter',
     ];
+
+    public function enterprise()
+    {
+        return $this->belongsTo(Enterprise::class, 'enterprise_id');
+    }
 }

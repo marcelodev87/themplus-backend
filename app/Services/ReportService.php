@@ -47,4 +47,11 @@ class ReportService
             throw new \Exception('Sua organização não tem acesso aos dados desse cliente');
         }
     }
+
+    public function finalize($request, $id)
+    {
+        $this->rule->index($id);
+
+        return $this->financialRepository->update($id, ['check_counter' => $request->user()->enterprise_id]);
+    }
 }

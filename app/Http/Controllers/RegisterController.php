@@ -305,6 +305,16 @@ class RegisterController
                         'text' => "O(A) usuário(a) {$register->user->name} entregou um relatório",
                     ];
                 }
+                if ($register->action === 'finalized') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} finalizou a entrega de um relatório",
+                    ];
+                }
             }
             if ($register->target === 'order') {
                 if ($register->action === 'invite') {
@@ -542,6 +552,12 @@ class RegisterController
         }
         if ($register->target === 'report') {
             if ($register->action === 'delivered') {
+                $parts = explode('|', $register->identification);
+                $monthYear = $parts[0];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} finalizou um encerramento do período {$monthYear}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'finalized') {
                 $parts = explode('|', $register->identification);
                 $monthYear = $parts[0];
 

@@ -112,6 +112,7 @@ Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
 });
 Route::prefix('report')->middleware('auth:sanctum')->group(function () {
     Route::get('/{id}', [ReportController::class, 'index']);
+    Route::post('/finalize/{id}', [ReportController::class, 'finalize']);
 });
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
