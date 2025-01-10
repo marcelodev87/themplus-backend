@@ -315,6 +315,26 @@ class RegisterController
                         'text' => "O(A) usuário(a) {$register->user->name} finalizou a entrega de um relatório",
                     ];
                 }
+                if ($register->action === 'undone') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} reverteu relatório para não verificado",
+                    ];
+                }
+                if ($register->action === 'deleted') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} reabriu relatório de movimentações.",
+                    ];
+                }
             }
             if ($register->target === 'order') {
                 if ($register->action === 'invite') {
@@ -338,11 +358,9 @@ class RegisterController
                     ];
                 }
             }
-
         }
 
         return $dataProcessed;
-
     }
 
     public function treatTextRegister($register)
@@ -560,8 +578,23 @@ class RegisterController
             if ($register->action === 'finalized') {
                 $parts = explode('|', $register->identification);
                 $monthYear = $parts[0];
+                $enterpriseName = $parts[1];
 
-                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} finalizou um encerramento do período {$monthYear}. Momento de registro: {$register->date_register}";
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} finalizou um encerramento do período {$monthYear} do cliente {$enterpriseName}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'undone') {
+                $parts = explode('|', $register->identification);
+                $monthYear = $parts[0];
+                $enterpriseName = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} reverteu o relatório do período {$monthYear} para não verificado do cliente {$enterpriseName}. Momento de registro: {$register->date_register}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $monthYear = $parts[0];
+                $enterpriseName = $parts[1];
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} reabriu relatório de movimentações do período {$monthYear} do cliente {$enterpriseName}. Momento de registro: {$register->date_register}";
             }
         }
         if ($register->target === 'order') {

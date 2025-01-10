@@ -112,7 +112,9 @@ Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
 });
 Route::prefix('report')->middleware('auth:sanctum')->group(function () {
     Route::get('/{id}', [ReportController::class, 'index']);
+    Route::post('/undo/{id}', [ReportController::class, 'undo']);
     Route::post('/finalize/{id}', [ReportController::class, 'finalize']);
+    Route::delete('/reopen/{id}', [ReportController::class, 'reopen']);
 });
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {

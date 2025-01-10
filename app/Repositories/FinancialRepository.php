@@ -52,11 +52,11 @@ class FinancialRepository
 
     public function update($id, array $data)
     {
-        $alert = $this->findById($id);
-        if ($alert) {
-            $alert->update($data);
+        $financial = $this->findById($id);
+        if ($financial) {
+            $financial->update($data);
 
-            return $alert;
+            return $financial;
         }
 
         return null;
@@ -64,9 +64,9 @@ class FinancialRepository
 
     public function delete($id)
     {
-        $alert = $this->findById($id);
-        if ($alert) {
-            return $alert->delete();
+        $financial = $this->findById($id);
+        if ($financial) {
+            return $financial->delete();
         }
 
         return false;

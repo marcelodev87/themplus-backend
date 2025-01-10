@@ -14,8 +14,28 @@ class ReportRule
         ];
 
         $messages = [
-            'id.required' => 'O ID da alerta é obrigatória',
-            'id.string' => 'O ID da alerta deve ser uma string',
+            'id.required' => 'O ID do relatório é obrigatório',
+            'id.string' => 'O ID do relatório deve ser uma string',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
+
+    public function reopen($id)
+    {
+        $rules = [
+            'id' => 'required|string',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID do relatório é obrigatório',
+            'id.string' => 'O ID do relatório deve ser uma string',
         ];
 
         $validator = Validator::make(['id' => $id], $rules, $messages);
