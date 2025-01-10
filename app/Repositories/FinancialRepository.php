@@ -34,6 +34,13 @@ class FinancialRepository
             ->orderBy('month', 'asc')
             ->get();
     }
+    public function countNoVerified($enterpriseId)
+    {
+        return $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->whereNull('check_counter')
+            ->count();
+    }
 
     public function mountDeliveries($enterpriseId)
     {

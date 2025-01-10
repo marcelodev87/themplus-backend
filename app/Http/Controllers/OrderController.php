@@ -6,6 +6,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\OrderRepository;
+use App\Repositories\FinancialRepository;
 use App\Rules\OrderRule;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
@@ -21,25 +22,33 @@ class OrderController
     private $service;
 
     private $enterpriseRepository;
+    private $financialRepository;
 
-    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service, EnterpriseRepository $enterpriseRepository)
+    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service, EnterpriseRepository $enterpriseRepository, FinancialRepository $financialRepository)
     {
         $this->repository = $repository;
         $this->rule = $rule;
         $this->service = $service;
         $this->enterpriseRepository = $enterpriseRepository;
+        $this->financialRepository = $financialRepository;
     }
 
     public function indexBonds(Request $request)
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
+
             $bonds = $this->enterpriseRepository->getBonds($request->user()->enterprise_id);
+            $bonds = $bonds->map(function ($bond) {
+                $bond->no_verified = $this->financialRepository->countNoVerified($bond->id);
+                return $bond;
+            });
+
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
             return response()->json(['bonds' => $bonds, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os vínculos: '.$e->getMessage());
+            Log::error('Erro ao buscar todas os vínculos: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -54,7 +63,7 @@ class OrderController
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as solicitações: '.$e->getMessage());
+            Log::error('Erro ao buscar todas as solicitações: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -69,7 +78,7 @@ class OrderController
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as solicitações: '.$e->getMessage());
+            Log::error('Erro ao buscar todas as solicitações: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -93,7 +102,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao enviar solicitação: '.$e->getMessage());
+            Log::error('Erro ao enviar solicitação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -118,7 +127,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar solicitação: '.$e->getMessage());
+            Log::error('Erro ao atualizar solicitação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -138,7 +147,7 @@ class OrderController
                 $request->user()->enterprise_id,
                 'invite',
                 'order',
-                $request->input('status').'|'.$orderData->counter->name
+                $request->input('status') . '|' . $orderData->counter->name
             );
 
             if ($register) {
@@ -155,7 +164,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao Aceitar/Rejeitar solicitação: '.$e->getMessage());
+            Log::error('Erro ao Aceitar/Rejeitar solicitação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -179,7 +188,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar solicitação: '.$e->getMessage());
+            Log::error('Erro ao deletar solicitação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -204,7 +213,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar solicitação: '.$e->getMessage());
+            Log::error('Erro ao deletar solicitação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
