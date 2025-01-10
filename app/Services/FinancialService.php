@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\FinancialRepository;
 use App\Rules\FinancialRule;
+use Carbon\Carbon;
 
 class FinancialService
 {
@@ -23,11 +24,11 @@ class FinancialService
     {
         $this->rule->finalize($request);
 
-        $currentDate = date('Y-m-d');
+        $currentDateTime = Carbon::now('America/Sao_Paulo')->format('Y-m-d H:i:s');
         [$month, $year] = explode('/', $request->input('monthYear'));
 
         $data = [
-            'date_delivery' => $currentDate,
+            'date_delivery' => $currentDateTime,
             'month' => (int) $month,
             'year' => (int) $year,
             'enterprise_id' => $request->user()->enterprise_id,

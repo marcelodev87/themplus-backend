@@ -13,6 +13,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -108,6 +109,9 @@ Route::prefix('order')->middleware('auth:sanctum')->group(function () {
 Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
     Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
+});
+Route::prefix('report')->middleware('auth:sanctum')->group(function () {
+    Route::get('/{id}', [ReportController::class, 'index']);
 });
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {

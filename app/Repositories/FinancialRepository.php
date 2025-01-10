@@ -26,6 +26,15 @@ class FinancialRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getReports($enterpriseId)
+    {
+        return $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->orderBy('year', 'asc')
+            ->orderBy('month', 'asc')
+            ->get();
+    }
+
     public function mountDeliveries($enterpriseId)
     {
         return $this->movementRepository->getDeliveries($enterpriseId);
