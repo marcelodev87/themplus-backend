@@ -184,4 +184,29 @@ class OrderController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function destroyBond(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->rule->deleteBond($id);
+            $order = $this->repository->deleteBond($id);
+
+            if ($order) {
+                DB::commit();
+                $bonds = $this->repository->getAllByCounter($request->user()->enterprise_id);
+
+                return response()->json(['bonds' => $bonds, 'message' => 'Vínculo desfeito com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar solicitação');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar solicitação: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 }

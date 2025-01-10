@@ -8,9 +8,12 @@ class OrderRepository
 {
     protected $model;
 
-    public function __construct(Order $order)
+    protected $enterpriseRepository;
+
+    public function __construct(Order $order, EnterpriseRepository $enterpriseRepository)
     {
         $this->model = $order;
+        $this->enterpriseRepository = $enterpriseRepository;
     }
 
     public function getAll()
@@ -74,5 +77,10 @@ class OrderRepository
         }
 
         return false;
+    }
+
+    public function deleteBond($id)
+    {
+        return $this->enterpriseRepository->deleteBond($id);
     }
 }

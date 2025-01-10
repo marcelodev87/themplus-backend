@@ -102,6 +102,7 @@ Route::prefix('order')->middleware('auth:sanctum')->group(function () {
     Route::post('/responseClient', [OrderController::class, 'actionClient']);
     Route::put('/', [OrderController::class, 'update']);
     Route::delete('/{id}', [OrderController::class, 'destroy']);
+    Route::delete('/bond/{id}', [OrderController::class, 'destroyBond']);
 });
 
 Route::prefix('financial')->middleware('auth:sanctum')->group(function () {

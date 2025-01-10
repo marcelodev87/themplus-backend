@@ -27,7 +27,7 @@ class EnterpriseRepository
 
     public function getBonds($enterpriseId)
     {
-        return $this->model->select('id', 'name', 'cnpj', 'cpf', 'email', 'phone')
+        return $this->model->select('id', 'name', 'cnpj', 'cpf', 'email', 'phone', 'created_by')
             ->where('counter_enterprise_id', $enterpriseId)->get();
     }
 
@@ -77,6 +77,23 @@ class EnterpriseRepository
         $enterprise = $this->findById($id);
         if ($enterprise) {
             $enterprise->update($data);
+
+            return $enterprise;
+        }
+
+        return null;
+    }
+
+    public function deleteBond($id)
+    {
+        $enterprise = $this->findById($id);
+        if ($enterprise) {
+            $enterprise->update(['counter_enterprise_id' => null]);
+
+            $offices = $this->getAllOfficesByEnterprise($id);
+            foreach ($offices as $office) {
+                $office->update(['counter_enterprise_id' => null]);
+            }
 
             return $enterprise;
         }
