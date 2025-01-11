@@ -34,6 +34,7 @@ class FinancialRepository
             ->orderBy('month', 'asc')
             ->get();
     }
+
     public function countNoVerified($enterpriseId)
     {
         return $this->model

@@ -24,6 +24,7 @@ class User extends Authenticatable
         'enterprise_id',
         'department_id',
         'created_by',
+        'view_enterprise_id',
     ];
 
     protected $hidden = [
