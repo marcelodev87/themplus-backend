@@ -85,6 +85,13 @@ class EnterpriseService
         return $this->repository->update($request->input('id'), $data);
     }
 
+    public function updateViewEnterprise($request)
+    {
+        $data = ['view_enterprise_id' => $request->input('viewEnterprise') ?? $request->user()->enterprise_id];
+
+        return $this->userRepository->update($request->user()->id, $data);
+    }
+
     public function unlink($request)
     {
         $enterprise = $this->repository->update($request->user()->enterprise_id, ['counter_enterprise_id' => null]);

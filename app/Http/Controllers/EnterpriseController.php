@@ -42,11 +42,50 @@ class EnterpriseController
         }
     }
 
+    public function showViewEnterprises(Request $request)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $enterprises = $this->repository->getAllViewEnterprises($enterpriseId);
+
+            return response()->json(['enterprises' => $enterprises], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as opções de visualização de organização: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function storeOffice(Request $request)
     {
         try {
             DB::beginTransaction();
             $office = $this->service->createOffice($request);
+
+            if ($office) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $offices = $this->repository->getAllOfficesByEnterprise($enterpriseId);
+
+                return response()->json(['offices' => $offices, 'message' => 'Filial cadastrada com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar filial');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar filial: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function saveViewEnterprise(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $view = $this->service->updateViewEnterprise($request);
 
             if ($office) {
                 DB::commit();

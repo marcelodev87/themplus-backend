@@ -25,6 +25,13 @@ class EnterpriseRepository
             ->get();
     }
 
+    public function getAllViewEnterprises($enterpriseId)
+    {
+        return $this->model->select('id', 'name')
+            ->where('created_by', $enterpriseId)
+            ->get();
+    }
+
     public function getBonds($enterpriseId)
     {
         return $this->model->select('id', 'name', 'cnpj', 'cpf', 'email', 'phone', 'created_by')

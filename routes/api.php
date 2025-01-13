@@ -110,6 +110,7 @@ Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
     Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
 });
+
 Route::prefix('report')->middleware('auth:sanctum')->group(function () {
     Route::get('/{id}', [ReportController::class, 'index']);
     Route::get('/details/{id}', [ReportController::class, 'details']);
@@ -137,8 +138,10 @@ Route::prefix('feedback')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [EnterpriseController::class, 'show']);
+    Route::get('/view', [EnterpriseController::class, 'showViewEnterprises'])->middleware('admin');
     Route::get('/search/{text}', [EnterpriseController::class, 'search']);
     Route::get('/show/{id}', [EnterpriseController::class, 'filter']);
+    Route::post('/view', [EnterpriseController::class, 'saveViewEnterprise'])->middleware('admin');
     // TODO: Veriicar depois a criação da orgnização por rota controller
     // Route::post('/', [EnterpriseController::class, 'store']);
     Route::put('/', [EnterpriseController::class, 'update'])->middleware('admin');
@@ -146,6 +149,7 @@ Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     // TODO: Veriicar depois a logica de exclusão da orgnização
     // Route::delete('/{id}', [EnterpriseController::class, 'destroy']);
 });
+
 Route::prefix('office')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [EnterpriseController::class, 'indexOffices']);
     Route::post('/', [EnterpriseController::class, 'storeOffice'])->middleware('admin');
