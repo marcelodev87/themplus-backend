@@ -46,7 +46,14 @@ class EnterpriseController
     {
         try {
             $enterpriseId = $request->user()->enterprise_id;
+            $viewEnterpriseId = $request->user()->view_enterprise_id;
+
             $enterprises = $this->repository->getAllViewEnterprises($enterpriseId);
+            $enterprises = $enterprises->map(function ($enterprise) use ($viewEnterpriseId) {
+                $enterprise->selected = $enterprise->id === $viewEnterpriseId;
+
+                return $enterprise;
+            });
 
             return response()->json(['enterprises' => $enterprises], 200);
         } catch (\Exception $e) {
@@ -87,13 +94,20 @@ class EnterpriseController
             DB::beginTransaction();
             $view = $this->service->updateViewEnterprise($request);
 
-            if ($office) {
+            if ($view) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
-                $offices = $this->repository->getAllOfficesByEnterprise($enterpriseId);
+                $viewEnterpriseId = $request->user()->view_enterprise_id;
 
-                return response()->json(['offices' => $offices, 'message' => 'Filial cadastrada com sucesso'], 201);
+                $enterprises = $this->repository->getAllViewEnterprises($enterpriseId);
+                $enterprises = $enterprises->map(function ($enterprise) use ($viewEnterpriseId) {
+                    $enterprise->selected = $enterprise->id === $viewEnterpriseId;
+
+                    return $enterprise;
+                });
+
+                return response()->json(['enterprises' => $enterprises, 'message' => 'Visualização de organização alterada com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao criar filial');
