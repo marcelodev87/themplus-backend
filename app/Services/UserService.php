@@ -59,6 +59,8 @@ class UserService
 
         $this->repository->update($user->id, ['view_enterprise_id' => $user->enterprise_id]);
 
+        $user = $this->repository->findByEmail($data['email']);
+
         return $user;
     }
 

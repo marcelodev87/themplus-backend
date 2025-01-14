@@ -6,6 +6,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\OfficeResource;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\UserRepository;
 use App\Rules\EnterpriseRule;
 use App\Services\EnterpriseService;
 use Illuminate\Http\Request;
@@ -18,13 +19,16 @@ class EnterpriseController
 
     private $repository;
 
+    private $userRepository;
+
     private $rule;
 
-    public function __construct(EnterpriseService $service, EnterpriseRepository $repository, EnterpriseRule $rule)
+    public function __construct(EnterpriseService $service, EnterpriseRepository $repository, EnterpriseRule $rule, UserRepository $userRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->rule = $rule;
+        $this->userRepository = $userRepository;
     }
 
     public function indexOffices(Request $request)
@@ -107,7 +111,13 @@ class EnterpriseController
                     return $enterprise;
                 });
 
-                return response()->json(['enterprises' => $enterprises, 'message' => 'Visualização de organização alterada com sucesso'], 200);
+                $user = $this->userRepository->findById($request->user()->id);
+
+                return response()->json([
+                    'enterprises' => $enterprises,
+                    'user' => $user,
+                    'message' => 'Visualização de organização alterada com sucesso',
+                ], 200);
             }
 
             throw new \Exception('Falha ao criar filial');
