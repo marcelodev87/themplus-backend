@@ -29,11 +29,11 @@ class CategoryController
     public function index(Request $request)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
             $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
-            return response()->json(['categories' => $categories,  'filled_data' => $filledData], 200);
+            return response()->json(['categories' => $categories, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
 

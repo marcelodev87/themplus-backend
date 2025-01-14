@@ -46,7 +46,7 @@ class MovementController
     public function index(Request $request, $date)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
 
             $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $date);
             $months_years = $this->repository->getMonthYears($enterpriseId);
@@ -69,10 +69,10 @@ class MovementController
     public function filterMovements(Request $request, $date)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
 
             $movements = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
-            $months_years = $this->repository->getMonthYears($request->user()->enterprise_id);
+            $months_years = $this->repository->getMonthYears($enterpriseId);
             $delivered = $this->repository->checkDelivered($enterpriseId, $date);
 
             return response()->json([
@@ -91,7 +91,7 @@ class MovementController
     {
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
-        $enterpriseId = $request->user()->enterprise_id;
+        $enterpriseId = $request->user()->view_enterprise_id;
 
         $movements = $this->repository->export($out, $entry, $date, $enterpriseId);
 

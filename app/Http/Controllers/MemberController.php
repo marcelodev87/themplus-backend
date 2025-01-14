@@ -36,7 +36,7 @@ class MemberController
     public function index(Request $request)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
             $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
@@ -109,7 +109,7 @@ class MemberController
 
     public function export(Request $request)
     {
-        $enterpriseId = $request->user()->enterprise_id;
+        $enterpriseId = $request->user()->view_enterprise_id;
 
         $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 

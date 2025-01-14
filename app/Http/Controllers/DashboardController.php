@@ -19,7 +19,8 @@ class DashboardController
     public function index(Request $request, $date)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
+
             $dashboard = $this->repository->mountDashboard($enterpriseId, $date);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 

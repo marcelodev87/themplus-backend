@@ -42,7 +42,7 @@ class RegisterController
     public function index(Request $request)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
             $registers = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 

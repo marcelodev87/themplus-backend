@@ -107,7 +107,7 @@ class SchedulingRepository
         $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
 
         $query = $this->model->with(['account', 'category'])
-            ->where('enterprise_id', $request->user()->enterprise_id);
+            ->where('enterprise_id', $request->user()->view_enterprise_id);
 
         if ($out !== null && $out) {
             $query->where('type', 'saída');

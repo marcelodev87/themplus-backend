@@ -29,10 +29,10 @@ class FinancialController
     public function index(Request $request)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
             $deliveries = $this->repository->mountDeliveries($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
-            $enterprise = $this->enterpriseRepository->findById($request->user()->enterprise_id);
+            $enterprise = $this->enterpriseRepository->findById($request->user()->view_enterprise_id);
 
             return response()->json([
                 'deliveries' => $deliveries,

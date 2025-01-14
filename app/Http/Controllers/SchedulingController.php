@@ -45,7 +45,7 @@ class SchedulingController
     public function index(Request $request, $date)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
             $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $date);
             $monthsYears = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
@@ -62,7 +62,7 @@ class SchedulingController
     {
         try {
             $schedulings = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
-            $monthsYears = $this->repository->getMonthYears($request->user()->enterprise_id);
+            $monthsYears = $this->repository->getMonthYears($request->user()->view_enterprise_id);
 
             return response()->json(['schedulings' => $schedulings, 'months_years' => $monthsYears], 200);
         } catch (\Exception $e) {
@@ -77,7 +77,7 @@ class SchedulingController
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
         $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
-        $enterpriseId = $request->user()->enterprise_id;
+        $enterpriseId = $request->user()->view_enterprise_id;
 
         $schedulings = $this->repository->export($out, $entry, $expired, $date, $enterpriseId);
 

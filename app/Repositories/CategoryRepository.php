@@ -32,7 +32,7 @@ class CategoryRepository
         $query = $this->model->with(['alert']);
 
         if (! is_null($createdByMe) && $createdByMe) {
-            $query->where('enterprise_id', $request->user()->enterprise_id);
+            $query->where('enterprise_id', $request->user()->view_enterprise_id);
         }
 
         if (! is_null($defaultSystem) && $defaultSystem) {

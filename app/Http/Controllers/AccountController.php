@@ -26,7 +26,7 @@ class AccountController
     public function index(Request $request)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->user()->view_enterprise_id;
             $accounts = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
@@ -72,7 +72,7 @@ class AccountController
 
     public function export(Request $request)
     {
-        $enterpriseId = $request->user()->enterprise_id;
+        $enterpriseId = $request->user()->view_enterprise_id;
 
         $accounts = $this->repository->getAllByEnterprise($enterpriseId);
 
