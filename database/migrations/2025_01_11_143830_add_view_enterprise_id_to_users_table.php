@@ -1,25 +1,21 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up()
     {
-        DB::statement('
-            CREATE TRIGGER update_view_enterprise_id_on_delete
-            BEFORE DELETE ON enterprises
-            FOR EACH ROW
-            BEGIN
-                UPDATE users
-                SET view_enterprise_id = OLD.id
-                WHERE view_enterprise_id = OLD.id;
-            END;
-        ');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('view_enterprise_id')->nullable()->after('enterprise_id');
+        });
     }
 
     public function down()
     {
-        DB::statement('DROP TRIGGER IF EXISTS update_view_enterprise_id_on_delete');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('view_enterprise_id');
+        });
     }
 };
