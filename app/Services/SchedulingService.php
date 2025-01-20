@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Repositories\FinancialRepository;
 use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
-use App\Repositories\FinancialRepository;
 use Carbon\Carbon;
 
 class SchedulingService

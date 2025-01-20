@@ -232,6 +232,25 @@ class SchedulingRepository
         return null;
     }
 
+    public function deleteByMonthYear($enterpriseId, $month, $year)
+    {
+        $schedulings = $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->whereMonth('date_movement', $month)
+            ->whereYear('date_movement', $year)
+            ->get();
+
+        if ($schedulings) {
+            foreach ($schedulings as $scheduling) {
+                $scheduling->delete();
+            }
+
+            return count($schedulings);
+        }
+
+        return null;
+    }
+
     public function delete($id)
     {
         $scheduling = $this->findById($id);
