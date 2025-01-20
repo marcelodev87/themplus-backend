@@ -47,7 +47,6 @@ class EnterpriseRepository
             ->where(function ($query) use ($text) {
                 $query->where('cpf', 'like', "%{$text}%")
                     ->orWhere('cnpj', 'like', "%{$text}%")
-                    ->orWhere('name', 'like', "%{$text}%")
                     ->orWhere('email', 'like', "%{$text}%");
             })
             ->select('id', 'name', 'email', 'cpf', 'cnpj')
