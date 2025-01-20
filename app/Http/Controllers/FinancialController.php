@@ -6,6 +6,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
+use App\Repositories\OrderRepository;
 use App\Services\FinancialService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +20,14 @@ class FinancialController
 
     private $enterpriseRepository;
 
-    public function __construct(FinancialService $service, FinancialRepository $repository, EnterpriseRepository $enterpriseRepository)
+    private $orderRepository;
+
+    public function __construct(FinancialService $service, FinancialRepository $repository, EnterpriseRepository $enterpriseRepository, OrderRepository $orderRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->enterpriseRepository = $enterpriseRepository;
+        $this->orderRepository = $orderRepository;
     }
 
     public function index(Request $request)
@@ -33,11 +37,13 @@ class FinancialController
             $deliveries = $this->repository->mountDeliveries($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $enterprise = $this->enterpriseRepository->findById($request->user()->view_enterprise_id);
+            $orderCount = $this->orderRepository->getAllByUser($request->user()->enterprise_id)->count();
 
             return response()->json([
                 'deliveries' => $deliveries,
                 'counter' => $enterprise->counter_enterprise_id,
                 'filled_data' => $filledData,
+                'order_count' => $orderCount,
                 'is_headquarters' => $enterprise->created_by === null ? true : false,
             ], 200);
         } catch (\Exception $e) {
