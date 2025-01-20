@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\FinancialRepository;
 use App\Repositories\MovementRepository;
 use App\Rules\MovementRule;
 use Carbon\Carbon;
@@ -18,16 +19,20 @@ class MovementService
 
     protected $categoryRepository;
 
+    protected $financialRepository;
+
     public function __construct(
         MovementRule $rule,
         MovementRepository $repository,
         AccountRepository $accountRepository,
         CategoryRepository $categoryRepository,
+        FinancialRepository $financialRepository,
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
         $this->accountRepository = $accountRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->financialRepository = $financialRepository;
     }
 
     public function create($request)
@@ -44,7 +49,17 @@ class MovementService
 
         $createdMovements = [];
 
+        $financial = $this->financialRepository->getReports($request->user()->enterprise_id);
         for ($i = 0; $i <= $programed; $i++) {
+
+            $month = $initialDate->month;
+            $year = $initialDate->year;
+
+            $exists = $financial->where('month', $month)->where('year', $year)->isNotEmpty();
+            if ($exists) {
+                throw new \Exception('Nos períodos de movimentações mencionados, contém períodos em que os relatórios ja foram entregues');
+            }
+
             $data = [
                 'type' => $request->input('type'),
                 'value' => $request->input('value'),

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
+use App\Repositories\FinancialRepository;
 use Carbon\Carbon;
 
 class SchedulingService
@@ -12,12 +13,16 @@ class SchedulingService
 
     protected $repository;
 
+    protected $financialRepository;
+
     public function __construct(
         SchedulingRule $rule,
         SchedulingRepository $repository,
+        FinancialRepository $financialRepository,
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
+        $this->financialRepository = $financialRepository;
     }
 
     public function create($request)
@@ -34,7 +39,17 @@ class SchedulingService
 
         $createdSchedulings = [];
 
+        $financial = $this->financialRepository->getReports($request->user()->enterprise_id);
+
         for ($i = 0; $i <= $programmed; $i++) {
+
+            $month = $initialDate->month;
+            $year = $initialDate->year;
+
+            $exists = $financial->where('month', $month)->where('year', $year)->isNotEmpty();
+            if ($exists) {
+                throw new \Exception('Nos períodos de agendamentos mencionados, contém períodos em que os relatórios ja foram entregues');
+            }
             $data = [
                 'type' => $request->input('type'),
                 'value' => $request->input('value'),
