@@ -29,6 +29,9 @@ class UserController
         try {
             $user = $this->service->login($request);
             $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
+            $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
+
+            $user->view_enterprise_name = $enterpriseView->name;
 
             $token = $user->createToken('my-app-token')->plainTextToken;
 
@@ -129,6 +132,9 @@ class UserController
             if ($user) {
                 DB::commit();
 
+                $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
+                $user->view_enterprise_name = $enterpriseView->name;
+
                 return response()->json(['user' => $user, 'message' => 'Seus dados foram atualizados com sucesso'], 200);
             }
 
@@ -150,6 +156,9 @@ class UserController
 
             if ($user) {
                 DB::commit();
+
+                $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
+                $user->view_enterprise_name = $enterpriseView->name;
 
                 return response()->json(['user' => $user, 'message' => 'Sua senha foi atualizada com sucesso'], 200);
             }
