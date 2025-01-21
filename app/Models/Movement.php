@@ -21,6 +21,7 @@ class Movement extends Model
         'category_id',
         'account_id',
         'enterprise_id',
+        'observation'
     ];
 
     public function category()

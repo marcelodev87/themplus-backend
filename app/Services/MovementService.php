@@ -172,6 +172,16 @@ class MovementService
 
         return null;
     }
+    public function saveObservations($request)
+    {
+        foreach ($request->movements as $movement) {
+            $observationValue = ($movement['observation'] === null || trim($movement['observation']) === '')
+                ? null
+                : $movement['observation'];
+
+            $this->repository->update($movement['id'], ['observation' => $observationValue]);
+        }
+    }
 
     public function includeScheduling($scheduling)
     {

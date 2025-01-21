@@ -11,6 +11,8 @@ use App\Http\Resources\CategoryResource;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\MovementRepository;
+use App\Repositories\EnterpriseRepository;
+use App\Repositories\FinancialRepository;
 use App\Rules\MovementRule;
 use App\Services\MovementService;
 use Illuminate\Http\Request;
@@ -26,6 +28,8 @@ class MovementController
     private $categoryRepository;
 
     private $accountRepository;
+    private $enterpriseRepository;
+    private $financialRepository;
 
     private $rule;
 
@@ -34,12 +38,16 @@ class MovementController
         MovementRepository $repository,
         AccountRepository $accountRepository,
         CategoryRepository $categoryRepository,
+        EnterpriseRepository $enterpriseRepository,
+        FinancialRepository $financialRepository,
         MovementRule $rule
     ) {
         $this->service = $service;
         $this->repository = $repository;
         $this->categoryRepository = $categoryRepository;
         $this->accountRepository = $accountRepository;
+        $this->enterpriseRepository = $enterpriseRepository;
+        $this->financialRepository = $financialRepository;
         $this->rule = $rule;
     }
 
@@ -60,7 +68,7 @@ class MovementController
                 'delivered' => $delivered,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as movimentações: '.$e->getMessage());
+            Log::error('Erro ao buscar todas as movimentações: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -81,7 +89,7 @@ class MovementController
                 'delivered' => $delivered,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar movimentações com base nos filtros: '.$e->getMessage());
+            Log::error('Erro ao buscar movimentações com base nos filtros: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -105,7 +113,7 @@ class MovementController
     {
         $filePath = storage_path("app/private/receipts/{$file}");
 
-        if (! file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             throw new \Exception('Não existe este arquivo');
         }
 
@@ -160,7 +168,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar movimentação: '.$e->getMessage());
+            Log::error('Erro ao registrar movimentação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -182,7 +190,7 @@ class MovementController
                 'accounts' => AccountResource::collection($accounts),
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar informações: '.$e->getMessage());
+            Log::error('Erro ao buscar informações: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -229,7 +237,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar movimentação: '.$e->getMessage());
+            Log::error('Erro ao registrar movimentação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -273,7 +281,48 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar movimentação: '.$e->getMessage());
+            Log::error('Erro ao atualizar movimentação: ' . $e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+    public function saveObservations(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $this->service->saveObservations($request);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Observações salvas com sucesso',
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao salvar observação: ' . $e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+    public function indexBonds(Request $request)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+
+            $bonds = $this->enterpriseRepository->getBonds($request->user()->enterprise_id);
+            $bonds = $bonds->map(function ($bond) {
+                $bond->no_verified = $this->financialRepository->countNoVerified($bond->id);
+
+                return $bond;
+            });
+
+            $filledData = EnterpriseHelper::filledData($enterpriseId);
+
+            return response()->json(['bonds' => $bonds, 'filled_data' => $filledData], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas os vínculos: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -308,7 +357,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar movimentação: '.$e->getMessage());
+            Log::error('Erro ao deletar movimentação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
