@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\RegisterHelper;
+use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\MovementRepository;
 use App\Rules\ReportRule;
@@ -21,21 +22,26 @@ class ReportController
 
     private $movementRepository;
 
-    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule, MovementRepository $movementRepository)
+    private $enterpriseRepository;
+
+    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule, MovementRepository $movementRepository, EnterpriseRepository $enterpriseRepository)
     {
         $this->service = $service;
         $this->rule = $rule;
         $this->financialRepository = $financialRepository;
         $this->movementRepository = $movementRepository;
+        $this->enterpriseRepository = $enterpriseRepository;
     }
 
     public function index(Request $request, $id)
     {
         try {
             $data = $this->service->index($request, $id);
+            $enterprise = $this->enterpriseRepository->findById($id);
 
             return response()->json([
                 'reports' => $data['reports'],
+                'enterprise_inspected' => $enterprise,
                 'client_name' => $data['client_name'],
             ], 200);
         } catch (\Exception $e) {
