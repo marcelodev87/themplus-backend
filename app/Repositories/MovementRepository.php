@@ -40,7 +40,7 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
@@ -65,11 +65,11 @@ class MovementRepository
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
-        if (! is_null($out) && $out) {
+        if (!is_null($out) && $out) {
             $query->where('type', 'saída');
         }
 
-        if (! is_null($entry) && $entry) {
+        if (!is_null($entry) && $entry) {
             $query->where('type', 'entrada');
         }
 
@@ -95,7 +95,7 @@ class MovementRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -175,23 +175,37 @@ class MovementRepository
 
                 $status = false;
                 $dateDelivery = null;
+                $hasObservation = false;
 
                 if ($financialRecords->isNotEmpty()) {
                     $status = true;
                     $dateDelivery = $financialRecords->first()->date_delivery;
                 }
 
+                $movements = DB::table('movements')
+                    ->whereYear('date_movement', $year)
+                    ->whereMonth('date_movement', $month)
+                    ->get();
+
+                foreach ($movements as $movement) {
+                    if ($movement->observation !== null) {
+                        $hasObservation = true;
+                        break;
+                    }
+                }
+
                 $resultArray[] = [
                     'month_year' => "$month/$year",
                     'status' => $status,
                     'date_delivery' => $dateDelivery,
+                    'has_observation' => $hasObservation
                 ];
             }
 
             return $resultArray;
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
+            \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
 
             return [];
         }
