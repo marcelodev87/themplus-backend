@@ -6,6 +6,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
+use App\Repositories\MovementRepository;
 use App\Repositories\OrderRepository;
 use App\Services\FinancialService;
 use Illuminate\Http\Request;
@@ -22,12 +23,15 @@ class FinancialController
 
     private $orderRepository;
 
-    public function __construct(FinancialService $service, FinancialRepository $repository, EnterpriseRepository $enterpriseRepository, OrderRepository $orderRepository)
+    private $movementRepository;
+
+    public function __construct(FinancialService $service, FinancialRepository $repository, EnterpriseRepository $enterpriseRepository, OrderRepository $orderRepository, MovementRepository $movementRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->orderRepository = $orderRepository;
+        $this->movementRepository = $movementRepository;
     }
 
     public function index(Request $request)
@@ -48,6 +52,20 @@ class FinancialController
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as entregas: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function indexObservations(Request $request, $date)
+    {
+        try {
+            $enterpriseId = $request->user()->view_enterprise_id;
+            $movements = $this->movementRepository->getAllByEnterpriseWithRelationsByDateWithObservation($enterpriseId, $date);
+
+            return response()->json(['movements' => $movements], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as observações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

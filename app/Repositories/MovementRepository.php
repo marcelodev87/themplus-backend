@@ -40,12 +40,30 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
         $query->whereMonth('date_movement', $month)
             ->whereYear('date_movement', $year);
+
+        return $query->get();
+    }
+
+    public function getAllByEnterpriseWithRelationsByDateWithObservation($enterpriseId, $date)
+    {
+        $query = $this->model->with(['account', 'category'])
+            ->where('enterprise_id', $enterpriseId);
+
+        [$month, $year] = explode('-', $date);
+
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            return collect();
+        }
+
+        $query->whereMonth('date_movement', $month)
+            ->whereYear('date_movement', $year)
+            ->whereNotNull('observation');
 
         return $query->get();
     }
@@ -65,11 +83,11 @@ class MovementRepository
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
-        if (!is_null($out) && $out) {
+        if (! is_null($out) && $out) {
             $query->where('type', 'saída');
         }
 
-        if (!is_null($entry) && $entry) {
+        if (! is_null($entry) && $entry) {
             $query->where('type', 'entrada');
         }
 
@@ -95,7 +113,7 @@ class MovementRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -198,14 +216,14 @@ class MovementRepository
                     'month_year' => "$month/$year",
                     'status' => $status,
                     'date_delivery' => $dateDelivery,
-                    'has_observation' => $hasObservation
+                    'has_observation' => $hasObservation,
                 ];
             }
 
             return $resultArray;
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
+            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
 
             return [];
         }
@@ -281,6 +299,14 @@ class MovementRepository
     public function getAllByAccount($accountId)
     {
         return $this->model->where('account_id', $accountId)->get();
+    }
+
+    public function clearObservations($enterpriseId, $month, $year)
+    {
+        $this->model->where('enterprise_id', $enterpriseId)
+            ->whereYear('date_movement', $year)
+            ->whereMonth('date_movement', $month)
+            ->update(['observation' => null]);
     }
 
     public function findById($id)

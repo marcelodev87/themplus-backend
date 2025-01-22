@@ -109,6 +109,7 @@ Route::prefix('order')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
+    Route::get('/movements-observations/{date}', [FinancialController::class, 'indexObservations']);
     Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
 });
 

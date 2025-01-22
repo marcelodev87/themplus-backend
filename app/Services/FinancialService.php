@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\FinancialRepository;
+use App\Repositories\MovementRepository;
 use App\Repositories\SchedulingRepository;
 use App\Rules\FinancialRule;
 use Carbon\Carbon;
@@ -15,14 +16,18 @@ class FinancialService
 
     protected $schedulingRepository;
 
+    protected $movementRepository;
+
     public function __construct(
         FinancialRepository $repository,
         SchedulingRepository $schedulingRepository,
-        FinancialRule $rule
+        FinancialRule $rule,
+        MovementRepository $movementRepository
     ) {
         $this->repository = $repository;
         $this->schedulingRepository = $schedulingRepository;
         $this->rule = $rule;
+        $this->movementRepository = $movementRepository;
     }
 
     public function finalize($request)
@@ -40,6 +45,7 @@ class FinancialService
         ];
 
         $this->schedulingRepository->deleteByMonthYear($request->user()->enterprise_id, $month, $year);
+        $this->movementRepository->clearObservations($request->user()->enterprise_id, $month, $year);
 
         return $this->repository->create($data);
     }

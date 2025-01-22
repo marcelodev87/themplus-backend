@@ -172,6 +172,7 @@ class MovementService
 
         return null;
     }
+
     public function saveObservations($request)
     {
         foreach ($request->movements as $movement) {

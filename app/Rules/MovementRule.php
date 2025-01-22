@@ -58,6 +58,8 @@ class MovementRule
 
     public function update($request)
     {
+        \Log::info($request->all());
+
         $rules = [
             'id' => 'required|string|max:100',
             'type' => 'required|string',
