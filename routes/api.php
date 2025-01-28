@@ -123,6 +123,7 @@ Route::prefix('report')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [DashboardController::class, 'index']);
+    Route::post('/export', [DashboardController::class, 'export']);
 });
 
 Route::prefix('feed')->middleware('auth:sanctum')->group(function () {
