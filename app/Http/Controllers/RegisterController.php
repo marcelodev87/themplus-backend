@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Http\Resources\UserOptionsResource;
 use App\Repositories\RegisterRepository;
+use App\Repositories\UserRepository;
 use App\Rules\RegisterRule;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,10 +19,11 @@ class RegisterController
 
     private $rule;
 
-    public function __construct(RegisterRepository $repository, RegisterRule $rule)
+    public function __construct(RegisterRepository $repository, RegisterRule $rule, UserRepository $userRepository)
     {
         $this->repository = $repository;
         $this->rule = $rule;
+        $this->userRepository = $userRepository;
     }
 
     public function show($id)
@@ -45,9 +48,11 @@ class RegisterController
             $enterpriseId = $request->user()->view_enterprise_id;
             $registers = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $users = $this->userRepository->getAllByEnterprise($enterpriseId);
 
             return response()->json([
                 'registers' => $this->treatRegister($registers),
+                'users' => UserOptionsResource::collection($users),
                 'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {
