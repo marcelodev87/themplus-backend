@@ -9,7 +9,7 @@
             margin: 20px;
             color: #333;
             line-height: 1.6;
-            background-color: #f9f9f9;
+            background-color: #fff;
             padding: 10px;
         }
 
