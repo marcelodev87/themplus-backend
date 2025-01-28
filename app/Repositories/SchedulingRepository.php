@@ -38,25 +38,34 @@ class SchedulingRepository
         return $this->model->where('account_id', $accountId)->get();
     }
 
-    public function getSchedulingsDashboard($enterpriseId, $date)
+    public function getSchedulingsDashboard($enterpriseId, $date, $mode)
     {
-        $carbonDate = Carbon::createFromFormat('m-Y', $date);
-
-        $month = $carbonDate->month;
-        $year = $carbonDate->year;
-
-        $dateColumn = 'created_at';
-
-        $schedulings = $this->model
+        $query = $this->model
             ->where('schedulings.enterprise_id', $enterpriseId)
-            ->whereYear("schedulings.$dateColumn", $year)
-            ->whereMonth("schedulings.$dateColumn", $month)
             ->join('categories', 'schedulings.category_id', '=', 'categories.id')
             ->selectRaw('
-                SUM(CASE WHEN categories.type = "entrada" THEN schedulings.value ELSE 0 END) as entry_value,
-                SUM(CASE WHEN categories.type = "saida" THEN schedulings.value ELSE 0 END) as out_value
-            ')
-            ->first();
+            SUM(CASE WHEN categories.type = "entrada" THEN schedulings.value ELSE 0 END) as entry_value,
+            SUM(CASE WHEN categories.type = "saida" THEN schedulings.value ELSE 0 END) as out_value
+        ');
+
+        $dateColumn = 'created_at';
+        if ($mode === 'month') {
+
+            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $month = $carbonDate->month;
+            $year = $carbonDate->year;
+
+            $query->whereYear("schedulings.$dateColumn", $year)
+                ->whereMonth("schedulings.$dateColumn", $month);
+        } else {
+
+            $from = Carbon::createFromFormat('Y-m/d', $date['from']);
+            $to = Carbon::createFromFormat('Y-m/d', $date['to']);
+
+            $query->whereBetween("schedulings.$dateColumn", [$from, $to]);
+        }
+
+        $schedulings = $query->first();
 
         $entryValue = $schedulings->entry_value ?? 0;
         $outValue = $schedulings->out_value ?? 0;
@@ -64,7 +73,8 @@ class SchedulingRepository
         return [
             'entry_value' => number_format($entryValue, 2, '.', ''),
             'out_value' => number_format($outValue, 2, '.', ''),
-            'month_year' => $date,
+            'month_year' => $mode === 'month' ? $date : null,
+            'period' => $mode === 'period' ? $date : null,
         ];
     }
 
@@ -125,7 +135,7 @@ class SchedulingRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -143,7 +153,7 @@ class SchedulingRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 

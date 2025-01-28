@@ -16,17 +16,18 @@ class DashboardController
         $this->repository = $repository;
     }
 
-    public function index(Request $request, $date)
+    public function index(Request $request)
     {
         try {
             $enterpriseId = $request->user()->view_enterprise_id;
 
-            $dashboard = $this->repository->mountDashboard($enterpriseId, $date);
+            $dashboard = $this->repository->mountDashboard($enterpriseId, $request);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
 
             return response()->json([
                 'months_years' => $dashboard['months_years'],
                 'categories_dashboard' => $dashboard['categories_dashboard'],
+                'categories' => $dashboard['categories'],
                 'movements_dashboard' => $dashboard['movements_dashboard'],
                 'users_dashboard' => $dashboard['users_dashboard'],
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],

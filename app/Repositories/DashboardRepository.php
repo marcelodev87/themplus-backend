@@ -40,18 +40,23 @@ class DashboardRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
-    public function mountDashboard($enterpriseId, $date)
+    public function mountDashboard($enterpriseId, $request)
     {
+        $mode = $request->input('mode');
+        $date = $request->input('date');
+
         $months_years = $this->movementRepository->getMonthYears($enterpriseId);
-        $categories_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId, $date);
-        $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId, $date);
+        $categories_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId, $date, $mode);
+        $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+        $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId, $date, $mode);
         $users_dashboard = $this->userRepository->getUsersDashboard($enterpriseId);
-        $schedulings_dashboard = $this->schedulingRepository->getSchedulingsDashboard($enterpriseId, $date);
+        $schedulings_dashboard = $this->schedulingRepository->getSchedulingsDashboard($enterpriseId, $date, $mode);
         $accounts_dashboard = $this->accountRepository->getAccountsDashboard($enterpriseId);
 
         return [
             'months_years' => $months_years,
             'categories_dashboard' => $categories_dashboard,
+            'categories' => $categories,
             'movements_dashboard' => $movements_dashboard,
             'users_dashboard' => $users_dashboard,
             'schedulings_dashboard' => $schedulings_dashboard,

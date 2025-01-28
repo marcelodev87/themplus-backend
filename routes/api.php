@@ -122,7 +122,7 @@ Route::prefix('report')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('dashboard')->middleware('auth:sanctum')->group(function () {
-    Route::get('/{date}', [DashboardController::class, 'index']);
+    Route::post('/', [DashboardController::class, 'index']);
 });
 
 Route::prefix('feed')->middleware('auth:sanctum')->group(function () {

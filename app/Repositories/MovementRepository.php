@@ -40,7 +40,7 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
@@ -57,7 +57,7 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
@@ -83,11 +83,11 @@ class MovementRepository
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
-        if (! is_null($out) && $out) {
+        if (!is_null($out) && $out) {
             $query->where('type', 'saída');
         }
 
-        if (! is_null($entry) && $entry) {
+        if (!is_null($entry) && $entry) {
             $query->where('type', 'entrada');
         }
 
@@ -113,7 +113,7 @@ class MovementRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -223,7 +223,7 @@ class MovementRepository
             return $resultArray;
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
+            \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
 
             return [];
         }
@@ -238,24 +238,36 @@ class MovementRepository
             ->pluck('month_year');
     }
 
-    public function getMovementsDashboard($enterpriseId, $date)
+    public function getMovementsDashboard($enterpriseId, $date, $mode)
     {
-
-        $carbonDate = Carbon::createFromFormat('m-Y', $date);
-
-        $month = $carbonDate->month;
-        $year = $carbonDate->year;
-
-        $movements = $this->model
+        \Log::info($date);
+        $query = $this->model
             ->where('movements.enterprise_id', $enterpriseId)
-            ->whereYear('date_movement', $year)
-            ->whereMonth('date_movement', $month)
             ->join('categories', 'movements.category_id', '=', 'categories.id')
             ->selectRaw('
-                SUM(CASE WHEN categories.type = "entrada" THEN movements.value ELSE 0 END) as entry_value,
-                SUM(CASE WHEN categories.type = "saida" THEN movements.value ELSE 0 END) as out_value
-            ')
-            ->first();
+            SUM(CASE WHEN categories.type = "entrada" THEN movements.value ELSE 0 END) as entry_value,
+            SUM(CASE WHEN categories.type = "saida" THEN movements.value ELSE 0 END) as out_value'
+            );
+
+        if ($mode === 'month') {
+            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $month = $carbonDate->month;
+            $year = $carbonDate->year;
+
+            $query->whereYear('movements.date_movement', $year)
+                ->whereMonth('movements.date_movement', $month);
+        } else {
+
+            $fromDate = str_replace('/', '-', $date['from']);
+            $toDate = str_replace('/', '-', $date['to']);
+
+            $from = Carbon::createFromFormat('Y-m-d', $fromDate);
+            $to = Carbon::createFromFormat('Y-m-d', $toDate);
+
+            $query->whereBetween('movements.date_movement', [$from, $to]);
+        }
+
+        $movements = $query->first();
 
         $entryValue = $movements->entry_value ?? 0;
         $outValue = $movements->out_value ?? 0;
@@ -265,27 +277,37 @@ class MovementRepository
             'entry_value' => $entryValue,
             'out_value' => $outValue,
             'balance' => $balance,
-            'month_year' => $date,
+            'month_year' => $mode === 'month' ? $date : null,
+            'period' => $mode === 'period' ? $date : null,
         ];
     }
 
-    public function getMovementsByCategoriesDashboard($enterpriseId, $date)
+    public function getMovementsByCategoriesDashboard($enterpriseId, $date, $mode)
     {
-        $carbonDate = Carbon::createFromFormat('m-Y', $date);
-
-        $month = $carbonDate->month;
-        $year = $carbonDate->year;
-
-        return $this->model
+        $query = $this->model
             ->select('movements.category_id')
             ->selectRaw('SUM(movements.value) as value')
             ->join('categories', 'movements.category_id', '=', 'categories.id')
-            ->whereYear('movements.date_movement', $year)
-            ->whereMonth('movements.date_movement', $month)
             ->where('movements.enterprise_id', $enterpriseId)
             ->groupBy('movements.category_id')
-            ->with(['category:id,name,type'])
-            ->get()
+            ->with(['category:id,name,type']);
+
+        if ($mode === 'month') {
+            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $month = $carbonDate->month;
+            $year = $carbonDate->year;
+
+            $query->whereYear('movements.date_movement', $year)
+                ->whereMonth('movements.date_movement', $month);
+        } else {
+
+            $from = Carbon::createFromFormat('Y-m/d', $date['from']);
+            $to = Carbon::createFromFormat('Y-m/d', $date['to']);
+
+            $query->whereBetween('movements.date_movement', [$from, $to]);
+        }
+
+        return $query->get()
             ->map(function ($movement) {
                 return [
                     'category_id' => $movement->category_id,
