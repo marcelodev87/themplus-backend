@@ -162,7 +162,7 @@
     </table>
 
     <h3>Movimentações</h3>
-    <p>A sua organização possui as seguintes movimentações:</p>
+    <p>A sua organização possui as seguintes movimentações x categorias:</p>
     @if(count($categories_movements_dashboard) > 0)
         <table>
             <thead>
@@ -191,7 +191,7 @@
     @endif
 
     <h3>Agendamentos</h3>
-    <p>A sua organização possui os seguintes agendamentos:</p>
+    <p>A sua organização possui os seguintes agendamentos x categorias:</p>
     @if(count($categories_schedules_dashboard) > 0)
         <table>
             <thead>
