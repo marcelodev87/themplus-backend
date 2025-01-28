@@ -40,7 +40,7 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
@@ -57,7 +57,7 @@ class MovementRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
@@ -83,11 +83,11 @@ class MovementRepository
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
-        if (!is_null($out) && $out) {
+        if (! is_null($out) && $out) {
             $query->where('type', 'saída');
         }
 
-        if (!is_null($entry) && $entry) {
+        if (! is_null($entry) && $entry) {
             $query->where('type', 'entrada');
         }
 
@@ -113,7 +113,7 @@ class MovementRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -223,7 +223,7 @@ class MovementRepository
             return $resultArray;
 
         } catch (\Exception $e) {
-            \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
+            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
 
             return [];
         }
@@ -282,7 +282,7 @@ class MovementRepository
         ];
     }
 
-    public function getMovementsByCategoriesDashboard($enterpriseId, $date, $mode)
+    public function getMovementsByCategoriesDashboard($enterpriseId, $date, $mode, $category)
     {
         $query = $this->model
             ->select('movements.category_id')
@@ -305,6 +305,10 @@ class MovementRepository
             $to = Carbon::createFromFormat('Y-m/d', $date['to']);
 
             $query->whereBetween('movements.date_movement', [$from, $to]);
+        }
+
+        if ($category !== null) {
+            $query->where('movements.category_id', $category);
         }
 
         return $query->get()

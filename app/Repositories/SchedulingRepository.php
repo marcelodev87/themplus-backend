@@ -78,6 +78,46 @@ class SchedulingRepository
         ];
     }
 
+    public function getSchedulesByCategoriesDashboard($enterpriseId, $date, $mode, $category)
+    {
+        $query = $this->model
+            ->select('schedulings.category_id')
+            ->selectRaw('SUM(schedulings.value) as value')
+            ->join('categories', 'schedulings.category_id', '=', 'categories.id')
+            ->where('schedulings.enterprise_id', $enterpriseId)
+            ->groupBy('schedulings.category_id')
+            ->with(['category:id,name,type']);
+
+        if ($mode === 'month') {
+            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $month = $carbonDate->month;
+            $year = $carbonDate->year;
+
+            $query->whereYear('schedulings.date_movement', $year)
+                ->whereMonth('schedulings.date_movement', $month);
+        } else {
+
+            $from = Carbon::createFromFormat('Y-m/d', $date['from']);
+            $to = Carbon::createFromFormat('Y-m/d', $date['to']);
+
+            $query->whereBetween('schedulings.date_movement', [$from, $to]);
+        }
+
+        if ($category !== null) {
+            $query->where('schedulings.category_id', $category);
+        }
+
+        return $query->get()
+            ->map(function ($schedule) {
+                return [
+                    'category_id' => $schedule->category_id,
+                    'name' => $schedule->category->name,
+                    'type' => $schedule->category->type,
+                    'value' => $schedule->value,
+                ];
+            });
+    }
+
     public function getAllByEnterpriseWithRelations($enterpriseId)
     {
         return $this->model->with(['account', 'category'])
@@ -135,7 +175,7 @@ class SchedulingRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -153,7 +193,7 @@ class SchedulingRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 

@@ -26,7 +26,8 @@ class DashboardController
 
             return response()->json([
                 'months_years' => $dashboard['months_years'],
-                'categories_dashboard' => $dashboard['categories_dashboard'],
+                'categories_movements_dashboard' => $dashboard['categories_movements_dashboard'],
+                'categories_schedules_dashboard' => $dashboard['categories_schedules_dashboard'],
                 'categories' => $dashboard['categories'],
                 'movements_dashboard' => $dashboard['movements_dashboard'],
                 'users_dashboard' => $dashboard['users_dashboard'],

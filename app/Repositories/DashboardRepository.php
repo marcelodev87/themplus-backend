@@ -44,9 +44,11 @@ class DashboardRepository
     {
         $mode = $request->input('mode');
         $date = $request->input('date');
+        $category = $request->input('category');
 
         $months_years = $this->movementRepository->getMonthYears($enterpriseId);
-        $categories_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId, $date, $mode);
+        $categories_movements_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId, $date, $mode, $category);
+        $categories_schedules_dashboard = $this->schedulingRepository->getSchedulesByCategoriesDashboard($enterpriseId, $date, $mode, $category);
         $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
         $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId, $date, $mode);
         $users_dashboard = $this->userRepository->getUsersDashboard($enterpriseId);
@@ -55,7 +57,8 @@ class DashboardRepository
 
         return [
             'months_years' => $months_years,
-            'categories_dashboard' => $categories_dashboard,
+            'categories_movements_dashboard' => $categories_movements_dashboard,
+            'categories_schedules_dashboard' => $categories_schedules_dashboard,
             'categories' => $categories,
             'movements_dashboard' => $movements_dashboard,
             'users_dashboard' => $users_dashboard,
