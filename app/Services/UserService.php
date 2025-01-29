@@ -46,12 +46,12 @@ class UserService
         $data = $request->only(['password', 'email']);
 
         $user = $this->repository->findByEmail($data['email']);
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => ['Credenciais não constam em nosso registro'],
             ]);
         }
-        if (!Hash::check($data['password'], $user->password)) {
+        if (! Hash::check($data['password'], $user->password)) {
             throw ValidationException::withMessages([
                 'password' => ['Credenciais não constam em nosso registro'],
             ]);
@@ -159,6 +159,7 @@ class UserService
         $data['password'] = Hash::make($request->input('password'));
         $data['department_id'] = $request->input('department');
         $data['enterprise_id'] = $request->input('enterpriseId');
+        $data['view_enterprise_id'] = $request->input('enterpriseId');
 
         return $this->repository->create($data);
     }

@@ -158,4 +158,5 @@ Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
 Route::prefix('office')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [EnterpriseController::class, 'indexOffices']);
     Route::post('/', [EnterpriseController::class, 'storeOffice'])->middleware('admin');
+    Route::delete('/{id}', [EnterpriseController::class, 'destroyOffice'])->middleware('admin');
 });

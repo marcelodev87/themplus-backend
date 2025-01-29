@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Enterprise;
+use Illuminate\Support\Facades\DB;
 
 class EnterpriseRepository
 {
@@ -105,6 +106,33 @@ class EnterpriseRepository
         }
 
         return null;
+    }
+
+    public function deleteOffice($id)
+    {
+        $enterprise = $this->findById($id);
+        if ($enterprise) {
+            DB::table('movements')->where('enterprise_id', $id)->delete();
+            DB::table('schedulings')->where('enterprise_id', $id)->delete();
+            DB::table('accounts')->where('enterprise_id', $id)->delete();
+            DB::table('alerts')->where('enterprise_id', $id)->delete();
+            DB::table('categories')->where('enterprise_id', $id)->delete();
+
+            DB::table('users')->where('enterprise_id', $id)
+                ->whereNotNull('department_id')
+                ->update(['department_id' => null]);
+            DB::table('departments')->where('enterprise_id', $id)->delete();
+
+            DB::table('feedbacks')->where('enterprise_id', $id)->delete();
+            DB::table('financial_movements')->where('enterprise_id', $id)->delete();
+            DB::table('orders')->where('enterprise_id', $id)->delete();
+            DB::table('registers')->where('enterprise_id', $id)->delete();
+            DB::table('users')->where('enterprise_id', $id)->delete();
+
+            return $enterprise->delete();
+        }
+
+        return false;
     }
 
     public function delete($id)

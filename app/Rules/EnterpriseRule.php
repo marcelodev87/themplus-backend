@@ -54,4 +54,24 @@ class EnterpriseRule
 
         return true;
     }
+
+    public function deleteOffice($id)
+    {
+        $rules = [
+            'id' => 'required|string',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID da filial é obrigatória',
+            'id.string' => 'O ID da filial deve ser uma string',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

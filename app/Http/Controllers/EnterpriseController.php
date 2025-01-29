@@ -233,4 +233,28 @@ class EnterpriseController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function destroyOffice(string $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->rule->deleteOffice($id);
+            $enterprise = $this->repository->deleteOffice($id);
+
+            if ($enterprise) {
+                DB::commit();
+
+                return response()->json(['message' => 'Filial deletada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar filial');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar filial: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 }

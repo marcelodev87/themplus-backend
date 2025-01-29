@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Helpers\EnterpriseHelper;
+use App\Repositories\AccountRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
@@ -18,16 +19,20 @@ class EnterpriseService
 
     protected $subscriptionRepository;
 
+    protected $accountRepository;
+
     public function __construct(
         EnterpriseRule $rule,
         EnterpriseRepository $repository,
         UserRepository $userRepository,
         SubscriptionRepository $subscriptionRepository,
+        AccountRepository $accountRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
         $this->userRepository = $userRepository;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->accountRepository = $accountRepository;
     }
 
     public function createOffice($request)
@@ -58,7 +63,12 @@ class EnterpriseService
             $data['cnpj'] = $entepriseActual->cnpj !== null ? $entepriseActual->cnpj : null;
         }
 
-        return $this->repository->createOffice($data);
+        $office = $this->repository->createOffice($data);
+
+        $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $office->id];
+        $this->accountRepository->create($dataAccount);
+
+        return $office;
     }
 
     public function update($request)
