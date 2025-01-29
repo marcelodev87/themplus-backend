@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\DashboardRepository;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
 
 class DashboardController
 {
@@ -37,7 +37,7 @@ class DashboardController
                 'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar informações para o dashboard: ' . $e->getMessage());
+            Log::error('Erro ao buscar informações para o dashboard: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -59,12 +59,13 @@ class DashboardController
                 'users_dashboard' => $dashboard['users_dashboard'],
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],
                 'accounts_dashboard' => $dashboard['accounts_dashboard'],
-                'date' => $request->input('date')
+                'date' => $request->input('date'),
             ]);
 
             return $pdf->download('dashboard.pdf');
         } catch (\Exception $e) {
-            Log::error('Erro ao gerar PDF do dashboard: ' . $e->getMessage());
+            Log::error('Erro ao gerar PDF do dashboard: '.$e->getMessage());
+
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }

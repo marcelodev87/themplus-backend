@@ -15,6 +15,7 @@ use App\Repositories\FinancialRepository;
 use App\Repositories\MovementRepository;
 use App\Rules\MovementRule;
 use App\Services\MovementService;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -97,7 +98,7 @@ class MovementController
         }
     }
 
-    public function export(Request $request, $date)
+    public function exportExcel(Request $request, $date)
     {
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
@@ -109,6 +110,23 @@ class MovementController
         $fileName = "movements_{$enterpriseId}_{$dateTime}.xlsx";
 
         return (new MovementExport($movements))->download($fileName);
+    }
+
+    public function exportPDF(Request $request, $date)
+    {
+        $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
+        $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
+        $enterpriseId = $request->user()->view_enterprise_id;
+
+        $movements = $this->repository->export($out, $entry, $date, $enterpriseId);
+        $movements = collect($movements)->sortByDesc('date_movement');
+
+        $pdf = PDF::loadView('movements.pdf', [
+            'movements' => $movements,
+            'date' => $date,
+        ]);
+
+        return $pdf->download('movements.pdf');
     }
 
     public function downloadFile($file)

@@ -69,7 +69,8 @@ Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
     Route::post('/observations', [MovementController::class, 'saveObservations']);
     Route::post('/insert-example', [MovementController::class, 'insertExample']);
     Route::post('/insert', [MovementController::class, 'insert']);
-    Route::post('/export/{date}', [MovementController::class, 'export']);
+    Route::post('/export/excel/{date}', [MovementController::class, 'exportExcel']);
+    Route::post('/export/pdf/{date}', [MovementController::class, 'exportPDF']);
     Route::post('/', [MovementController::class, 'store']);
     Route::put('/', [MovementController::class, 'update']);
     Route::delete('/{id}', [MovementController::class, 'destroy']);
