@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Movimentações PDF {{ $date }}</title>
+    <title>Agendamentos PDF {{ $date }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,10 +97,10 @@
 </head>
 
 <body>
-    <h1>Detalhes de movimentações {{ $date }}</h1>
+    <h1>Detalhes de agendamentos {{ $date }}</h1>
 
-    <h3>Movimentações</h3>
-    @if(count($movements) > 0)
+    <h3>Agendamentos</h3>
+    @if(count($schedulings) > 0)
         <table>
             <thead>
                 <tr>
@@ -114,23 +114,23 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($movements as $movement)
+                @foreach($schedulings as $scheduling)
                     <tr>
-                        <td>{{ $movement['account']['name'] }}</td>
-                        <td>{{ $movement['account']['account_number'] }}</td>
-                        <td>{{ $movement['account']['agency_number'] }}</td>
-                        <td>{{ $movement['category']['name'] }}</td>
-                        <td>R$ {{ number_format($movement['value'], 2, ',', '.') }}</td>
-                        <td style="color: {{ $movement['type'] === 'entrada' ? 'green' : 'red' }}">
-                            {{ ucfirst($movement['type']) }}
+                        <td>{{ $scheduling['account']['name'] }}</td>
+                        <td>{{ $scheduling['account']['account_number'] }}</td>
+                        <td>{{ $scheduling['account']['agency_number'] }}</td>
+                        <td>{{ $scheduling['category']['name'] }}</td>
+                        <td>R$ {{ number_format($scheduling['value'], 2, ',', '.') }}</td>
+                        <td style="color: {{ $scheduling['type'] === 'entrada' ? 'green' : 'red' }}">
+                            {{ ucfirst($scheduling['type']) }}
                         </td>
-                        <td>{{ \Carbon\Carbon::parse($movement['date_movement'])->format('d/m/Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($scheduling['date_movement'])->format('d/m/Y') }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
     @else
-        <p class="no-records">Não há movimentações registradas.</p>
+        <p class="no-records">Não há agendamentos registrados.</p>
     @endif
 
 </body>

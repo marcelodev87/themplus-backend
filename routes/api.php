@@ -81,7 +81,8 @@ Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
     Route::get('/filter/{date}', [SchedulingController::class, 'filterSchedulings']);
     Route::get('/informations/{type}', [SchedulingController::class, 'getFormInformations']);
     Route::post('/', [SchedulingController::class, 'store']);
-    Route::post('/export/{date}', [SchedulingController::class, 'export']);
+    Route::post('/export/excel/{date}', [SchedulingController::class, 'exportExcel']);
+    Route::post('/export/pdf/{date}', [SchedulingController::class, 'exportPDF']);
     Route::put('/', [SchedulingController::class, 'update']);
     Route::put('/finalize/{id}', [SchedulingController::class, 'finalize']);
     Route::delete('/{id}', [SchedulingController::class, 'destroy']);

@@ -12,6 +12,7 @@ use App\Repositories\CategoryRepository;
 use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
 use App\Services\SchedulingService;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -72,7 +73,7 @@ class SchedulingController
         }
     }
 
-    public function export(Request $request, $date)
+    public function exportExcel(Request $request, $date)
     {
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
@@ -85,6 +86,24 @@ class SchedulingController
         $fileName = "schedulings_{$enterpriseId}_{$dateTime}.xlsx";
 
         return (new SchedulingExport($schedulings))->download($fileName);
+    }
+
+    public function exportPDF(Request $request, $date)
+    {
+        $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
+        $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
+        $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
+        $enterpriseId = $request->user()->view_enterprise_id;
+
+        $schedulings = $this->repository->export($out, $entry, $expired, $date, $enterpriseId);
+        $schedulings = collect($schedulings)->sortByDesc('date_movement');
+
+        $pdf = PDF::loadView('schedulings.pdf', [
+            'schedulings' => $schedulings,
+            'date' => $date,
+        ]);
+
+        return $pdf->download('schedulings.pdf');
     }
 
     public function getFormInformations(Request $request, $type)
