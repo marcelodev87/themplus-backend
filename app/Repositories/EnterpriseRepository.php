@@ -139,6 +139,49 @@ class EnterpriseRepository
     {
         $enterprise = $this->findById($id);
         if ($enterprise) {
+
+            $offices = DB::table('enterprises')->where('created_by', $enterprise->id)->get();
+
+            // Deletando dados de filiais
+            foreach ($offices as $office) {
+                DB::table('movements')->where('enterprise_id', $office->id)->delete();
+                DB::table('schedulings')->where('enterprise_id', $office->id)->delete();
+                DB::table('accounts')->where('enterprise_id', $office->id)->delete();
+                DB::table('alerts')->where('enterprise_id', $office->id)->delete();
+                DB::table('categories')->where('enterprise_id', $office->id)->delete();
+
+                DB::table('users')->where('enterprise_id', $office->id)
+                    ->whereNotNull('department_id')
+                    ->update(['department_id' => null]);
+                DB::table('departments')->where('enterprise_id', $office->id)->delete();
+
+                DB::table('feedbacks')->where('enterprise_id', $office->id)->delete();
+                DB::table('financial_movements')->where('enterprise_id', $office->id)->delete();
+                DB::table('orders')->where('enterprise_id', $office->id)->delete();
+                DB::table('registers')->where('enterprise_id', $office->id)->delete();
+                DB::table('users')->where('enterprise_id', $office->id)->delete();
+
+                DB::table('enterprises')->where('id', $office->id)->delete();
+            }
+
+            // Deletando dados da matriz
+            DB::table('movements')->where('enterprise_id', $id)->delete();
+            DB::table('schedulings')->where('enterprise_id', $id)->delete();
+            DB::table('accounts')->where('enterprise_id', $id)->delete();
+            DB::table('alerts')->where('enterprise_id', $id)->delete();
+            DB::table('categories')->where('enterprise_id', $id)->delete();
+
+            DB::table('users')->where('enterprise_id', $id)
+                ->whereNotNull('department_id')
+                ->update(['department_id' => null]);
+            DB::table('departments')->where('enterprise_id', $id)->delete();
+
+            DB::table('feedbacks')->where('enterprise_id', $id)->delete();
+            DB::table('financial_movements')->where('enterprise_id', $id)->delete();
+            DB::table('orders')->where('enterprise_id', $id)->delete();
+            DB::table('registers')->where('enterprise_id', $id)->delete();
+            DB::table('users')->where('enterprise_id', $id)->delete();
+
             return $enterprise->delete();
         }
 

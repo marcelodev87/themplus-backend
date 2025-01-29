@@ -151,8 +151,7 @@ Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     // Route::post('/', [EnterpriseController::class, 'store']);
     Route::put('/', [EnterpriseController::class, 'update'])->middleware('admin');
     Route::put('/unlink', [EnterpriseController::class, 'unlink'])->middleware('admin');
-    // TODO: Veriicar depois a logica de exclusão da orgnização
-    // Route::delete('/{id}', [EnterpriseController::class, 'destroy']);
+    Route::delete('/{id}', [EnterpriseController::class, 'destroy'])->middleware('admin');
 });
 
 Route::prefix('office')->middleware('auth:sanctum')->group(function () {

@@ -257,4 +257,28 @@ class EnterpriseController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function destroy(string $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->rule->delete($id);
+            $enterprise = $this->repository->delete($id);
+
+            if ($enterprise) {
+                DB::commit();
+
+                return response()->json(['message' => 'Organização deletada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar organização');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar organização: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
 }
