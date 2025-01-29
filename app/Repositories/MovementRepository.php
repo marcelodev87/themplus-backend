@@ -98,6 +98,7 @@ class MovementRepository
     {
         $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
         $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
+        $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
 
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->view_enterprise_id);
@@ -108,6 +109,10 @@ class MovementRepository
 
         if ($entry !== null && $entry) {
             $query->where('type', 'entrada');
+        }
+
+        if ($categoryId !== null) {
+            $query->where('category_id', $categoryId);
         }
 
         if ($date) {
@@ -124,7 +129,7 @@ class MovementRepository
         return $query->get();
     }
 
-    public function export($out, $entry, $date, $enterpriseId)
+    public function export($out, $entry, $date, $categoryId, $enterpriseId)
     {
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $enterpriseId);
@@ -135,6 +140,10 @@ class MovementRepository
 
         if ($entry) {
             $query->where('type', 'entrada');
+        }
+
+        if ($categoryId !== null) {
+            $query->where('category_id', $categoryId);
         }
 
         if ($date) {

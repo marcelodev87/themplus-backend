@@ -155,6 +155,7 @@ class SchedulingRepository
         $expired = $request->has('expired') ? filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN) : null;
         $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
         $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
+        $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
 
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->view_enterprise_id);
@@ -170,6 +171,10 @@ class SchedulingRepository
         if ($expired !== null && $expired) {
             $yesterday = Carbon::yesterday()->format('Y-m-d');
             $query->where('date_movement', '<', $yesterday);
+        }
+
+        if ($categoryId !== null) {
+            $query->where('category_id', $categoryId);
         }
 
         if ($date) {
@@ -237,7 +242,7 @@ class SchedulingRepository
         return null;
     }
 
-    public function export($out, $entry, $expired, $date, $enterpriseId)
+    public function export($out, $entry, $expired, $date, $categoryId, $enterpriseId)
     {
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $enterpriseId);
@@ -252,6 +257,10 @@ class SchedulingRepository
 
         if ($expired) {
             $query->whereDate('date_movement', '<', now()->toDateString());
+        }
+
+        if ($categoryId !== null) {
+            $query->where('category_id', $categoryId);
         }
 
         if ($date) {

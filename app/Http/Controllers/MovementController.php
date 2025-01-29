@@ -8,6 +8,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\CategorySelect;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\EnterpriseRepository;
@@ -63,11 +64,13 @@ class MovementController
             $months_years = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $delivered = $this->repository->checkDelivered($enterpriseId, $date);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
 
             return response()->json([
                 'movements' => $movements,
                 'filled_data' => $filledData,
                 'months_years' => $months_years,
+                'categories' => CategorySelect::collection($categories),
                 'delivered' => $delivered,
             ], 200);
         } catch (\Exception $e) {
@@ -85,10 +88,12 @@ class MovementController
             $movements = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
             $months_years = $this->repository->getMonthYears($enterpriseId);
             $delivered = $this->repository->checkDelivered($enterpriseId, $date);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
 
             return response()->json([
                 'movements' => $movements,
                 'months_years' => $months_years,
+                'categories' => CategorySelect::collection($categories),
                 'delivered' => $delivered,
             ], 200);
         } catch (\Exception $e) {
@@ -102,9 +107,10 @@ class MovementController
     {
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
+        $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $enterpriseId = $request->user()->view_enterprise_id;
 
-        $movements = $this->repository->export($out, $entry, $date, $enterpriseId);
+        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId);
 
         $dateTime = now()->format('Ymd_His');
         $fileName = "movements_{$enterpriseId}_{$dateTime}.xlsx";
@@ -116,9 +122,10 @@ class MovementController
     {
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
+        $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $enterpriseId = $request->user()->view_enterprise_id;
 
-        $movements = $this->repository->export($out, $entry, $date, $enterpriseId);
+        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId);
         $movements = collect($movements)->sortByDesc('date_movement');
 
         $pdf = PDF::loadView('movements.pdf', [

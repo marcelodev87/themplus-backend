@@ -7,6 +7,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\CategorySelect;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\SchedulingRepository;
@@ -50,8 +51,14 @@ class SchedulingController
             $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $date);
             $monthsYears = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
 
-            return response()->json(['schedulings' => $schedulings, 'filled_data' => $filledData, 'months_years' => $monthsYears], 200);
+            return response()->json([
+                'schedulings' => $schedulings,
+                'filled_data' => $filledData,
+                'months_years' => $monthsYears,
+                'categories' => CategorySelect::collection($categories),
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os agendamentos: '.$e->getMessage());
 
@@ -64,8 +71,13 @@ class SchedulingController
         try {
             $schedulings = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
             $monthsYears = $this->repository->getMonthYears($request->user()->view_enterprise_id);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($request->user()->view_enterprise_id);
 
-            return response()->json(['schedulings' => $schedulings, 'months_years' => $monthsYears], 200);
+            return response()->json([
+                'schedulings' => $schedulings,
+                'months_years' => $monthsYears,
+                'categories' => CategorySelect::collection($categories),
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar agendamentos com base nos filtros: '.$e->getMessage());
 
@@ -78,9 +90,10 @@ class SchedulingController
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
         $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
+        $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $enterpriseId = $request->user()->view_enterprise_id;
 
-        $schedulings = $this->repository->export($out, $entry, $expired, $date, $enterpriseId);
+        $schedulings = $this->repository->export($out, $entry, $expired, $date, $categoryId, $enterpriseId);
 
         $dateTime = now()->format('Ymd_His');
         $fileName = "schedulings_{$enterpriseId}_{$dateTime}.xlsx";
@@ -93,9 +106,10 @@ class SchedulingController
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
         $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
+        $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $enterpriseId = $request->user()->view_enterprise_id;
 
-        $schedulings = $this->repository->export($out, $entry, $expired, $date, $enterpriseId);
+        $schedulings = $this->repository->export($out, $entry, $expired, $date, $categoryId, $enterpriseId);
         $schedulings = collect($schedulings)->sortByDesc('date_movement');
 
         $pdf = PDF::loadView('schedulings.pdf', [
