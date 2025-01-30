@@ -150,6 +150,7 @@ Route::prefix('enterprise')->middleware('auth:sanctum')->group(function () {
     Route::get('/search/{text}', [EnterpriseController::class, 'search']);
     Route::get('/show/{id}', [EnterpriseController::class, 'filter']);
     Route::post('/view', [EnterpriseController::class, 'saveViewEnterprise'])->middleware('admin');
+    Route::post('/enterprise-counter', [EnterpriseController::class, 'storeByCounter']);
     // TODO: Veriicar depois a criação da orgnização por rota controller
     // Route::post('/', [EnterpriseController::class, 'store']);
     Route::put('/', [EnterpriseController::class, 'update'])->middleware('admin');

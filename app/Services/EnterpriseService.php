@@ -77,6 +77,38 @@ class EnterpriseService
         return $office;
     }
 
+    public function createByCounter($request)
+    {
+        $this->rule->createOffice($request);
+
+        $subscription = $this->subscriptionRepository->findByName('free');
+
+        $data = [
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'cep' => $request->input('cep'),
+            'state' => $request->input('state'),
+            'city' => $request->input('city'),
+            'neighborhood' => $request->input('neighborhood'),
+            'address' => $request->input('address'),
+            'number_address' => $request->input('numberAddress'),
+            'complement' => $request->input('complement'),
+            'phone' => $request->input('phone'),
+            'subscription_id' => $subscription->id,
+            'counter_enterprise_id' => $request->user()->enterprise_id,
+            'cnpj' => $request->input('cnpj'),
+            'cpf' => $request->input('cpf'),
+        ];
+
+        $enterprise = $this->repository->createOffice($data);
+
+        $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
+        $this->accountRepository->create($dataAccount);
+        $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id]);
+
+        return $enterprise;
+    }
+
     public function update($request)
     {
         $this->rule->update($request);

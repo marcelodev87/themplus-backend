@@ -92,6 +92,28 @@ class EnterpriseController
         }
     }
 
+    public function storeByCounter(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $enteprise = $this->service->createByCounter($request);
+
+            if ($enteprise) {
+                DB::commit();
+
+                return response()->json(['message' => 'Organização cadastrada com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar organização');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar organização: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function saveViewEnterprise(Request $request)
     {
         try {
