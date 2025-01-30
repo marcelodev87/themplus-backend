@@ -128,6 +128,7 @@ class EnterpriseRepository
             DB::table('orders')->where('enterprise_id', $id)->delete();
             DB::table('registers')->where('enterprise_id', $id)->delete();
             DB::table('users')->where('enterprise_id', $id)->delete();
+            DB::table('settings_counter')->where('enterprise_id', $id)->delete();
 
             return $enterprise->delete();
         }
@@ -160,6 +161,7 @@ class EnterpriseRepository
                 DB::table('orders')->where('enterprise_id', $office->id)->delete();
                 DB::table('registers')->where('enterprise_id', $office->id)->delete();
                 DB::table('users')->where('enterprise_id', $office->id)->delete();
+                DB::table('settings_counter')->where('enterprise_id', $office->id)->delete();
 
                 DB::table('enterprises')->where('id', $office->id)->delete();
             }
@@ -181,6 +183,7 @@ class EnterpriseRepository
             DB::table('orders')->where('enterprise_id', $id)->delete();
             DB::table('registers')->where('enterprise_id', $id)->delete();
             DB::table('users')->where('enterprise_id', $id)->delete();
+            DB::table('settings_counter')->where('enterprise_id', $id)->delete();
 
             return $enterprise->delete();
         }

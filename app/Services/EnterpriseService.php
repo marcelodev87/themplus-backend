@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\SettingsCounterRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
 use App\Rules\EnterpriseRule;
@@ -21,18 +22,22 @@ class EnterpriseService
 
     protected $accountRepository;
 
+    protected $settingsCounterRepository;
+
     public function __construct(
         EnterpriseRule $rule,
         EnterpriseRepository $repository,
         UserRepository $userRepository,
         SubscriptionRepository $subscriptionRepository,
-        AccountRepository $accountRepository
+        AccountRepository $accountRepository,
+        SettingsCounterRepository $settingsCounterRepository,
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
         $this->userRepository = $userRepository;
         $this->subscriptionRepository = $subscriptionRepository;
         $this->accountRepository = $accountRepository;
+        $this->settingsCounterRepository = $settingsCounterRepository;
     }
 
     public function createOffice($request)
@@ -67,6 +72,7 @@ class EnterpriseService
 
         $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $office->id];
         $this->accountRepository->create($dataAccount);
+        $this->settingsCounterRepository->create(['enterprise_id' => $office->id]);
 
         return $office;
     }

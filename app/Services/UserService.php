@@ -7,6 +7,7 @@ use App\Jobs\SendResetPasswordEmail;
 use App\Models\PasswordReset;
 use App\Repositories\AccountRepository;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\SettingsCounterRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
 use App\Rules\UserRule;
@@ -25,18 +26,22 @@ class UserService
 
     protected $accountRepository;
 
+    protected $settingsCounterRepository;
+
     public function __construct(
         UserRule $rule,
         UserRepository $repository,
         EnterpriseRepository $enterpriseRepository,
         SubscriptionRepository $subscriptionRepository,
         AccountRepository $accountRepository,
+        SettingsCounterRepository $settingsCounterRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->subscriptionRepository = $subscriptionRepository;
         $this->accountRepository = $accountRepository;
+        $this->settingsCounterRepository = $settingsCounterRepository;
     }
 
     public function login($request)
@@ -125,8 +130,9 @@ class UserService
         $enterprise = $this->enterpriseRepository->createStart($dataEnterprise);
 
         if ($enterprise->position === 'client') {
-            $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
+            $dataAccount = ['name' => 'Caixinha'];
             $this->accountRepository->create($dataAccount);
+            $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id]);
         }
 
         $data['enterprise_id'] = $enterprise->id;

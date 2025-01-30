@@ -15,6 +15,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchedulingController;
+use App\Http\Controllers\SettingsCounterController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -113,6 +114,8 @@ Route::prefix('financial')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
     Route::get('/movements-observations/{date}', [FinancialController::class, 'indexObservations']);
     Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
+    Route::get('/settings-counter', [SettingsCounterController::class, 'index'])->middleware('admin');
+    Route::put('/settings-counter', [SettingsCounterController::class, 'update'])->middleware('admin');
 });
 
 Route::prefix('report')->middleware('auth:sanctum')->group(function () {
