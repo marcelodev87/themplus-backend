@@ -38,6 +38,7 @@ Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::post('/export', [MemberController::class, 'export']);
     Route::put('/', [MemberController::class, 'update'])->middleware('admin');
     Route::delete('/{id}', [MemberController::class, 'destroy'])->middleware('admin');
+    Route::delete('/{id}/counter', [MemberController::class, 'destroyByCounter']);
 });
 
 Route::prefix('category')->middleware('auth:sanctum')->group(function () {

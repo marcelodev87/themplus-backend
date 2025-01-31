@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository
 {
@@ -146,6 +147,10 @@ class UserRepository
     {
         $user = $this->findById($id);
         if ($user) {
+            DB::table('notifications')->where('user_id', $id)->delete();
+            DB::table('registers')->where('user_id', $id)->delete();
+            DB::table('feedbacks')->where('user_id', $id)->delete();
+
             return $user->delete();
         }
 

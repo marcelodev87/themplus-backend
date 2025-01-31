@@ -7,6 +7,7 @@ use App\Jobs\SendResetPasswordEmail;
 use App\Models\PasswordReset;
 use App\Repositories\AccountRepository;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\NotificationRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
@@ -28,13 +29,16 @@ class UserService
 
     protected $settingsCounterRepository;
 
+    protected $notificationRepository;
+
     public function __construct(
         UserRule $rule,
         UserRepository $repository,
         EnterpriseRepository $enterpriseRepository,
         SubscriptionRepository $subscriptionRepository,
         AccountRepository $accountRepository,
-        SettingsCounterRepository $settingsCounterRepository
+        SettingsCounterRepository $settingsCounterRepository,
+        NotificationRepository $notificationRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -42,6 +46,7 @@ class UserService
         $this->subscriptionRepository = $subscriptionRepository;
         $this->accountRepository = $accountRepository;
         $this->settingsCounterRepository = $settingsCounterRepository;
+        $this->notificationRepository = $notificationRepository;
     }
 
     public function login($request)
@@ -199,5 +204,21 @@ class UserService
         $data = ['password' => Hash::make($request->input('passwordNew'))];
 
         return $this->repository->updatePassword($request->user()->id, $data);
+    }
+
+    public function destroyByCounter($request, $id)
+    {
+        $this->rule->delete($id);
+
+        $memberDelete = $this->repository->findById($id);
+        $member = $this->repository->delete($id);
+
+        $enterprise = $this->enterpriseRepository->findById($request->user()->enterprise_id);
+
+        $text = "O(A) usuário(a) $memberDelete->name com e-mail $memberDelete->email foi deletado(a) pela organização de contabilidade $enterprise->name";
+
+        $this->notificationRepository->create($memberDelete->enterprise_id, 'Exclusão de usuário', $text);
+
+        return $member;
     }
 }

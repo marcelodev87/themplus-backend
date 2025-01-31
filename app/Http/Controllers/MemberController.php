@@ -8,6 +8,7 @@ use App\Helpers\RegisterHelper;
 use App\Http\Resources\OfficeResource;
 use App\Http\Resources\UserResource;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\NotificationRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\UserRepository;
 use App\Rules\UserRule;
@@ -25,14 +26,18 @@ class MemberController
     private $rule;
 
     private $enterpriseRepository;
+
     private $settingsCounterRepository;
 
-    public function __construct(UserService $service, UserRepository $repository, UserRule $rule, EnterpriseRepository $enterpriseRepository, SettingsCounterRepository $settingsCounterRepository)
+    private $notificationRepository;
+
+    public function __construct(UserService $service, UserRepository $repository, UserRule $rule, EnterpriseRepository $enterpriseRepository, SettingsCounterRepository $settingsCounterRepository, NotificationRepository $notificationRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->settingsCounterRepository = $settingsCounterRepository;
+        $this->notificationRepository = $notificationRepository;
         $this->rule = $rule;
     }
 
@@ -45,21 +50,21 @@ class MemberController
 
             return response()->json(['users' => UserResource::collection($users), 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os membros da organização: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
     public function indexByEnterprise($id)
     {
         try {
             $users = $this->repository->getAllByEnterpriseWithRelations($id);
             $settings = $this->settingsCounterRepository->getByEnterprise($id);
 
-
             return response()->json(['users' => UserResource::collection($users), 'settings' => $settings], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os membros da organização: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -92,7 +97,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar membro da organização: ' . $e->getMessage());
+            Log::error('Erro ao registrar membro da organização: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -118,7 +123,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar membro da filial: ' . $e->getMessage());
+            Log::error('Erro ao registrar membro da filial: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -163,7 +168,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar dados do membro: ' . $e->getMessage());
+            Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -196,7 +201,28 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar membro: ' . $e->getMessage());
+            Log::error('Erro ao deletar membro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroyByCounter(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+            $member = $this->service->destroyByCounter($request, $id);
+            if ($member) {
+                DB::commit();
+
+                return response()->json(['message' => 'Membro deletado com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar membro pela contabilidade');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar membro pela contabilidade: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
