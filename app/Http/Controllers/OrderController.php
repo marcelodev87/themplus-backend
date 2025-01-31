@@ -7,6 +7,7 @@ use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\OrderRepository;
+use App\Repositories\SettingsCounterRepository;
 use App\Rules\OrderRule;
 use App\Services\OrderService;
 use Illuminate\Http\Request;
@@ -25,13 +26,16 @@ class OrderController
 
     private $financialRepository;
 
-    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service, EnterpriseRepository $enterpriseRepository, FinancialRepository $financialRepository)
+    private $settingsCounterRepository;
+
+    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service, EnterpriseRepository $enterpriseRepository, FinancialRepository $financialRepository, SettingsCounterRepository $settingsCounterRepository)
     {
         $this->repository = $repository;
         $this->rule = $rule;
         $this->service = $service;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->financialRepository = $financialRepository;
+        $this->settingsCounterRepository = $settingsCounterRepository;
     }
 
     public function indexBonds(Request $request)
@@ -42,6 +46,7 @@ class OrderController
             $bonds = $this->enterpriseRepository->getBonds($request->user()->enterprise_id);
             $bonds = $bonds->map(function ($bond) {
                 $bond->no_verified = $this->financialRepository->countNoVerified($bond->id);
+                $bond->manage_users = $this->settingsCounterRepository->verifyAllowManage($bond->id);
 
                 return $bond;
             });

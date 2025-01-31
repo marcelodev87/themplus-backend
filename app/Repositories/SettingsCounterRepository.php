@@ -28,6 +28,16 @@ class SettingsCounterRepository
         return $this->model->find($id);
     }
 
+    public function verifyAllowManage($enterpriseId)
+    {
+        $permissions = $this->model->where('enterprise_id', $enterpriseId)->first();
+        if ($permissions->allow_add_user === 1 || $permissions->allow_edit_user === 1 || $permissions->allow_delete_user === 1) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);
