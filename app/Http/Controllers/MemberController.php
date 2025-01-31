@@ -103,6 +103,32 @@ class MemberController
         }
     }
 
+    public function storeByCounter(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = $this->service->storeByCounter($request);
+
+            if ($user) {
+                DB::commit();
+
+                $users = $this->repository->getAllByEnterpriseWithRelations($request->input('enterpriseId'));
+                $settings = $this->settingsCounterRepository->getByEnterprise($request->input('enterpriseId'));
+
+                return response()->json(['users' => UserResource::collection($users), 'settings' => $settings, 'message' => 'Membro adicionado á sua organização com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar membro da organização');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar membro da organização: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function startOfficeNewUser(Request $request)
     {
         try {

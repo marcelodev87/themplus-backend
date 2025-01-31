@@ -34,6 +34,7 @@ Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [MemberController::class, 'index']);
     Route::get('/{id}', [MemberController::class, 'indexByEnterprise']);
     Route::post('/', [MemberController::class, 'store'])->middleware('admin');
+    Route::post('/member-counter', [MemberController::class, 'storeByCounter']);
     Route::post('/start-office', [MemberController::class, 'startOfficeNewUser'])->middleware('admin');
     Route::post('/export', [MemberController::class, 'export']);
     Route::put('/', [MemberController::class, 'update'])->middleware('admin');

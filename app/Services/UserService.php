@@ -162,6 +162,27 @@ class UserService
         return $this->repository->create($data);
     }
 
+    public function storeByCounter($request)
+    {
+        $this->rule->storeByCounter($request);
+
+        $data = $request->only(['name', 'email', 'position', 'phone']);
+        $data['password'] = Hash::make($request->input('password'));
+        $data['position'] = 'admin';
+        $data['enterprise_id'] = $request->input('enterpriseId');
+        $data['view_enterprise_id'] = $request->input('enterpriseId');
+
+        $user = $this->repository->create($data);
+
+        $enterprise = $this->enterpriseRepository->findById($request->user()->enterprise_id);
+
+        $text = "O(A) usuário(a) $user->name com e-mail $user->email foi adicionado(a) pela organização de contabilidade $enterprise->name";
+
+        $this->notificationRepository->create($user->enterprise_id, 'Adição de usuário', $text);
+
+        return $user;
+    }
+
     public function startOfficeNewUser($request)
     {
         $this->rule->startOfficeNewUser($request);
