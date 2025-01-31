@@ -32,6 +32,7 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [MemberController::class, 'index']);
+    Route::get('/{id}', [MemberController::class, 'indexByEnterprise']);
     Route::post('/', [MemberController::class, 'store'])->middleware('admin');
     Route::post('/start-office', [MemberController::class, 'startOfficeNewUser'])->middleware('admin');
     Route::post('/export', [MemberController::class, 'export']);
