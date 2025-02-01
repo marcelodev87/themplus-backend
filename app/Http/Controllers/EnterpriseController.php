@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\OfficeResource;
 use App\Repositories\EnterpriseRepository;
@@ -37,8 +38,13 @@ class EnterpriseController
             $enterpriseId = $request->user()->enterprise_id;
             $offices = $this->repository->getAllOfficesByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
-            return response()->json(['offices' => OfficeResource::collection($offices), 'filled_data' => $filledData], 200);
+            return response()->json([
+                'offices' => OfficeResource::collection($offices),
+                'filled_data' => $filledData,
+                'notifications' => $notifications,
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as filiais: '.$e->getMessage());
 

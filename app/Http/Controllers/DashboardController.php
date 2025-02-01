@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Repositories\DashboardRepository;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ class DashboardController
 
             $dashboard = $this->repository->mountDashboard($enterpriseId, $request);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
             return response()->json([
                 'months_years' => $dashboard['months_years'],
@@ -34,6 +36,7 @@ class DashboardController
                 'users_dashboard' => $dashboard['users_dashboard'],
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],
                 'accounts_dashboard' => $dashboard['accounts_dashboard'],
+                'notifications' => $notifications,
                 'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {

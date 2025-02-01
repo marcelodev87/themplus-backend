@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
@@ -42,12 +43,14 @@ class FinancialController
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $enterprise = $this->enterpriseRepository->findById($request->user()->view_enterprise_id);
             $orderCount = $this->orderRepository->getAllByUser($request->user()->enterprise_id)->count();
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
             return response()->json([
                 'deliveries' => $deliveries,
                 'counter' => $enterprise->counter_enterprise_id,
                 'filled_data' => $filledData,
                 'order_count' => $orderCount,
+                'notifications' => $notifications,
                 'is_headquarters' => $enterprise->created_by === null ? true : false,
             ], 200);
         } catch (\Exception $e) {

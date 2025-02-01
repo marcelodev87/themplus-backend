@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Repositories\DepartmentRepository;
 use App\Rules\DepartmentRule;
 use App\Services\DepartmentService;
@@ -31,8 +32,9 @@ class DepartmentController
             $enterpriseId = $request->user()->view_enterprise_id;
             $departments = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
-            return response()->json(['departments' => $departments, 'filled_data' => $filledData], 200);
+            return response()->json(['departments' => $departments, 'filled_data' => $filledData, 'notifications' => $notifications], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os departamentos: '.$e->getMessage());
 

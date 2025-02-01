@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Http\Resources\UserOptionsResource;
 use App\Repositories\RegisterRepository;
 use App\Repositories\UserRepository;
@@ -49,10 +50,12 @@ class RegisterController
             $registers = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $users = $this->userRepository->getAllByEnterprise($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
             return response()->json([
                 'registers' => $this->treatRegister($registers),
                 'users' => UserOptionsResource::collection($users),
+                'notifications' => $notifications,
                 'filled_data' => $filledData,
             ], 200);
         } catch (\Exception $e) {

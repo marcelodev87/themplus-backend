@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\SchedulingExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
@@ -52,11 +53,13 @@ class SchedulingController
             $monthsYears = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
             return response()->json([
                 'schedulings' => $schedulings,
                 'filled_data' => $filledData,
                 'months_years' => $monthsYears,
+                'notifications' => $notifications,
                 'categories' => CategorySelect::collection($categories),
             ], 200);
         } catch (\Exception $e) {

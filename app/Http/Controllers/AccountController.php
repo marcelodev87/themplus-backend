@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\AccountExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\AccountRepository;
 use App\Services\AccountService;
@@ -29,8 +30,9 @@ class AccountController
             $enterpriseId = $request->user()->view_enterprise_id;
             $accounts = $this->repository->getAllByEnterprise($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
-            return response()->json(['accounts' => $accounts, 'filled_data' => $filledData], 200);
+            return response()->json(['accounts' => $accounts, 'filled_data' => $filledData, 'notifications' => $notifications], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as contas: '.$e->getMessage());
 

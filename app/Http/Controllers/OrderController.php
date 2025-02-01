@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
@@ -52,8 +53,9 @@ class OrderController
             });
 
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
-            return response()->json(['bonds' => $bonds, 'filled_data' => $filledData], 200);
+            return response()->json(['bonds' => $bonds, 'filled_data' => $filledData, 'notifications' => $notifications], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os vínculos: '.$e->getMessage());
 
@@ -67,8 +69,9 @@ class OrderController
             $enterpriseId = $request->user()->enterprise_id;
             $orders = $this->repository->getAllByCounter($request->user()->enterprise_id);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
-            return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
+            return response()->json(['orders' => $orders, 'filled_data' => $filledData, 'notifications' => $notifications], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as solicitações: '.$e->getMessage());
 

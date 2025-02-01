@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\Example\MovementInsertExample;
 use App\Exports\MovementExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\CategoryResource;
@@ -65,12 +66,14 @@ class MovementController
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $delivered = $this->repository->checkDelivered($enterpriseId, $date);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+            $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
             return response()->json([
                 'movements' => $movements,
                 'filled_data' => $filledData,
                 'months_years' => $months_years,
                 'categories' => CategorySelect::collection($categories),
+                'notifications' => $notifications,
                 'delivered' => $delivered,
             ], 200);
         } catch (\Exception $e) {
