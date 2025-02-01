@@ -70,6 +70,19 @@ class MemberController
         }
     }
 
+    public function show($id)
+    {
+        try {
+            $user = $this->repository->findById($id);
+
+            return response()->json(['user' => $user], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar dados do usuário: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         try {
@@ -188,6 +201,32 @@ class MemberController
                 $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 return response()->json(['users' => UserResource::collection($users), 'message' => 'Dados do membro foram atualizados com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar dados do membro');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateByCounter(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = $this->service->updateByCounter($request);
+
+            if ($user) {
+                DB::commit();
+
+                $users = $this->repository->getAllByEnterpriseWithRelations($user->enterprise_id);
+                $settings = $this->settingsCounterRepository->getByEnterprise($user->enterprise_id);
+
+                return response()->json(['users' => UserResource::collection($users), 'settings' => $settings, 'message' => 'Membro atualizado com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao atualizar dados do membro');

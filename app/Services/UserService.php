@@ -183,6 +183,22 @@ class UserService
         return $user;
     }
 
+    public function updateByCounter($request)
+    {
+
+        $data = $request->only(['name', 'email', 'phone']);
+
+        $user = $this->repository->update($request->input('id'), $data);
+
+        $enterprise = $this->enterpriseRepository->findById($request->user()->enterprise_id);
+
+        $text = "O(A) usuário(a) $user->name com e-mail $user->email foi atualizado(a) pela organização de contabilidade $enterprise->name";
+
+        $this->notificationRepository->create($user->enterprise_id, 'Atualização de usuário', $text);
+
+        return $user;
+    }
+
     public function startOfficeNewUser($request)
     {
         $this->rule->startOfficeNewUser($request);
