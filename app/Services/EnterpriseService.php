@@ -91,7 +91,7 @@ class EnterpriseService
             'city' => $request->input('city'),
             'neighborhood' => $request->input('neighborhood'),
             'address' => $request->input('address'),
-            'number_address' => $request->input('numberAddress'),
+            'number_address' => $request->input('number_address'),
             'complement' => $request->input('complement'),
             'phone' => $request->input('phone'),
             'subscription_id' => $subscription->id,
