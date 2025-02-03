@@ -138,6 +138,13 @@ class MemberController
 
             if ($user && $register) {
                 DB::commit();
+                $dataNotification = [
+                    'user_id' => $user->id,
+                    'enterprise_id' => $user->enterprise_id,
+                    'title' => 'Boas vindas ao Themplus',
+                    'text' => 'Seja bem-vindo ao Themplus! Você acaba de dar o primeiro passo para gerenciar melhor suas movimentações e simplificar a burocracia da sua contabilidade de modo mais fácil. Estamos aqui para ajudar você a ter uma experiência mais organizada e eficiente. Aproveite todos os recursos que preparamos para otimizar a sua gestão!',
+                ];
+                $this->notificationRepository->createForUser($dataNotification);
 
                 $enterpriseId = $request->user()->enterprise_id;
                 $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
@@ -190,6 +197,14 @@ class MemberController
 
             if ($user) {
                 DB::commit();
+
+                $dataNotification = [
+                    'user_id' => $user->id,
+                    'enterprise_id' => $user->enterprise_id,
+                    'title' => 'Boas vindas ao Themplus',
+                    'text' => 'Seja bem-vindo ao Themplus! Você acaba de dar o primeiro passo para gerenciar melhor suas movimentações e simplificar a burocracia da sua contabilidade de modo mais fácil. Estamos aqui para ajudar você a ter uma experiência mais organizada e eficiente. Aproveite todos os recursos que preparamos para otimizar a sua gestão!',
+                ];
+                $this->notificationRepository->createForUser($dataNotification);
 
                 $enterpriseId = $request->user()->enterprise_id;
                 $offices = $this->enterpriseRepository->getAllOfficesByEnterprise($enterpriseId);
