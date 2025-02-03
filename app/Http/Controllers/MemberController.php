@@ -62,6 +62,39 @@ class MemberController
         }
     }
 
+    public function inbox(Request $request)
+    {
+        try {
+            $inbox = $this->notificationRepository->getInbox($request->user()->id);
+
+            return response()->json([
+                'inbox' => $inbox,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as notificações: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function readNotification(Request $request)
+    {
+        try {
+            $read = $this->notificationRepository->update($request->input('id'), ['read' => 1]);
+            if ($read) {
+                $inbox = $this->notificationRepository->getInbox($request->user()->id);
+
+                return response()->json([
+                    'inbox' => $inbox,
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            Log::error('Erro ao marcar notificação como lida: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function indexByEnterprise($id)
     {
         try {

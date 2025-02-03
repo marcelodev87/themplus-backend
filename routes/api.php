@@ -32,6 +32,8 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::get('/', [MemberController::class, 'index']);
+    Route::get('/inbox', [MemberController::class, 'inbox']);
+    Route::put('/inbox', [MemberController::class, 'readNotification']);
     Route::get('/{id}', [MemberController::class, 'indexByEnterprise']);
     Route::get('/find/{id}', [MemberController::class, 'show']);
     Route::post('/', [MemberController::class, 'store'])->middleware('admin');

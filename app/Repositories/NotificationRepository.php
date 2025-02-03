@@ -21,6 +21,13 @@ class NotificationRepository
         return $this->model->all();
     }
 
+    public function getInbox($userId)
+    {
+        return $this->model->where('user_id', $userId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+    }
+
     public function getAllByEnterprise($enterpriseId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();
@@ -54,11 +61,11 @@ class NotificationRepository
 
     public function update($id, array $data)
     {
-        $alert = $this->findById($id);
-        if ($alert) {
-            $alert->update($data);
+        $notification = $this->findById($id);
+        if ($notification) {
+            $notification->update($data);
 
-            return $alert;
+            return $notification;
         }
 
         return null;
@@ -66,9 +73,9 @@ class NotificationRepository
 
     public function delete($id)
     {
-        $alert = $this->findById($id);
-        if ($alert) {
-            return $alert->delete();
+        $notification = $this->findById($id);
+        if ($notification) {
+            return $notification->delete();
         }
 
         return false;
