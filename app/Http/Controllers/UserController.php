@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\NotificationRepository;
 use App\Rules\UserRule;
 use App\Services\UserService;
 use Illuminate\Http\Request;
@@ -17,11 +18,14 @@ class UserController
 
     protected $enterpriseRepository;
 
-    public function __construct(UserService $service, UserRule $rule, EnterpriseRepository $enterpriseRepository)
+    protected $notificationRepository;
+
+    public function __construct(UserService $service, UserRule $rule, EnterpriseRepository $enterpriseRepository, NotificationRepository $notificationRepository)
     {
         $this->service = $service;
         $this->rule = $rule;
         $this->enterpriseRepository = $enterpriseRepository;
+        $this->notificationRepository = $notificationRepository;
     }
 
     public function login(Request $request)
@@ -52,6 +56,14 @@ class UserController
 
             if ($user) {
                 $token = $user->createToken('my-app-token')->plainTextToken;
+
+                $dataNotification = [
+                    'user_id' => $user->id,
+                    'enterprise_id' => $user->enterprise_id,
+                    'title' => 'Boas vindas ao Themplus',
+                    'text' => 'Seja bem-vindo ao Themplus! Você acaba de dar o primeiro passo para gerenciar melhor suas movimentações e simplificar a burocracia da sua contabilidade de modo mais fácil. Estamos aqui para ajudar você a ter uma experiência mais organizada e eficiente. Aproveite todos os recursos que preparamos para otimizar a sua gestão!',
+                ];
+                $this->notificationRepository->createForUser($dataNotification);
 
                 DB::commit();
                 $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);

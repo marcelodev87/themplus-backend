@@ -59,6 +59,11 @@ class NotificationRepository
         }
     }
 
+    public function createForUser($data)
+    {
+        return $this->model->create($data);
+    }
+
     public function update($id, array $data)
     {
         $notification = $this->findById($id);
