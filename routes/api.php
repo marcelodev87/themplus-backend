@@ -42,6 +42,7 @@ Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::put('/member-counter', [MemberController::class, 'updateByCounter']);
     Route::put('/inbox', [MemberController::class, 'readNotification']);
     Route::put('/', [MemberController::class, 'update'])->middleware('admin');
+    Route::put('/active', [MemberController::class, 'active'])->middleware('admin');
     Route::delete('/{id}', [MemberController::class, 'destroy'])->middleware('admin');
     Route::delete('/{id}/counter', [MemberController::class, 'destroyByCounter']);
     Route::delete('/inbox/{id}', [MemberController::class, 'destroyNotification']);

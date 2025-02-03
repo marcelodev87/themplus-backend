@@ -252,6 +252,32 @@ class MemberController
         }
     }
 
+    public function active(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $member = $this->repository->update($request->input('userId'), ['active' => $request->input('active')]);
+            if ($member) {
+                DB::commit();
+
+                $enterpriseId = $request->user()->enterprise_id;
+                $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
+
+                $message = $request->input('active') == 0 ? 'Usuário inativado com sucesso' : 'Usuário ativado com sucesso';
+
+                return response()->json(['users' => UserResource::collection($users), 'message' => $message], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar dados do membro');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function updateByCounter(Request $request)
     {
         try {
