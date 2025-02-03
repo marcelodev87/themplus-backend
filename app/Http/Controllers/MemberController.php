@@ -311,6 +311,27 @@ class MemberController
         }
     }
 
+    public function destroyNotification($id)
+    {
+        try {
+            DB::beginTransaction();
+            $notification = $this->notificationRepository->delete($id);
+            if ($notification) {
+                DB::commit();
+
+                return response()->json(['message' => 'Notificação deletada com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar notificação');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar notificação: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function destroyByCounter(Request $request, string $id)
     {
         try {
