@@ -99,6 +99,18 @@ class CategoryRepository
         return null;
     }
 
+    public function removeAlert($enterpriseId)
+    {
+        $categories = $this->getAllByEnterprise($enterpriseId);
+
+        if ($categories->isNotEmpty()) {
+            foreach ($categories as $category) {
+                $category->alert = null;
+                $category->save();
+            }
+        }
+    }
+
     public function delete($id)
     {
         $category = $this->findById($id);

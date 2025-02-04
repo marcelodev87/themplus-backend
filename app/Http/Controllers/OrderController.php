@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
+use App\Repositories\CategoryRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\OrderRepository;
@@ -29,13 +30,16 @@ class OrderController
 
     private $settingsCounterRepository;
 
-    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service, EnterpriseRepository $enterpriseRepository, FinancialRepository $financialRepository, SettingsCounterRepository $settingsCounterRepository)
+    private $categoryRepository;
+
+    public function __construct(OrderRepository $repository, OrderRule $rule, OrderService $service, EnterpriseRepository $enterpriseRepository, FinancialRepository $financialRepository, SettingsCounterRepository $settingsCounterRepository, CategoryRepository $categoryRepository)
     {
         $this->repository = $repository;
         $this->rule = $rule;
         $this->service = $service;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->financialRepository = $financialRepository;
+        $this->categoryRepository = $categoryRepository;
         $this->settingsCounterRepository = $settingsCounterRepository;
     }
 
@@ -210,6 +214,7 @@ class OrderController
             DB::beginTransaction();
 
             $this->rule->deleteBond($id);
+            $this->categoryRepository->removeAlert($id);
             $order = $this->repository->deleteBond($id);
 
             if ($order) {

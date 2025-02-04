@@ -14,6 +14,7 @@ class CategoryResource extends JsonResource
             'name' => $this->name,
             'active' => $this->active,
             'type' => $this->type,
+            'alert' => $this->alert,
         ];
     }
 }

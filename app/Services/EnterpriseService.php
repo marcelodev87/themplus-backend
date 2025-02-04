@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\CategoryHelper;
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\AccountRepository;
+use App\Repositories\CategoryRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\SubscriptionRepository;
@@ -21,6 +22,8 @@ class EnterpriseService
 
     protected $subscriptionRepository;
 
+    protected $categoryRepository;
+
     protected $accountRepository;
 
     protected $settingsCounterRepository;
@@ -32,6 +35,7 @@ class EnterpriseService
         SubscriptionRepository $subscriptionRepository,
         AccountRepository $accountRepository,
         SettingsCounterRepository $settingsCounterRepository,
+        CategoryRepository $categoryRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -39,6 +43,7 @@ class EnterpriseService
         $this->subscriptionRepository = $subscriptionRepository;
         $this->accountRepository = $accountRepository;
         $this->settingsCounterRepository = $settingsCounterRepository;
+        $this->categoryRepository = $categoryRepository;
     }
 
     public function createOffice($request)
@@ -151,6 +156,8 @@ class EnterpriseService
         foreach ($offices as $office) {
             $office->update(['counter_enterprise_id' => null]);
         }
+
+        $this->categoryRepository->removeAlert($request->user()->enterprise_id);
 
         return $enterprise;
     }
