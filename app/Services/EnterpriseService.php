@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\CategoryHelper;
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\EnterpriseRepository;
@@ -73,6 +74,7 @@ class EnterpriseService
         $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $office->id];
         $this->accountRepository->create($dataAccount);
         $this->settingsCounterRepository->create(['enterprise_id' => $office->id]);
+        CategoryHelper::createDefault($office->id);
 
         return $office;
     }
@@ -105,6 +107,7 @@ class EnterpriseService
         $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
         $this->accountRepository->create($dataAccount);
         $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id]);
+        CategoryHelper::createDefault($enterprise->id);
 
         return $enterprise;
     }

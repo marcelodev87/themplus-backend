@@ -18,6 +18,7 @@ class Category extends Model
         'enterprise_id',
         'alert',
         'active',
+        'default',
     ];
 
     public function alert()

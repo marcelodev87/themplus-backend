@@ -32,11 +32,12 @@ class CategoryRepository
         $query = $this->model->with(['alert']);
 
         if (! is_null($createdByMe) && $createdByMe) {
-            $query->where('enterprise_id', $request->user()->view_enterprise_id);
+            $query->where('enterprise_id', $request->user()->view_enterprise_id)
+                ->where('default', 0);
         }
 
         if (! is_null($defaultSystem) && $defaultSystem) {
-            $query->where('enterprise_id', null);
+            $query->where('default', 1);
         }
 
         return $query->get();
@@ -44,11 +45,8 @@ class CategoryRepository
 
     public function getAllByEnterpriseWithDefaults($enterpriseId, $type = null)
     {
-        return $this->model->where(function ($query) use ($enterpriseId) {
-            $query->where('enterprise_id', $enterpriseId)
-                ->orWhere('enterprise_id', null);
-        })
-            ->when($type === 'entrada' || $type === 'saída', function ($query) use ($type) {
+        return $this->model->where('enterprise_id', $enterpriseId)
+            ->when(in_array($type, ['entrada', 'saída']), function ($query) use ($type) {
                 return $query->where('type', $type);
             })
             ->orderBy('name', 'asc')
@@ -57,13 +55,9 @@ class CategoryRepository
 
     public function getAllByEnterpriseWithDefaultsOnlyActive($enterpriseId, $type = null)
     {
-        return $this->model->with('alert')
-            ->where('active', 1)
-            ->where(function ($query) use ($enterpriseId) {
-                $query->where('enterprise_id', $enterpriseId)
-                    ->orWhere('enterprise_id', null);
-            })
-            ->when($type === 'entrada' || $type === 'saída', function ($query) use ($type) {
+        return $this->model->where('active', 1)
+            ->where('enterprise_id', $enterpriseId)
+            ->when(in_array($type, ['entrada', 'saída']), function ($query) use ($type) {
                 return $query->where('type', $type);
             })
             ->get();
@@ -84,10 +78,7 @@ class CategoryRepository
         return $this->model
             ->where(DB::raw('LOWER(name)'), '=', strtolower($name))
             ->where('type', $type)
-            ->where(function ($query) use ($enterpriseId) {
-                $query->where('enterprise_id', $enterpriseId)
-                    ->orWhereNull('enterprise_id');
-            })
+            ->where('enterprise_id', $enterpriseId)
             ->first();
     }
 

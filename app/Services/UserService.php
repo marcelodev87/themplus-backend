@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\CategoryHelper;
 use App\Helpers\UserHelper;
 use App\Jobs\SendResetPasswordEmail;
 use App\Models\PasswordReset;
@@ -143,6 +144,7 @@ class UserService
             $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
             $this->accountRepository->create($dataAccount);
             $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id]);
+            CategoryHelper::createDefault($enterprise->id);
         }
 
         $data['enterprise_id'] = $enterprise->id;
