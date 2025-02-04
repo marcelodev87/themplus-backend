@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Repositories\AlertRepository;
+use App\Repositories\CategoryRepository;
 use App\Rules\AlertRule;
 
 class AlertService
@@ -13,7 +13,7 @@ class AlertService
 
     public function __construct(
         AlertRule $rule,
-        AlertRepository $repository,
+        CategoryRepository $repository,
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -31,11 +31,11 @@ class AlertService
 
     public function update($request)
     {
-        $this->rule->update($request);
+        foreach ($request->input('categories') as $categorie) {
 
-        $data = $request->only(['description']);
-        $data['enterprise_id'] = $request->user()->enterprise_id;
+            $data = ['alert' => $categorie['alert']];
+            $this->repository->update($categorie['id'], $data);
+        }
 
-        return $this->repository->update($request->input('id'), $data);
     }
 }

@@ -2,8 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\EnterpriseHelper;
-use App\Repositories\AlertRepository;
+use App\Repositories\CategoryRepository;
 use App\Rules\AlertRule;
 use App\Services\AlertService;
 use Illuminate\Http\Request;
@@ -18,23 +17,21 @@ class AlertController
 
     private $rule;
 
-    public function __construct(AlertService $service, AlertRepository $repository, AlertRule $rule)
+    public function __construct(AlertService $service, CategoryRepository $repository, AlertRule $rule)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->rule = $rule;
     }
 
-    public function index(Request $request)
+    public function index($id)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
-            $alerts = $this->repository->getAllByEnterprise($enterpriseId);
-            $filledData = EnterpriseHelper::filledData($enterpriseId);
+            $categories = $this->repository->getAllByEnterpriseWithDefaults($id);
 
-            return response()->json(['alerts' => $alerts, 'filled_data' => $filledData], 200);
+            return response()->json(['categories' => $categories], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as alertas: '.$e->getMessage());
+            Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -69,22 +66,17 @@ class AlertController
     {
         try {
             DB::beginTransaction();
-            $alert = $this->service->update($request);
+            $this->service->update($request);
 
-            if ($alert) {
-                DB::commit();
+            DB::commit();
 
-                $enterpriseId = $request->user()->enterprise_id;
-                $alerts = $this->repository->getAllByEnterprise($enterpriseId);
+            $categories = $this->repository->getAllByEnterpriseWithDefaults($request->input('enterpriseId'));
 
-                return response()->json(['alerts' => $alerts, 'message' => 'Alerta atualizada com sucesso'], 200);
-            }
-
-            throw new \Exception('Falha ao atualizar alerta');
+            return response()->json(['categories' => $categories, 'message' => 'Categorias com alertas atualizadas com sucesso'], 200);
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar alerta: '.$e->getMessage());
+            Log::error('Erro ao atualizar categoria com alerta: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

@@ -65,7 +65,7 @@ Route::prefix('department')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('alert')->middleware('auth:sanctum')->group(function () {
-    Route::get('/', [AlertController::class, 'index']);
+    Route::get('/{id}', [AlertController::class, 'index']);
     Route::post('/', [AlertController::class, 'store']);
     Route::put('/', [AlertController::class, 'update']);
     Route::delete('/{id}', [AlertController::class, 'destroy']);

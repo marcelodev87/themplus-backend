@@ -33,17 +33,17 @@ class AlertRule
     {
         $rules = [
             'id' => 'required|string|max:100',
-            'description' => 'required|string|min:1|max:2000',
+            'alert' => 'required|string|min:1|max:2000',
         ];
 
         $messages = [
-            'id.required' => 'O ID da alerta é obrigatório',
-            'id.string' => 'O ID da alerta deve ser uma string',
-            'id.max' => 'O ID da alerta não pode ter mais de 100 caracteres',
-            'description.required' => 'A descrição da alerta é obrigatório',
-            'description.string' => 'A descrição da alerta deve ser uma string',
-            'description.min' => 'A descrição da alerta não pode ter menos de 1 caracteres',
-            'description.max' => 'A descrição da alerta não pode ter mais de 2000 caracteres',
+            'id.required' => 'O ID da categoria é obrigatório',
+            'id.string' => 'O ID da categoria deve ser uma string',
+            'id.max' => 'O ID da categoria não pode ter mais de 100 caracteres',
+            'alert.required' => 'A alerta da categoria é obrigatório',
+            'alert.string' => 'A alerta da categoria deve ser uma string',
+            'alert.min' => 'A alerta da categoria não pode ter menos de 1 caracteres',
+            'alert.max' => 'A alerta da categoria não pode ter mais de 2000 caracteres',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

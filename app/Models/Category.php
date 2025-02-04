@@ -16,7 +16,7 @@ class Category extends Model
         'name',
         'type',
         'enterprise_id',
-        'alert_id',
+        'alert',
         'active',
     ];
 
