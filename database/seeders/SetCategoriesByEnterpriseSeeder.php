@@ -14,12 +14,11 @@ class SetCategoriesByEnterpriseSeeder extends Seeder
     {
         $enterpriseIds = Enterprise::pluck('id');
 
-        $oldCategories = Category::whereNull('enterprise_id')->pluck('id')->toArray();
+        $oldCategoryIds = Category::whereNull('enterprise_id')->pluck('id')->toArray();
 
         $newCategories = [];
-        $categoryMapping = [];
 
-        foreach ($enterpriseIds as $id) {
+        foreach ($enterpriseIds as $enterpriseId) {
             $categories = [
                 ['name' => 'Dízimos', 'type' => 'entrada'],
                 ['name' => 'Ofertas', 'type' => 'entrada'],
@@ -59,24 +58,20 @@ class SetCategoriesByEnterpriseSeeder extends Seeder
             ];
 
             foreach ($categories as $category) {
-                $newId = Str::uuid();
                 $newCategories[] = [
-                    'id' => $newId,
+                    'id' => Str::uuid(),
                     'name' => $category['name'],
                     'type' => $category['type'],
-                    'enterprise_id' => $id,
+                    'enterprise_id' => $enterpriseId,
                     'default' => 1,
                 ];
-                $categoryMapping[$category['name']] = $newId;
             }
         }
 
         Category::insert($newCategories);
 
-        foreach ($categoryMapping as $name => $newId) {
-            DB::table('movements')->whereIn('category_id', $oldCategories)->update(['category_id' => $newId]);
-            DB::table('schedulings')->whereIn('category_id', $oldCategories)->update(['category_id' => $newId]);
-        }
+        DB::table('movements')->whereIn('category_id', $oldCategoryIds)->delete();
+        DB::table('schedulings')->whereIn('category_id', $oldCategoryIds)->delete();
 
         Category::whereNull('enterprise_id')->delete();
     }
