@@ -8,6 +8,7 @@ use App\Repositories\FinancialRepository;
 use App\Repositories\MovementRepository;
 use App\Rules\MovementRule;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class MovementService
 {
@@ -39,9 +40,21 @@ class MovementService
     {
         $this->rule->create($request);
 
-        $filePath = null;
+        $fileUrl = null;
+
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->storeAs('/receipts', $request->file('file')->getClientOriginalName(), 'local');
+            $env = env('APP_ENV');
+
+            $folder = match ($env) {
+                'local' => 'receipts-local',
+                'development' => 'receipts-development',
+                'production' => 'receipts-production',
+                default => 'receipts',
+            };
+
+            $path = $request->file('file')->store($folder, 's3');
+
+            $fileUrl = Storage::disk('s3')->url($path);
         }
 
         $programed = $request->input('programmed');
@@ -65,7 +78,7 @@ class MovementService
                 'value' => $request->input('value'),
                 'date_movement' => $initialDate->format('Y-m-d'),
                 'description' => $request->input('description'),
-                'receipt' => $filePath,
+                'receipt' => $fileUrl,
                 'category_id' => $request->input('category'),
                 'account_id' => $request->input('account'),
                 'enterprise_id' => $request->user()->enterprise_id,

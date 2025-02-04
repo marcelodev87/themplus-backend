@@ -6,6 +6,7 @@ use App\Repositories\FinancialRepository;
 use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class SchedulingService
 {
@@ -29,9 +30,21 @@ class SchedulingService
     {
         $this->rule->create($request);
 
-        $filePath = null;
+        $fileUrl = null;
+
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('receipts');
+            $env = env('APP_ENV');
+
+            $folder = match ($env) {
+                'local' => 'receipts-local',
+                'development' => 'receipts-development',
+                'production' => 'receipts-production',
+                default => 'receipts',
+            };
+
+            $path = $request->file('file')->store($folder, 's3');
+
+            $fileUrl = Storage::disk('s3')->url($path);
         }
 
         $programmed = (int) $request->input('programmed');
@@ -55,7 +68,7 @@ class SchedulingService
                 'value' => $request->input('value'),
                 'date_movement' => $initialDate->format('Y-m-d'),
                 'description' => $request->input('description'),
-                'receipt' => $filePath,
+                'receipt' => $fileUrl,
                 'category_id' => $request->input('category'),
                 'account_id' => $request->input('account'),
                 'enterprise_id' => $request->user()->enterprise_id,
