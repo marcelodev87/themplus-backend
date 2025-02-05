@@ -115,7 +115,6 @@ class EnterpriseRepository
             DB::table('movements')->where('enterprise_id', $id)->delete();
             DB::table('schedulings')->where('enterprise_id', $id)->delete();
             DB::table('accounts')->where('enterprise_id', $id)->delete();
-            DB::table('alerts')->where('enterprise_id', $id)->delete();
             DB::table('categories')->where('enterprise_id', $id)->delete();
 
             DB::table('users')->where('enterprise_id', $id)
@@ -149,7 +148,6 @@ class EnterpriseRepository
                 DB::table('movements')->where('enterprise_id', $office->id)->delete();
                 DB::table('schedulings')->where('enterprise_id', $office->id)->delete();
                 DB::table('accounts')->where('enterprise_id', $office->id)->delete();
-                DB::table('alerts')->where('enterprise_id', $office->id)->delete();
                 DB::table('categories')->where('enterprise_id', $office->id)->delete();
 
                 DB::table('users')->where('enterprise_id', $office->id)
@@ -172,7 +170,6 @@ class EnterpriseRepository
             DB::table('movements')->where('enterprise_id', $id)->delete();
             DB::table('schedulings')->where('enterprise_id', $id)->delete();
             DB::table('accounts')->where('enterprise_id', $id)->delete();
-            DB::table('alerts')->where('enterprise_id', $id)->delete();
             DB::table('categories')->where('enterprise_id', $id)->delete();
 
             DB::table('users')->where('enterprise_id', $id)
