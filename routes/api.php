@@ -82,7 +82,7 @@ Route::prefix('movement')->middleware('auth:sanctum')->group(function () {
     Route::post('/export/excel/{date}', [MovementController::class, 'exportExcel']);
     Route::post('/export/pdf/{date}', [MovementController::class, 'exportPDF']);
     Route::post('/', [MovementController::class, 'store']);
-    Route::put('/', [MovementController::class, 'update']);
+    Route::post('/update', [MovementController::class, 'update']);
     Route::delete('/{id}', [MovementController::class, 'destroy']);
 });
 
@@ -93,7 +93,7 @@ Route::prefix('scheduling')->middleware('auth:sanctum')->group(function () {
     Route::post('/', [SchedulingController::class, 'store']);
     Route::post('/export/excel/{date}', [SchedulingController::class, 'exportExcel']);
     Route::post('/export/pdf/{date}', [SchedulingController::class, 'exportPDF']);
-    Route::put('/', [SchedulingController::class, 'update']);
+    Route::post('/update', [SchedulingController::class, 'update']);
     Route::put('/finalize/{id}', [SchedulingController::class, 'finalize']);
     Route::delete('/{id}', [SchedulingController::class, 'destroy']);
 });

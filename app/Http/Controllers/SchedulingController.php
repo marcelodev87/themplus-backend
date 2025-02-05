@@ -18,6 +18,7 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class SchedulingController
 {
@@ -267,6 +268,11 @@ class SchedulingController
             $this->rule->delete($id);
 
             $schedulingActual = $this->repository->findById($id);
+            if ($schedulingActual->receipt) {
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $schedulingActual->receipt);
+                Storage::disk('s3')->delete($oldFilePath);
+            }
+
             $scheduling = $this->repository->delete($id);
 
             $register = RegisterHelper::create(

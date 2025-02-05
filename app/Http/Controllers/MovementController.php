@@ -21,6 +21,7 @@ use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class MovementController
 {
@@ -368,6 +369,12 @@ class MovementController
             $this->rule->delete($id);
 
             $movementActual = $this->repository->findById($id);
+
+            if ($movementActual->receipt) {
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movementActual->receipt);
+                Storage::disk('s3')->delete($oldFilePath);
+            }
+
             $movement = $this->repository->delete($id);
 
             $register = RegisterHelper::create(

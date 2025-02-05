@@ -161,21 +161,18 @@ class MovementService
     public function update($request)
     {
         $this->rule->update($request);
-
-        $filePath = null;
-        if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->storeAs('/receipts', $request->file('file')->getClientOriginalName(), 'local');
-        }
+        $movement = $this->repository->findById($request->input('id'));
 
         $data = [
             'type' => $request->input('type'),
             'value' => $request->input('value'),
             'description' => $request->input('description'),
-            'receipt' => $filePath,
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
             'enterprise_id' => $request->user()->enterprise_id,
         ];
+
+        $data = $this->handleFileUpdate($request, $movement, $data);
 
         $movement = $this->repository->update($request->input('id'), $data);
 
@@ -184,6 +181,42 @@ class MovementService
         }
 
         return null;
+    }
+
+    private function handleFileUpdate($request, $movement, $data)
+    {
+        if ($request->input('file') === 'keep') {
+            return $data;
+        } elseif (! $request->hasFile('file')) {
+            $data['receipt'] = null;
+            if ($movement && $movement->receipt) {
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
+                if ($oldFilePath) {
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
+            }
+
+            return $data;
+        } else {
+            if ($movement && $movement->receipt) {
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
+                if ($oldFilePath) {
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
+            }
+            $env = env('APP_ENV');
+            $folder = match ($env) {
+                'local' => 'receipts-local',
+                'development' => 'receipts-development',
+                'production' => 'receipts-production',
+                default => 'receipts',
+            };
+
+            $path = $request->file('file')->store($folder, 's3');
+            $data['receipt'] = Storage::disk('s3')->url($path);
+
+            return $data;
+        }
     }
 
     public function saveObservations($request)
