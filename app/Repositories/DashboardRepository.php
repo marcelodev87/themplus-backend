@@ -54,6 +54,7 @@ class DashboardRepository
         $users_dashboard = $this->userRepository->getUsersDashboard($enterpriseId);
         $schedulings_dashboard = $this->schedulingRepository->getSchedulingsDashboard($enterpriseId, $date, $mode);
         $accounts_dashboard = $this->accountRepository->getAccountsDashboard($enterpriseId);
+        $general = $this->movementRepository->getGeneralByEnteprise($enterpriseId);
 
         return [
             'months_years' => $months_years,
@@ -64,6 +65,7 @@ class DashboardRepository
             'users_dashboard' => $users_dashboard,
             'schedulings_dashboard' => $schedulings_dashboard,
             'accounts_dashboard' => $accounts_dashboard,
+            'general' => $general,
         ];
     }
 

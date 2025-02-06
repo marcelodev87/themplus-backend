@@ -165,6 +165,27 @@ class MovementRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getGeneralByEnteprise($enterpriseId)
+    {
+        $movements = $this->model->where('enterprise_id', $enterpriseId)->get();
+
+        $entrySum = 0;
+        $outSum = 0;
+
+        foreach ($movements as $movement) {
+            if ($movement->type === 'entrada') {
+                $entrySum += $movement->value;
+            } else {
+                $outSum += $movement->value;
+            }
+        }
+
+        return [
+            'entry' => $entrySum,
+            'out' => $outSum,
+        ];
+    }
+
     public function getAllByCategory($categoryId)
     {
         return $this->model->where('category_id', $categoryId)->get();

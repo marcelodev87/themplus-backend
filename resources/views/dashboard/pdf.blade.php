@@ -142,6 +142,24 @@
         </tbody>
     </table>
 
+    <h3>Geral da organização</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Entrada </th>
+                <th>Saída</th>
+                <th>Salvo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>R$ {{ number_format($general['entry'], 2, ',', '.') }}</td>
+                <td>R$ {{ number_format($general['out'], 2, ',', '.') }}</td>
+                <td>R$ {{ number_format($general['entry'] - $general['out'], 2, ',', '.') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
     <h3>Contas</h3>
     <p>A sua organização possui as seguintes contas:</p>
     <table>

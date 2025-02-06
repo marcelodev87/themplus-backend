@@ -36,6 +36,7 @@ class DashboardController
                 'users_dashboard' => $dashboard['users_dashboard'],
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],
                 'accounts_dashboard' => $dashboard['accounts_dashboard'],
+                'general' => $dashboard['general'],
                 'notifications' => $notifications,
                 'filled_data' => $filledData,
             ], 200);
@@ -62,6 +63,7 @@ class DashboardController
                 'users_dashboard' => $dashboard['users_dashboard'],
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],
                 'accounts_dashboard' => $dashboard['accounts_dashboard'],
+                'general' => $dashboard['general'],
                 'date' => $request->input('date'),
             ]);
 
