@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
-use App\Http\Resources\UserOptionsResource;
 use App\Repositories\RegisterRepository;
 use App\Repositories\UserRepository;
 use App\Rules\RegisterRule;
@@ -43,18 +42,16 @@ class RegisterController
         }
     }
 
-    public function index(Request $request)
+    public function index(Request $request, $period)
     {
         try {
             $enterpriseId = $request->user()->view_enterprise_id;
-            $registers = $this->repository->getAllByEnterprise($enterpriseId);
+            $registers = $this->repository->getAllByEnterprise($enterpriseId, $period);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
-            $users = $this->userRepository->getAllByEnterprise($enterpriseId);
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
             return response()->json([
                 'registers' => $this->treatRegister($registers),
-                'users' => UserOptionsResource::collection($users),
                 'notifications' => $notifications,
                 'filled_data' => $filledData,
             ], 200);
