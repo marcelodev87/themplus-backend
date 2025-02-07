@@ -48,7 +48,7 @@ class SchedulingRepository
             SUM(CASE WHEN categories.type = "saida" THEN schedulings.value ELSE 0 END) as out_value
         ');
 
-        $dateColumn = 'created_at';
+        $dateColumn = 'date_movement';
         if ($mode === 'month') {
 
             $carbonDate = Carbon::createFromFormat('m-Y', $date);
@@ -180,7 +180,7 @@ class SchedulingRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -198,7 +198,7 @@ class SchedulingRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 
