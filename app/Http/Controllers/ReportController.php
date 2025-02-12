@@ -10,6 +10,7 @@ use App\Repositories\NotificationRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\UserRepository;
 use App\Rules\ReportRule;
+use App\Services\MovementService;
 use App\Services\ReportService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,6 +28,8 @@ class ReportController
 
     private $movementRepository;
 
+    private $movementService;
+
     private $enterpriseRepository;
 
     private $settingsCounterRepository;
@@ -35,7 +38,7 @@ class ReportController
 
     private $userRepository;
 
-    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule, MovementRepository $movementRepository, EnterpriseRepository $enterpriseRepository, SettingsCounterRepository $settingsCounterRepository, NotificationRepository $notificationRepository, UserRepository $userRepository)
+    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule, MovementRepository $movementRepository, EnterpriseRepository $enterpriseRepository, SettingsCounterRepository $settingsCounterRepository, NotificationRepository $notificationRepository, UserRepository $userRepository, MovementService $movementService)
     {
         $this->service = $service;
         $this->rule = $rule;
@@ -45,6 +48,7 @@ class ReportController
         $this->enterpriseRepository = $enterpriseRepository;
         $this->notificationRepository = $notificationRepository;
         $this->userRepository = $userRepository;
+        $this->movementService = $movementService;
     }
 
     public function index(Request $request, $id)
@@ -246,6 +250,53 @@ class ReportController
             DB::rollBack();
 
             Log::error('Erro ao deletar movimentação: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateMovementByCounter(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $movementData = $this->movementRepository->findById($request->input('id'));
+            $movement = $this->movementService->updateMovementByCounter($request);
+
+            $users = $this->userRepository->getAllByEnterprise($movementData->enterprise_id);
+            $formattedDate = Carbon::parse($movementData->date_movement)->format('d/m/Y');
+            $formattedValue = number_format($movementData->value, 2, ',', '.');
+
+            foreach ($users as $user) {
+                $dataNotification = [
+                    'user_id' => $user->id,
+                    'enterprise_id' => $user->enterprise_id,
+                    'title' => 'Edição de movimentação',
+                    'text' => "Uma movimentação do período $formattedDate, do tipo $movementData->type e valor R$ $formattedValue foi atualizada pela organização de contabilidade.",
+                ];
+                $this->notificationRepository->createForUser($dataNotification);
+            }
+
+            if ($movement) {
+                DB::commit();
+
+                $dateObject = Carbon::createFromFormat('Y-m-d', $movementData->date_movement);
+                $data = $dateObject->format('m-Y');
+
+                $movements = $this->movementRepository->getAllByEnterpriseWithRelationsByDate($movementData->enterprise_id, $data);
+                $permissions = $permissions = $this->settingsCounterRepository->getByEnterprise($movementData->enterprise_id);
+
+                return response()->json([
+                    'movements' => $movements,
+                    'permissions' => $permissions,
+                    'message' => 'Movimentação atualizada com sucesso',
+                ], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar movimentação');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar movimentação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

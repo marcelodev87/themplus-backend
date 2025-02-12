@@ -183,6 +183,25 @@ class MovementService
         return null;
     }
 
+    public function updateMovementByCounter($request)
+    {
+        $this->rule->update($request);
+        $movement = $this->repository->findById($request->input('id'));
+
+        $data = [
+            'value' => $request->input('value'),
+            'description' => $request->input('description'),
+        ];
+
+        $movement = $this->repository->update($request->input('id'), $data);
+
+        if ($movement) {
+            return $this->updateBalanceAccount($request->input('account'));
+        }
+
+        return null;
+    }
+
     private function handleFileUpdate($request, $movement, $data)
     {
         if ($request->input('file') === 'keep') {

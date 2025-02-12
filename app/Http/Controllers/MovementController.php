@@ -208,7 +208,7 @@ class MovementController
     public function getFormInformations(Request $request, $type)
     {
         try {
-            $enterpriseId = $request->user()->enterprise_id;
+            $enterpriseId = $request->input('enterpriseId', $request->user()->enterprise_id);
 
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive(
                 $enterpriseId,
