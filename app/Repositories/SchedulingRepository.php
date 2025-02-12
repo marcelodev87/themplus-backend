@@ -180,7 +180,7 @@ class SchedulingRepository
         if ($date) {
             [$month, $year] = explode('-', $date);
 
-            if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
                 return collect();
             }
 
@@ -198,7 +198,7 @@ class SchedulingRepository
 
         [$month, $year] = explode('-', $date);
 
-        if (!is_numeric($month) || !is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
             return collect();
         }
 

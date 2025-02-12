@@ -132,6 +132,7 @@ Route::prefix('report')->middleware('auth:sanctum')->group(function () {
     Route::get('/details/{id}', [ReportController::class, 'details']);
     Route::post('/undo/{id}', [ReportController::class, 'undo']);
     Route::post('/finalize/{id}', [ReportController::class, 'finalize']);
+    Route::delete('/movement/{id}', [ReportController::class, 'destroyMovement']);
     Route::delete('/reopen/{id}', [ReportController::class, 'reopen']);
 });
 
