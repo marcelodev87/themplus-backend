@@ -146,7 +146,7 @@ class MemberController
                 ];
                 $this->notificationRepository->createForUser($dataNotification);
 
-                $enterpriseId = $request->user()->enterprise_id;
+                $enterpriseId = $request->user()->enterprise_id !== $request->user()->view_enterprise_id ? $request->user()->view_enterprise_id : $request->user()->enterprise_id;
                 $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 return response()->json(['users' => UserResource::collection($users), 'message' => 'Membro adicionado á sua organização com sucesso'], 201);
@@ -251,7 +251,7 @@ class MemberController
             if ($user && $register) {
                 DB::commit();
 
-                $enterpriseId = $request->user()->enterprise_id;
+                $enterpriseId = $request->user()->enterprise_id !== $request->user()->view_enterprise_id ? $request->user()->view_enterprise_id : $request->user()->enterprise_id;
                 $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 return response()->json(['users' => UserResource::collection($users), 'message' => 'Dados do membro foram atualizados com sucesso'], 200);
@@ -275,7 +275,7 @@ class MemberController
             if ($member) {
                 DB::commit();
 
-                $enterpriseId = $request->user()->enterprise_id;
+                $enterpriseId = $request->user()->enterprise_id !== $request->user()->view_enterprise_id ? $request->user()->view_enterprise_id : $request->user()->enterprise_id;
                 $users = $this->repository->getAllByEnterpriseWithRelations($enterpriseId);
 
                 $message = $request->input('active') == 0 ? 'Usuário inativado com sucesso' : 'Usuário ativado com sucesso';
