@@ -43,11 +43,11 @@ class FeedbackController
                 return response()->json(['message' => 'Mensagem enviada com sucesso'], 201);
             }
 
-            throw new \Exception('Falha ao criar mensagem');
+            throw new \Exception('Falha ao enviar mensagem');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar mensagem: '.$e->getMessage());
+            Log::error('Erro ao enviar mensagem: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
