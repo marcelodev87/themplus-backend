@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Movimentações PDF {{ $date }}</title>
+    <title>Movimentações PDF {{ str_replace('-', '/', $date) }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,7 +97,40 @@
 </head>
 
 <body>
-    <h1>Detalhes de movimentações {{ $date }}</h1>
+    <h1>Detalhes de movimentações {{ str_replace('-', '/', $date) }}</h1>
+
+    <?php
+$totalEntrada = 0;
+$totalSaida = 0;
+
+foreach ($movements as $movement) {
+    if ($movement['type'] === 'entrada') {
+        $totalEntrada += $movement['value'];
+    } else {
+        $totalSaida += $movement['value'];
+    }
+}
+
+$saldo = $totalEntrada - $totalSaida;
+        ?>
+
+    <h3>Geral do período</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Total de Entrada</th>
+                <th>Total de Saída</th>
+                <th>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>R$ {{ number_format($totalEntrada, 2, ',', '.') }}</td>
+                <td>R$ {{ number_format($totalSaida, 2, ',', '.') }}</td>
+                <td>R$ {{ number_format($saldo, 2, ',', '.') }}</td>
+            </tr>
+        </tbody>
+    </table>
 
     <h3>Movimentações</h3>
     @if(count($movements) > 0)

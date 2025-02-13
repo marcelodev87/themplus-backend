@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Agendamentos PDF {{ $date }}</title>
+    <title>Agendamentos PDF {{ str_replace('-', '/', $date)  }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -97,7 +97,40 @@
 </head>
 
 <body>
-    <h1>Detalhes de agendamentos {{ $date }}</h1>
+    <h1>Detalhes de agendamentos {{ str_replace('-', '/', $date)  }}</h1>
+
+    <?php
+$totalEntrada = 0;
+$totalSaida = 0;
+
+foreach ($schedulings as $scheduling) {
+    if ($scheduling['type'] === 'entrada') {
+        $totalEntrada += $scheduling['value'];
+    } else {
+        $totalSaida += $scheduling['value'];
+    }
+}
+
+$saldo = $totalEntrada - $totalSaida; 
+    ?>
+
+    <h3>Geral do período</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Total de Entrada</th>
+                <th>Total de Saída</th>
+                <th>Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>R$ {{ number_format($totalEntrada, 2, ',', '.') }}</td>
+                <td>R$ {{ number_format($totalSaida, 2, ',', '.') }}</td>
+                <td>R$ {{ number_format($saldo, 2, ',', '.') }}</td>
+            </tr>
+        </tbody>
+    </table>
 
     <h3>Agendamentos</h3>
     @if(count($schedulings) > 0)
@@ -129,10 +162,13 @@
                 @endforeach
             </tbody>
         </table>
+
+
     @else
         <p class="no-records">Não há agendamentos registrados.</p>
     @endif
 
 </body>
+
 
 </html>
