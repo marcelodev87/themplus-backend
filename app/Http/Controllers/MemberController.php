@@ -56,7 +56,7 @@ class MemberController
                 'notifications' => $notifications,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
+            Log::error('Erro ao buscar todas os membros da organização: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -71,7 +71,7 @@ class MemberController
                 'inbox' => $inbox,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as notificações: '.$e->getMessage());
+            Log::error('Erro ao buscar todas as notificações: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -86,10 +86,29 @@ class MemberController
 
                 return response()->json([
                     'inbox' => $inbox,
+                    'message' => 'Notificação marcada como lida'
                 ], 200);
             }
         } catch (\Exception $e) {
-            Log::error('Erro ao marcar notificação como lida: '.$e->getMessage());
+            Log::error('Erro ao marcar notificação como lida: ' . $e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+    public function readAllNotification(Request $request)
+    {
+        try {
+            $read = $this->notificationRepository->updateAll($request->user()->id);
+            if ($read) {
+                $inbox = $this->notificationRepository->getInbox($request->user()->id);
+
+                return response()->json([
+                    'inbox' => $inbox,
+                    'message' => 'Todas as notificações marcadas como lida'
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            Log::error('Erro ao marcar todas as notificações como lida: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -103,7 +122,7 @@ class MemberController
 
             return response()->json(['users' => UserResource::collection($users), 'settings' => $settings], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os membros da organização: '.$e->getMessage());
+            Log::error('Erro ao buscar todas os membros da organização: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -116,7 +135,7 @@ class MemberController
 
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar dados do usuário: '.$e->getMessage());
+            Log::error('Erro ao buscar dados do usuário: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -156,7 +175,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar membro da organização: '.$e->getMessage());
+            Log::error('Erro ao registrar membro da organização: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -182,7 +201,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar membro da organização: '.$e->getMessage());
+            Log::error('Erro ao registrar membro da organização: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -216,7 +235,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar membro da filial: '.$e->getMessage());
+            Log::error('Erro ao registrar membro da filial: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -261,7 +280,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
+            Log::error('Erro ao atualizar dados do membro: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -287,7 +306,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
+            Log::error('Erro ao atualizar dados do membro: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -313,7 +332,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
+            Log::error('Erro ao atualizar dados do membro: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -346,7 +365,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar membro: '.$e->getMessage());
+            Log::error('Erro ao deletar membro: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -367,7 +386,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar notificação: '.$e->getMessage());
+            Log::error('Erro ao deletar notificação: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -388,7 +407,7 @@ class MemberController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar membro pela contabilidade: '.$e->getMessage());
+            Log::error('Erro ao deletar membro pela contabilidade: ' . $e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

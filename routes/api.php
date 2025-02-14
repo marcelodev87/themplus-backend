@@ -41,6 +41,7 @@ Route::prefix('member')->middleware('auth:sanctum')->group(function () {
     Route::post('/start-office', [MemberController::class, 'startOfficeNewUser'])->middleware('admin');
     Route::put('/member-counter', [MemberController::class, 'updateByCounter']);
     Route::put('/inbox', [MemberController::class, 'readNotification']);
+    Route::put('/inbox-all', [MemberController::class, 'readAllNotification']);
     Route::put('/', [MemberController::class, 'update'])->middleware('admin');
     Route::put('/active', [MemberController::class, 'active'])->middleware('admin');
     Route::delete('/{id}', [MemberController::class, 'destroy'])->middleware('admin');
