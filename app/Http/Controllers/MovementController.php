@@ -151,11 +151,21 @@ class MovementController
         return response()->download($filePath, $file);
     }
 
+    // public function insertExample()
+    // {
+    //     $fileName = 'movements_insert_example.xlsx';
+
+    //     return (new MovementInsertExample)->download($fileName);
+    // }
     public function insertExample()
     {
-        $fileName = 'movements_insert_example.xlsx';
+        $filePath = storage_path('app/public/exports/movements_example.xlsx');
 
-        return (new MovementInsertExample)->download($fileName);
+        if (! file_exists($filePath)) {
+            abort(404);
+        }
+
+        return response()->download($filePath);
     }
 
     public function insert(Request $request)
@@ -164,19 +174,8 @@ class MovementController
             DB::beginTransaction();
 
             $movements = $this->service->insert($request);
-            foreach ($movements as $movement) {
-                $movementData = $this->repository->findByIdWithRelations($movement->id);
 
-                $register = RegisterHelper::create(
-                    $request->user()->id,
-                    $request->user()->enterprise_id,
-                    'created',
-                    'movement',
-                    "{$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->category->name}|{$movementData->date_movement}"
-                );
-            }
-
-            if ($movements && $register) {
+            if ($movements) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -186,11 +185,15 @@ class MovementController
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
                 $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
+                $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+                $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
                 return response()->json([
                     'movements' => $movements,
-                    'message' => 'Inserção de movimentações em lote realizada com sucesso',
                     'months_years' => $months_years,
+                    'categories' => CategorySelect::collection($categories),
+                    'notifications' => $notifications,
+                    'message' => 'Inserção de movimentações em lote realizada com sucesso',
                     'delivered' => $delivered,
                 ], 201);
             }

@@ -75,6 +75,7 @@ class NotificationRepository
 
         return null;
     }
+
     public function updateAll($userId)
     {
         $updated = $this->model->where('user_id', $userId)->update(['read' => 1]);

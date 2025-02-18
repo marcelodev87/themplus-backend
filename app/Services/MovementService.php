@@ -100,13 +100,26 @@ class MovementService
     public function insert($request)
     {
         $this->rule->insert($request);
-
         $createdMovements = [];
 
-        foreach ($request->input('movements') as $movementData) {
-            $filePath = null;
-            if ($movementData['receipt']) {
-                $filePath = $movementData['receipt']->store('receipts');
+        $movementsArray = $request->input('movements');
+
+        foreach ($movementsArray as $index => $movementData) {
+            $fileUrl = null;
+
+            if ($request->hasFile("movements.$index.receipt")) {
+                $file = $request->file("movements.$index.receipt");
+
+                $env = env('APP_ENV');
+                $folder = match ($env) {
+                    'local' => 'receipts-local',
+                    'development' => 'receipts-development',
+                    'production' => 'receipts-production',
+                    default => 'receipts',
+                };
+
+                $path = $file->store($folder, 's3');
+                $fileUrl = Storage::disk('s3')->url($path);
             }
 
             $data = [
@@ -114,7 +127,7 @@ class MovementService
                 'date_movement' => Carbon::createFromFormat('d/m/Y', $movementData['date']),
                 'value' => $movementData['value'],
                 'description' => $movementData['description'],
-                'receipt' => $filePath,
+                'receipt' => $fileUrl,
                 'category_id' => $movementData['category'],
                 'account_id' => $movementData['account'],
                 'enterprise_id' => $request->user()->enterprise_id,
@@ -127,8 +140,8 @@ class MovementService
             }
         }
 
-        return $createdMovements;
 
+        return response()->json($createdMovements);
     }
 
     public function createTransfer($dataOut, $dataEntry)
@@ -206,10 +219,10 @@ class MovementService
     {
         if ($request->input('file') === 'keep') {
             return $data;
-        } elseif (! $request->hasFile('file')) {
+        } elseif (!$request->hasFile('file')) {
             $data['receipt'] = null;
             if ($movement && $movement->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
+                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movement->receipt);
                 if ($oldFilePath) {
                     Storage::disk('s3')->delete($oldFilePath);
                 }
@@ -218,7 +231,7 @@ class MovementService
             return $data;
         } else {
             if ($movement && $movement->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
+                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movement->receipt);
                 if ($oldFilePath) {
                     Storage::disk('s3')->delete($oldFilePath);
                 }
