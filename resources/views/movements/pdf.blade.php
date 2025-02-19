@@ -16,13 +16,13 @@
 
         h1 {
             text-align: center;
-            color: #0056b3;
+            color: #660000;
             font-size: 1.3em;
         }
 
         h3 {
             color: #2e2e2e;
-            border-bottom: 2px solid #0056b3;
+            border-bottom: 2px solid #660000;
             padding-bottom: 5px;
             font-size: 1.1em;
         }
@@ -48,7 +48,7 @@
         }
 
         th {
-            background-color: #0056b3;
+            background-color: #660000;
             color: white;
             font-size: 1.1em;
         }
@@ -84,7 +84,8 @@
 
         .card-title {
             font-size: 1.2em;
-            color: #0056b3;
+            color: #660000;
+            /* Alterado */
             margin-bottom: 10px;
         }
 

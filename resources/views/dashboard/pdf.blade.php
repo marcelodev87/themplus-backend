@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Dashboard PDF {{ $date }}</title>
+    <title>Dashboard PDF {{ str_replace('-', '/', $date) }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,12 +15,12 @@
 
         h1 {
             text-align: center;
-            color: #0056b3;
+            color: #660000;
         }
 
         h3 {
             color: #2e2e2e;
-            border-bottom: 2px solid #0056b3;
+            border-bottom: 2px solid #660000;
             padding-bottom: 5px;
         }
 
@@ -44,7 +44,7 @@
         }
 
         th {
-            background-color: #0056b3;
+            background-color: #660000;
             color: white;
             font-size: 1.2em;
         }
@@ -79,7 +79,7 @@
 
         .card-title {
             font-size: 1.5em;
-            color: #0056b3;
+            color: #660000;
             margin-bottom: 10px;
         }
 
@@ -92,7 +92,7 @@
 </head>
 
 <body>
-    <h1>Relatório do Dashboard {{ $date }}</h1>
+    <h1>Relatório do Dashboard {{ str_replace('-', '/', $date) }}</h1>
 
     <h3>Dados de Movimentação</h3>
     <div class="card">
