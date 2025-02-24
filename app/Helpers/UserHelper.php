@@ -4,9 +4,9 @@ namespace App\Helpers;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
 
 class UserHelper
 {
@@ -14,7 +14,7 @@ class UserHelper
     {
         $userRepository = new UserRepository(new User);
         $user = $userRepository->findByEmail($email);
-        if (!Hash::check($password, $user->password)) {
+        if (! Hash::check($password, $user->password)) {
             throw ValidationException::withMessages([
                 'password' => ['A senha informada está incorreta'],
             ]);

@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Enterprise;
-use Illuminate\Support\ServiceProvider;
 use App\Observers\EnterpriseObserver;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {

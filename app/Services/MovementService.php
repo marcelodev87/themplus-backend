@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\RegisterHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\FinancialRepository;
@@ -137,9 +138,16 @@ class MovementService
             if ($movement) {
                 $createdMovements[] = $movement;
                 $this->updateBalanceAccount($movementData['account']);
+
+                RegisterHelper::create(
+                    $request->user()->id,
+                    $request->user()->enterprise_id,
+                    'insert',
+                    'movement',
+                    "{$movement->value}|{$movement->type}|{$movement->account->name}|{$movement->category->name}|{$movement->date_movement}"
+                );
             }
         }
-
 
         return response()->json($createdMovements);
     }
@@ -219,10 +227,10 @@ class MovementService
     {
         if ($request->input('file') === 'keep') {
             return $data;
-        } elseif (!$request->hasFile('file')) {
+        } elseif (! $request->hasFile('file')) {
             $data['receipt'] = null;
             if ($movement && $movement->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movement->receipt);
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
                 if ($oldFilePath) {
                     Storage::disk('s3')->delete($oldFilePath);
                 }
@@ -231,7 +239,7 @@ class MovementService
             return $data;
         } else {
             if ($movement && $movement->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movement->receipt);
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
                 if ($oldFilePath) {
                     Storage::disk('s3')->delete($oldFilePath);
                 }
