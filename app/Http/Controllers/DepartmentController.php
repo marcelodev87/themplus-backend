@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
+use App\Helpers\RegisterHelper;
 use App\Repositories\DepartmentRepository;
 use App\Rules\DepartmentRule;
 use App\Services\DepartmentService;
@@ -48,7 +49,15 @@ class DepartmentController
             DB::beginTransaction();
             $department = $this->service->create($request);
 
-            if ($department) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'department',
+                "{$department->name}"
+            );
+
+            if ($department && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -73,7 +82,15 @@ class DepartmentController
             DB::beginTransaction();
             $department = $this->service->update($request);
 
-            if ($department) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'department',
+                "{$department->name}"
+            );
+
+            if ($department && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -98,9 +115,18 @@ class DepartmentController
             DB::beginTransaction();
 
             $this->rule->delete($id);
+            $departmentPerDelete = $this->repository->findById($id);
             $department = $this->repository->delete($id);
 
-            if ($department) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'department',
+                "{$departmentPerDelete->name}"
+            );
+
+            if ($department && $register) {
                 DB::commit();
                 $enterpriseId = $request->user()->enterprise_id;
                 $departments = $this->repository->getAllByEnterprise($enterpriseId);

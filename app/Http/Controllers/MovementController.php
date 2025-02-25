@@ -244,7 +244,7 @@ class MovementController
                     $request->user()->enterprise_id,
                     'created',
                     'movement',
-                    "{$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->category->name}|{$movementData->date_movement}"
+                    "{$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->account->account_number}|{$movementData->account->agency_number}|{$movementData->category->name}|{$movementData->date_movement}"
                 );
             }
 
@@ -289,7 +289,7 @@ class MovementController
                 $request->user()->enterprise_id,
                 'updated',
                 'movement',
-                "{$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->category->name}|{$movementData->date_movement}"
+                "{$movementData->value}|{$movementData->type}|{$movementData->account->name}|{$movementData->account->account_number}|{$movementData->account->agency_number}|{$movementData->category->name}|{$movementData->date_movement}"
             );
 
             if ($movement && $register) {
@@ -385,7 +385,7 @@ class MovementController
                 $request->user()->enterprise_id,
                 'deleted',
                 'movement',
-                "{$movementActual->value}|{$movementActual->type}|{$movementActual->account->name}|{$movementActual->category->name}|{$movementActual->date_movement}"
+                "{$movementActual->value}|{$movementActual->type}|{$movementActual->account->name}|{$movementActual->account->account_number}|{$movementActual->account->agency_number}|{$movementActual->category->name}|{$movementActual->date_movement}"
             );
 
             if ($movement && $register) {

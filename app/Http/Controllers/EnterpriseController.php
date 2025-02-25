@@ -79,7 +79,15 @@ class EnterpriseController
             DB::beginTransaction();
             $office = $this->service->createOffice($request);
 
-            if ($office) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'office',
+                "{$office->name}"
+            );
+
+            if ($office && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;
@@ -262,15 +270,24 @@ class EnterpriseController
         }
     }
 
-    public function destroyOffice(string $id)
+    public function destroyOffice(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
 
             $this->rule->deleteOffice($id);
+            $enterpriseForDelete = $this->repository->findById($id);
             $enterprise = $this->repository->deleteOffice($id);
 
-            if ($enterprise) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'office',
+                "{$enterpriseForDelete->name}"
+            );
+
+            if ($enterprise && $register) {
                 DB::commit();
 
                 return response()->json(['message' => 'Filial deletada com sucesso'], 200);

@@ -121,7 +121,10 @@ class EnterpriseService
     {
         $this->rule->update($request);
 
-        EnterpriseHelper::existsEnterpriseCpfOrCnpj($request);
+        $enterprise = $this->repository->findById($request->input('id'));
+        if (($request->input('cpf') && $request->input('cpf') !== $enterprise->cpf) || $request->input('cnpj') && $request->input('cnpj') !== $enterprise->cnpj) {
+            EnterpriseHelper::existsEnterpriseCpfOrCnpj($request);
+        }
 
         $data = [
             'name' => $request->input('name'),

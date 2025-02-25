@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\OrderRepository;
@@ -63,7 +64,15 @@ class SettingsCounterController
 
             $setting = $this->repository->update($request->user()->enterprise_id, $data);
 
-            if ($setting) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'permission',
+                '-'
+            );
+
+            if ($setting && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id;

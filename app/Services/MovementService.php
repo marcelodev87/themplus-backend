@@ -144,7 +144,7 @@ class MovementService
                     $request->user()->enterprise_id,
                     'insert',
                     'movement',
-                    "{$movement->value}|{$movement->type}|{$movement->account->name}|{$movement->category->name}|{$movement->date_movement}"
+                    "{$movement->value}|{$movement->type}|{$movement->account->name}|{$movement->account->account_number}|{$movement->account->agency_number}|{$movement->category->name}|{$movement->date_movement}"
                 );
             }
         }

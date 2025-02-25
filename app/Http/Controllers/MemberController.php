@@ -292,7 +292,15 @@ class MemberController
         try {
             DB::beginTransaction();
             $member = $this->repository->update($request->input('userId'), ['active' => $request->input('active')]);
-            if ($member) {
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                $request->input('active') === 1 ? 'reactivated' : 'inactivated',
+                'member',
+                "{$member->name}|{$member->email}"
+            );
+            if ($member && $register) {
                 DB::commit();
 
                 $enterpriseId = $request->user()->enterprise_id !== $request->user()->view_enterprise_id ? $request->user()->view_enterprise_id : $request->user()->enterprise_id;
