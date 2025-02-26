@@ -104,7 +104,16 @@ class OrderController
             DB::beginTransaction();
 
             $order = $this->service->create($request);
-            if ($order) {
+            $enterprise = $this->enterpriseRepository->findById($request->input('enterpriseId'));
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'order',
+                "$enterprise->name|$enterprise->email"
+            );
+            if ($order && $register) {
                 DB::commit();
 
                 $orders = $this->repository->getAllByCounter($request->user()->enterprise_id);
@@ -128,8 +137,18 @@ class OrderController
             DB::beginTransaction();
 
             $order = $this->service->update($request);
+            $log = $this->repository->findById($request->input('id'));
+            $enterprise = $this->enterpriseRepository->findById($log->enterprise_id);
 
-            if ($order) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'order',
+                "$enterprise->name|$enterprise->email"
+            );
+
+            if ($order && $register) {
                 DB::commit();
 
                 $orders = $this->repository->getAllByCounter($request->user()->enterprise_id);
@@ -184,15 +203,26 @@ class OrderController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
 
             $this->rule->delete($id);
+            $log = $this->repository->findById($id);
+            $enterprise = $this->enterpriseRepository->findById($log->enterprise_id);
+
             $order = $this->repository->delete($id);
 
-            if ($order) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'order',
+                "$enterprise->name|$enterprise->email"
+            );
+
+            if ($order && $register) {
                 DB::commit();
 
                 return response()->json(['message' => 'Solicitação deletada com sucesso'], 200);
@@ -216,8 +246,17 @@ class OrderController
             $this->rule->deleteBond($id);
             $this->categoryRepository->removeAlert($id);
             $order = $this->repository->deleteBond($id);
+            $enterprise = $this->enterpriseRepository->findById($id);
 
-            if ($order) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'bond',
+                "$enterprise->name|$enterprise->email"
+            );
+
+            if ($order && $register) {
                 DB::commit();
                 $bonds = $this->repository->getAllByCounter($request->user()->enterprise_id);
 

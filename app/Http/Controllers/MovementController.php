@@ -18,6 +18,7 @@ use App\Repositories\MovementRepository;
 use App\Rules\MovementRule;
 use App\Services\MovementService;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -326,6 +327,20 @@ class MovementController
         try {
             DB::beginTransaction();
             $this->service->saveObservations($request);
+
+            if (count($request->movements) > 0) {
+                $movement = $this->repository->findById($request->movements[0]['id']);
+                $enterprise = $this->enterpriseRepository->findById($movement->enterprise_id);
+
+                $formattedDate = Carbon::parse($movement->date_movement)->format('m/Y');
+                RegisterHelper::create(
+                    $request->user()->id,
+                    $request->user()->enterprise_id,
+                    'observations',
+                    'manageMovement',
+                    "{$formattedDate}|$enterprise->name|$enterprise->email"
+                );
+            }
 
             DB::commit();
 

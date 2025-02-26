@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RegisterHelper;
 use App\Repositories\CategoryRepository;
+use App\Repositories\EnterpriseRepository;
 use App\Rules\AlertRule;
 use App\Services\AlertService;
 use Illuminate\Http\Request;
@@ -15,13 +17,16 @@ class AlertController
 
     private $repository;
 
+    private $enterpriseRepository;
+
     private $rule;
 
-    public function __construct(AlertService $service, CategoryRepository $repository, AlertRule $rule)
+    public function __construct(AlertService $service, CategoryRepository $repository, AlertRule $rule, EnterpriseRepository $enterpriseRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->rule = $rule;
+        $this->enterpriseRepository = $enterpriseRepository;
     }
 
     public function index($id)
@@ -67,6 +72,16 @@ class AlertController
         try {
             DB::beginTransaction();
             $this->service->update($request);
+            $category = $this->repository->findById($request->input('categories')[0]['id']);
+            $enterprise = $this->enterpriseRepository->findById($category->enterprise_id);
+
+            RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'alert',
+                "{$enterprise->name}|{$enterprise->email}"
+            );
 
             DB::commit();
 

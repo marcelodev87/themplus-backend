@@ -188,8 +188,17 @@ class MemberController
             DB::beginTransaction();
 
             $user = $this->service->storeByCounter($request);
+            $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
 
-            if ($user) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'created',
+                'manageUser',
+                "{$user->name}|{$user->email}|{$enterprise->name}|{$enterprise->email}"
+            );
+
+            if ($user && $register) {
                 DB::commit();
 
                 $users = $this->repository->getAllByEnterpriseWithRelations($request->input('enterpriseId'));
@@ -327,8 +336,17 @@ class MemberController
             DB::beginTransaction();
 
             $user = $this->service->updateByCounter($request);
+            $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
 
-            if ($user) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'manageUser',
+                "{$user->name}|{$user->email}|{$enterprise->name}|{$enterprise->email}"
+            );
+
+            if ($user && $register) {
                 DB::commit();
 
                 $users = $this->repository->getAllByEnterpriseWithRelations($user->enterprise_id);
@@ -405,8 +423,20 @@ class MemberController
     {
         try {
             DB::beginTransaction();
+            $memberDelete = $this->repository->findById($id);
+            $enterprise = $this->enterpriseRepository->findById($memberDelete->enterprise_id);
+
             $member = $this->service->destroyByCounter($request, $id);
-            if ($member) {
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'manageUser',
+                "{$memberDelete->name}|{$memberDelete->email}|{$enterprise->name}|{$enterprise->email}"
+            );
+
+            if ($member && $register) {
                 DB::commit();
 
                 return response()->json(['message' => 'Membro deletado com sucesso'], 200);

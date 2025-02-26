@@ -426,7 +426,7 @@ class RegisterController
                         'text' => "O(A) usuário(a) {$register->user->name} reverteu relatório para não verificado",
                     ];
                 }
-                if ($register->action === 'deleted') {
+                if ($register->action === 'reopen') {
                     $dataProcessed[] = [
                         'id' => $register->id,
                         'user_name' => $register->user->name,
@@ -438,6 +438,36 @@ class RegisterController
                 }
             }
             if ($register->target === 'order') {
+                if ($register->action === 'created') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} enviou uma solicitação de vínculo com uma organização",
+                    ];
+                }
+                if ($register->action === 'updated') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} atualizou uma descrição de solicitação de vínculo com uma organização",
+                    ];
+                }
+                if ($register->action === 'deleted') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} excluiu uma solicitação de vínculo com uma organização",
+                    ];
+                }
                 if ($register->action === 'invite') {
                     $dataProcessed[] = [
                         'id' => $register->id,
@@ -456,6 +486,94 @@ class RegisterController
                         'date' => $register->date_register,
                         'action' => $register->action,
                         'text' => "O(A) usuário(a) {$register->user->name} desvinculou a própria organização de uma organização de contabilidade.",
+                    ];
+                }
+            }
+            if ($register->target === 'bond') {
+                if ($register->action === 'deleted') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} excluiu um vínculo com uma organização",
+                    ];
+                }
+            }
+            if ($register->target === 'alert') {
+                if ($register->action === 'updated') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} atualizou alertas de categoria de uma organização",
+                    ];
+                }
+            }
+            if ($register->target === 'manageUser') {
+                if ($register->action === 'created') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} adicionou um usuário em uma organização",
+                    ];
+                }
+                if ($register->action === 'updated') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} atualizou um usuário de uma organização",
+                    ];
+                }
+                if ($register->action === 'deleted') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} excluiu um usuário de uma organização",
+                    ];
+                }
+            }
+            if ($register->target === 'manageMovement') {
+                if ($register->action === 'updated') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} atualizou uma movimentação de uma organização",
+                    ];
+                }
+                if ($register->action === 'observations') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} atualizou observações de movimentações de uma organização",
+                    ];
+                }
+                if ($register->action === 'deleted') {
+                    $dataProcessed[] = [
+                        'id' => $register->id,
+                        'user_name' => $register->user->name,
+                        'user_email' => $register->user->email,
+                        'date' => $register->date_register,
+                        'action' => $register->action,
+                        'text' => "O(A) usuário(a) {$register->user->name} excluiu uma movimentação de uma organização",
                     ];
                 }
             }
@@ -799,7 +917,7 @@ class RegisterController
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} reverteu o relatório do período {$monthYear} para não verificado do cliente {$enterpriseName}. Momento do registro: {$dateRegisterFormatted}";
             }
-            if ($register->action === 'deleted') {
+            if ($register->action === 'reopen') {
                 $parts = explode('|', $register->identification);
                 $monthYear = $parts[0];
                 $enterpriseName = $parts[1];
@@ -809,6 +927,30 @@ class RegisterController
             }
         }
         if ($register->target === 'order') {
+            if ($register->action === 'created') {
+                $parts = explode('|', $register->identification);
+                $enterpriseName = $parts[0];
+                $enterpriseEmail = $parts[1];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} enviou uma solicitação de vínculo para organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $enterpriseName = $parts[0];
+                $enterpriseEmail = $parts[1];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou uma descrição de vínculo para organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $enterpriseName = $parts[0];
+                $enterpriseEmail = $parts[1];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu uma solicitação de vínculo para organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
             if ($register->action === 'invite') {
                 $parts = explode('|', $register->identification);
                 $actionBond = $parts[0] === 'accepted' ? 'aceitou' : 'rejeitou';
@@ -821,6 +963,91 @@ class RegisterController
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} desvinculou-se da organização de contabilidade nomeada de {$register->identification}. Momento do registro: {$dateRegisterFormatted}";
+            }
+        }
+        if ($register->target === 'bond') {
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $enterpriseName = $parts[0];
+                $enterpriseEmail = $parts[1];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um de vínculo com a organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+        }
+        if ($register->target === 'manageUser') {
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $userName = $parts[0];
+                $userEmail = $parts[1];
+                $enterpriseName = $parts[2];
+                $enterpriseEmail = $parts[3];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um usuário: Nome {$userName} / E-mail: {$userEmail} da organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+            if ($register->action === 'created') {
+                $parts = explode('|', $register->identification);
+                $userName = $parts[0];
+                $userEmail = $parts[1];
+                $enterpriseName = $parts[2];
+                $enterpriseEmail = $parts[3];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} adicionou um usuário: Nome {$userName} / E-mail: {$userEmail} na organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $userName = $parts[0];
+                $userEmail = $parts[1];
+                $enterpriseName = $parts[2];
+                $enterpriseEmail = $parts[3];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou um usuário: Nome {$userName} / E-mail: {$userEmail} da organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+        }
+        if ($register->target === 'manageMovement') {
+            if ($register->action === 'observations') {
+                $parts = explode('|', $register->identification);
+                $period = $parts[0];
+                $enterpriseName = $parts[1];
+                $enterpriseEmail = $parts[2];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou observações para movimentações do periodo {$period} da organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[2])->format('d/m/Y');
+                $enterpriseName = $parts[3];
+                $enterpriseEmail = $parts[4];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou uma movimentação: Valor: R$ {$value} / Tipo: {$type} / Data de movimentação: {$dateMovement}  da organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+            if ($register->action === 'deleted') {
+                $parts = explode('|', $register->identification);
+                $value = number_format($parts[0], 2, ',', '.');
+                $type = $parts[1];
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[2])->format('d/m/Y');
+                $enterpriseName = $parts[3];
+                $enterpriseEmail = $parts[4];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu uma movimentação: Valor: R$ {$value} / Tipo: {$type} / Data de movimentação: {$dateMovement}  da organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
+            }
+        }
+        if ($register->target === 'alert') {
+            if ($register->action === 'updated') {
+                $parts = explode('|', $register->identification);
+                $enterpriseName = $parts[0];
+                $enterpriseEmail = $parts[1];
+                $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
+
+                $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou alertas de categorias da organização: Nome: {$enterpriseName} / E-mail: {$enterpriseEmail}. Momento do registro: {$dateRegisterFormatted}";
             }
         }
 

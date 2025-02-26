@@ -81,10 +81,12 @@ class ReportController
             $data = "{$month}-{$financial->year}";
             $movements = $this->movementRepository->getAllByEnterpriseWithRelationsByDate($financial->enterprise_id, $data);
             $permissions = $permissions = $this->settingsCounterRepository->getByEnterprise($financial->enterprise_id);
+            $finalized = $financial->check_counter !== null ? true : false;
 
             return response()->json([
                 'movements' => $movements,
                 'permissions' => $permissions,
+                'finalized' => $finalized,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar detalhes do relatório do cliente: '.$e->getMessage());
@@ -143,7 +145,7 @@ class ReportController
             $register = RegisterHelper::create(
                 $request->user()->id,
                 $request->user()->enterprise_id,
-                'deleted',
+                'reopen',
                 'report',
                 "$report->month/$report->year|$enterpriseName"
             );
@@ -235,8 +237,17 @@ class ReportController
             }
 
             $permissions = $permissions = $this->settingsCounterRepository->getByEnterprise($movementActual->enterprise_id);
+            $enterprise = $this->enterpriseRepository->findById($movementActual->enterprise_id);
 
-            if ($movement) {
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'deleted',
+                'manageMovement',
+                "$movementActual->value|$movementActual->type|$movementActual->date_movement|$enterprise->name|$enterprise->email"
+            );
+
+            if ($movement && $register) {
                 DB::commit();
 
                 return response()->json([
@@ -276,7 +287,17 @@ class ReportController
                 $this->notificationRepository->createForUser($dataNotification);
             }
 
-            if ($movement) {
+            $enterprise = $this->enterpriseRepository->findById($movementData->enterprise_id);
+
+            $register = RegisterHelper::create(
+                $request->user()->id,
+                $request->user()->enterprise_id,
+                'updated',
+                'manageMovement',
+                "$movementData->value|$movementData->type|$movementData->date_movement|$enterprise->name|$enterprise->email"
+            );
+
+            if ($movement && $register) {
                 DB::commit();
 
                 $dateObject = Carbon::createFromFormat('Y-m-d', $movementData->date_movement);
