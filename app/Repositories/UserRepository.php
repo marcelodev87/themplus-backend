@@ -23,6 +23,10 @@ class UserRepository
     {
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
+    public function getUsersByPhone($phone)
+    {
+        return $this->model->where('phone', $phone)->get();
+    }
 
     public function getAllByEnterpriseWithRelations($enterpriseId)
     {

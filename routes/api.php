@@ -16,6 +16,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
+use App\Http\Controllers\MovementAnalyzeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,6 +29,16 @@ Route::post('/newPassword', [UserController::class, 'resetPassword']);
 Route::prefix('user')->middleware('auth:sanctum')->group(function () {
     Route::put('/password', [UserController::class, 'updatePassword']);
     Route::put('/data', [UserController::class, 'updateData']);
+});
+
+Route::prefix('external')->group(function () {
+    Route::prefix('movement-analyze')->group(function () {
+        Route::get('/', [MovementAnalyzeController::class, 'index']);
+        Route::post('/', [MovementAnalyzeController::class, 'store']);
+        Route::post('/finalize', [MovementAnalyzeController::class, 'finalize']);
+        Route::put('/', [MovementAnalyzeController::class, 'update']);
+        Route::delete('/{id}', [MovementAnalyzeController::class, 'destroy']);
+    });
 });
 
 Route::prefix('member')->middleware('auth:sanctum')->group(function () {
