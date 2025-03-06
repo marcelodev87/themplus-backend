@@ -55,6 +55,29 @@ class EnterpriseRule
         return true;
     }
 
+    public function updateCodeFinancial($request)
+    {
+        $rules = [
+            'id' => 'required|string|max:100',
+            'code' => 'nullable|numeric',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID da organização é obrigatório',
+            'id.string' => 'O ID da organização deve ser uma string',
+            'id.max' => 'O ID da organização não pode ter mais de 100 caracteres',
+            'code.numeric' => 'O código deve ser numérico',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
+
     public function delete($id)
     {
         $rules = [

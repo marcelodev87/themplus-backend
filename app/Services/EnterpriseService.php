@@ -144,6 +144,15 @@ class EnterpriseService
         return $this->repository->update($request->input('id'), $data);
     }
 
+    public function updateCodeFinancial($request)
+    {
+        $this->rule->updateCodeFinancial($request);
+
+        $data = ['code_financial' => $request->input('code')];
+
+        return $this->repository->update($request->input('id'), $data);
+    }
+
     public function updateViewEnterprise($request)
     {
         $data = ['view_enterprise_id' => $request->input('viewEnterprise') ?? $request->user()->enterprise_id];

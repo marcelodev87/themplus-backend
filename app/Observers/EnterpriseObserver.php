@@ -20,12 +20,17 @@ class EnterpriseObserver
      */
     public function updated(Enterprise $enterprise): void
     {
-        // Limpar as observações da organização ao não ter contabilidade vinculada
         if ($enterprise->counter_enterprise_id === null) {
+            // Limpar as observações da organização ao não ter contabilidade vinculada
             DB::table('movements')
                 ->where('enterprise_id', $enterprise->id)
                 ->whereNotNull('observation')
                 ->update(['observation' => null]);
+
+            // Retirar código contabil da organização ao não ter contabilidade vinculada
+            DB::table('enterprises')
+                ->where('id', $enterprise->id)
+                ->update(['code_financial' => null]);
         }
     }
 

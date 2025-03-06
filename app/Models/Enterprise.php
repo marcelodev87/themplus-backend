@@ -29,6 +29,7 @@ class Enterprise extends Model
         'created_by',
         'position',
         'counter_enterprise_id',
+        'code_financial'
     ];
 
     public function users()

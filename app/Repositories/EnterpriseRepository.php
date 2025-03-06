@@ -35,7 +35,7 @@ class EnterpriseRepository
 
     public function getBonds($enterpriseId)
     {
-        return $this->model->select('id', 'name', 'cnpj', 'cpf', 'email', 'phone', 'created_by')
+        return $this->model->select('id', 'name', 'cnpj', 'cpf', 'email', 'phone', 'code_financial', 'created_by')
             ->where('counter_enterprise_id', $enterpriseId)->get();
     }
 
