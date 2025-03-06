@@ -166,6 +166,17 @@ class MovementAnalyzeService
     {
         $fileUrl = null;
         if ($request->hasFile('file')) {
+
+            $file = $request->file('file');
+
+            if (strtolower($file->getClientOriginalExtension()) !== 'pdf') {
+                throw new \Exception('Só é permitido arquivos do formato PDF');
+            }
+
+            if ($file->getSize() > 2097152) {
+                throw new \Exception('O limite de arquivo PDF é até 2mb');
+            }
+
             $env = env('APP_ENV');
 
             $folder = match ($env) {
@@ -175,8 +186,7 @@ class MovementAnalyzeService
                 default => 'receipts',
             };
 
-            $path = $request->file('file')->store($folder, 's3');
-
+            $path = $file->store($folder, 's3');
             $fileUrl = Storage::disk('s3')->url($path);
         }
 
