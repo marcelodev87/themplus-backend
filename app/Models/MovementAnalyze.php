@@ -18,5 +18,6 @@ class MovementAnalyze extends Model
         'description',
         'enterprise_id',
         'date_movement',
+        'receipt'
     ];
 }

@@ -11,7 +11,9 @@ return new class extends Migration {
         Schema::create('movements_analyze', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->date('date_movement');
+            $table->string('type');
             $table->decimal('value', 13, 2)->default(0);
+            $table->text('receipt')->nullable();
             $table->text('description')->nullable();
             $table->foreignUuid('enterprise_id')->constrained('enterprises');
             $table->timestamps();

@@ -10,9 +10,11 @@ use App\Repositories\MovementRepository;
 use App\Repositories\CategoryRepository;
 use App\Services\MovementAnalyzeService;
 use App\Rules\MovementAnalyzeRule;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class MovementAnalyzeController
 {
@@ -57,20 +59,10 @@ class MovementAnalyzeController
             DB::beginTransaction();
 
             $this->rule->store($request);
-            $enterpriseId = $this->verifyUserByPhone($request->input('phone'));
-
-            $data = [
-                'date_movement' => $request->input('date_movement'),
-                'value' => $request->input('value'),
-                'type' => $request->input('type'),
-                'description' => $request->input('description'),
-                'enterprise_id' => $enterpriseId
-            ];
-            $movement = $this->service->create($data);
+            $movement = $this->service->create($request);
 
             if ($movement) {
                 DB::commit();
-
                 return response()->json(201);
             }
 
@@ -80,30 +72,10 @@ class MovementAnalyzeController
 
             Log::error('Erro ao registrar pré-movimentação: ' . $e->getMessage());
 
-            return response()->json(['message' => $e->getMessage()], 500);
+            $status = $e->getCode() ? $e->getCode() : 500;
+
+            return response()->json(['message' => $e->getMessage()], $status);
         }
-    }
-
-    public function verifyUserByPhone($phone)
-    {
-        $users = $this->userRepository->getUsersByPhone($phone);
-
-        if (empty($users)) {
-            throw new \Exception(
-                'Nenhum usuário no sistema está registrado com esse número de telefone',
-                404
-            );
-        }
-
-        if (count($users) > 1) {
-            throw new \Exception(
-                'O mesmo número de telefone está registrado em mais de um usuário, entre em contato com o administrador',
-                403
-            );
-        }
-
-        $user = current($users);
-        return $user->enterprise_id;
     }
 
     public function update(Request $request)
@@ -142,7 +114,7 @@ class MovementAnalyzeController
         try {
             DB::beginTransaction();
             $this->rule->finalize($request);
-            $movement = $this->service->create($request);
+            $movement = $this->service->finalize($request);
 
             if ($movement) {
                 DB::commit();
@@ -159,36 +131,6 @@ class MovementAnalyzeController
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
-    }
-
-    public function calculateValueAccount($movements)
-    {
-        $value = 0;
-
-        foreach ($movements as $movement) {
-            if ($movement->type === 'entrada') {
-                $value += $movement->value;
-            } elseif ($movement->type === 'saída') {
-                $value -= $movement->value;
-            } else {
-                $category = $this->categoryRepository->findById($movement->category_id);
-                if ($category->type === 'entrada') {
-                    $value += $movement->value;
-                } else {
-                    $value -= $movement->value;
-                }
-            }
-        }
-
-        return $value;
-    }
-
-    public function updateBalanceAccount($accountId)
-    {
-        $movements = $this->movementRepository->getAllByAccount($accountId);
-        $newValueAccount = $this->calculateValueAccount($movements);
-
-        return $this->accountRepository->updateBalance($accountId, $newValueAccount);
     }
 
     public function destroy(string $id)

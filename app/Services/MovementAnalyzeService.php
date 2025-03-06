@@ -7,6 +7,7 @@ use App\Repositories\CategoryRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\MovementAnalyzeRepository;
 use App\Repositories\MovementRepository;
+use App\Repositories\UserRepository;
 use App\Rules\MovementRule;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -19,6 +20,7 @@ class MovementAnalyzeService
     protected $movementRepository;
 
     protected $accountRepository;
+    protected $userRepository;
 
     protected $categoryRepository;
 
@@ -31,6 +33,7 @@ class MovementAnalyzeService
         CategoryRepository $categoryRepository,
         FinancialRepository $financialRepository,
         MovementAnalyzeRepository $repository,
+        UserRepository $userRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -38,9 +41,25 @@ class MovementAnalyzeService
         $this->accountRepository = $accountRepository;
         $this->categoryRepository = $categoryRepository;
         $this->financialRepository = $financialRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function create($request)
+    {
+        $enterpriseId = $this->verifyUserByPhone($request->input('phone'));
+        $fileUrl = $this->saveFile($request);
+
+        $data = [
+            'date_movement' => Carbon::parse($request->input('date'))->format('Y-m-d'),
+            'value' => $request->input('value'),
+            'type' => $request->input('type'),
+            'description' => $request->input('description'),
+            'file' => $fileUrl,
+            'enterprise_id' => $enterpriseId
+        ];
+        return $this->repository->create($data);
+    }
+    public function finalize($request)
     {
         $fileUrl = null;
 
@@ -119,5 +138,48 @@ class MovementAnalyzeService
         $newValueAccount = $this->calculateValueAccount($movements);
 
         return $this->accountRepository->updateBalance($accountId, $newValueAccount);
+    }
+
+    public function verifyUserByPhone($phone)
+    {
+        $users = $this->userRepository->getUsersByPhone($phone);
+
+        if (count($users) === 0) {
+            throw new \Exception(
+                'Nenhum usuário no sistema está registrado com esse número de telefone',
+                404
+            );
+        }
+
+        if (count($users) > 1) {
+            throw new \Exception(
+                'O mesmo número de telefone está registrado em mais de um usuário, entre em contato com o administrador',
+                403
+            );
+        }
+
+        $user = $users[0]->toArray();
+        return $user['enterprise_id'];
+    }
+
+    public function saveFile($request)
+    {
+        $fileUrl = null;
+        if ($request->hasFile('file')) {
+            $env = env('APP_ENV');
+
+            $folder = match ($env) {
+                'local' => 'receipts-local',
+                'development' => 'receipts-development',
+                'production' => 'receipts-production',
+                default => 'receipts',
+            };
+
+            $path = $request->file('file')->store($folder, 's3');
+
+            $fileUrl = Storage::disk('s3')->url($path);
+        }
+
+        return $fileUrl;
     }
 }
