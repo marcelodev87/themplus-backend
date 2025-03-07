@@ -44,8 +44,17 @@ class MovementAnalyzeController
     {
         try {
             $movements = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive(
+                $request->user()->enterprise_id,
+                null
+            );
+            $accounts = $this->accountRepository->getAllByEnterpriseOnlyActive($request->user()->enterprise_id);
 
-            return response()->json(['movements' => $movements], 200);
+            return response()->json([
+                'movements_analyze' => $movements,
+                'categories' => $categories,
+                'accounts' => $accounts
+            ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as pré-movimentações: ' . $e->getMessage());
 
@@ -118,8 +127,19 @@ class MovementAnalyzeController
 
             if ($movement) {
                 DB::commit();
+
+                $movements = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive(
+                    $request->user()->enterprise_id,
+                    null
+                );
+                $accounts = $this->accountRepository->getAllByEnterpriseOnlyActive($request->user()->enterprise_id);
+
                 return response()->json([
                     'message' => 'Pré-Movimentação validada com sucesso',
+                    'movements_analyze' => $movements,
+                    'categories' => $categories,
+                    'accounts' => $accounts
                 ], 201);
             }
 

@@ -18,6 +18,11 @@ class MovementAnalyzeRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function countByEnterprise($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)->count();
+    }
+
     public function findById($id)
     {
         return $this->model->find($id);

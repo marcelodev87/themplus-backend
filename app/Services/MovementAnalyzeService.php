@@ -78,7 +78,7 @@ class MovementAnalyzeService
             $fileUrl = Storage::disk('s3')->url($path);
         }
 
-        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
+        $initialDate = Carbon::createFromFormat('Y-m-d', $request->input('date'));
 
         $financial = $this->financialRepository->getReports($request->user()->enterprise_id);
 
@@ -101,7 +101,7 @@ class MovementAnalyzeService
             'enterprise_id' => $request->user()->enterprise_id,
         ];
 
-        $movement = $this->repository->create($data);
+        $movement = $this->movementRepository->create($data);
         if ($movement) {
             $this->updateBalanceAccount($request->input('account'));
             $this->repository->delete($request->input('id'));

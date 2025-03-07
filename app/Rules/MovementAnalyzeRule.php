@@ -78,7 +78,7 @@ class MovementAnalyzeRule
             'id' => 'required|string',
             'type' => 'required|string',
             'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
-            'date' => 'required|date_format:d-m-Y',
+            'date' => 'required|date_format:Y-m-d',
             'category' => 'required|string',
             'account' => 'required|string',
         ];
@@ -92,7 +92,7 @@ class MovementAnalyzeRule
             'value.numeric' => 'O valor deve ser um número',
             'value.regex' => 'O valor deve ter no máximo duas casas decimais',
             'date.required' => 'A data da pré-movimentação é obrigatória',
-            'date.date_format' => 'A data da pré-movimentação deve estar no formato DD-MM-YYYY',
+            'date.date_format' => 'A data da pré-movimentação deve estar no formato YYYY-MM-DD',
             'category.required' => 'O ID da categoria é obrigatório',
             'category.string' => 'O ID da categoria deve ser uma string',
             'account.required' => 'O ID da conta é obrigatório',

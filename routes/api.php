@@ -33,12 +33,15 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 
 Route::prefix('external')->group(function () {
     Route::prefix('movement-analyze')->group(function () {
-        Route::get('/', [MovementAnalyzeController::class, 'index'])->middleware('auth:sanctum');
         Route::post('/', [MovementAnalyzeController::class, 'store']);
-        Route::post('/finalize', [MovementAnalyzeController::class, 'finalize'])->middleware('auth:sanctum');
-        Route::put('/', [MovementAnalyzeController::class, 'update'])->middleware('auth:sanctum');
-        Route::delete('/{id}', [MovementAnalyzeController::class, 'destroy'])->middleware('auth:sanctum');
     });
+});
+
+Route::prefix('movement-analyze')->group(function () {
+    Route::get('/', [MovementAnalyzeController::class, 'index'])->middleware('auth:sanctum');
+    Route::post('/finalize', [MovementAnalyzeController::class, 'finalize'])->middleware('auth:sanctum');
+    Route::put('/', [MovementAnalyzeController::class, 'update'])->middleware('auth:sanctum');
+    Route::delete('/{id}', [MovementAnalyzeController::class, 'destroy'])->middleware('auth:sanctum');
 });
 
 Route::prefix('member')->middleware('auth:sanctum')->group(function () {
