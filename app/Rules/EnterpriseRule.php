@@ -10,7 +10,7 @@ class EnterpriseRule
     public function createOffice($request)
     {
         $rules = [
-            'name' => 'required|string|min:3|max:30',
+            'name' => 'required|string|min:3|max:80',
         ];
 
         $messages = [
@@ -33,7 +33,7 @@ class EnterpriseRule
     {
         $rules = [
             'id' => 'required|string|max:100',
-            'name' => 'required|string|min:3|max:30',
+            'name' => 'required|string|min:3|max:80',
         ];
 
         $messages = [
