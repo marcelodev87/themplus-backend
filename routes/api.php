@@ -32,6 +32,7 @@ Route::prefix('user')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('external')->group(function () {
+    Route::get('/check-phone/{phone}', [MovementAnalyzeController::class, 'checkPhone']);
     Route::prefix('movement-analyze')->group(function () {
         Route::post('/', [MovementAnalyzeController::class, 'store']);
     });

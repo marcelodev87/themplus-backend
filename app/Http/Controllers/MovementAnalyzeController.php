@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PhoneHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\MovementAnalyzeRepository;
 use App\Repositories\UserRepository;
@@ -10,11 +11,9 @@ use App\Repositories\MovementRepository;
 use App\Repositories\CategoryRepository;
 use App\Services\MovementAnalyzeService;
 use App\Rules\MovementAnalyzeRule;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class MovementAnalyzeController
 {
@@ -62,6 +61,20 @@ class MovementAnalyzeController
         }
     }
 
+    public function checkPhone($phone)
+    {
+        try {
+            $result = PhoneHelper::validPhone($phone);
+
+            if ($result) {
+                return response()->json(200);
+            }
+        } catch (\Exception $e) {
+            Log::error('Erro ao registrar pré-movimentação: ' . $e->getMessage());
+            $status = $e->getCode() ? $e->getCode() : 500;
+            return response()->json(['message' => $e->getMessage()], $status);
+        }
+    }
     public function store(Request $request)
     {
         try {
