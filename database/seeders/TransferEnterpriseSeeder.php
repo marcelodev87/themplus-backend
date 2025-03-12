@@ -35,6 +35,11 @@ class TransferEnterpriseSeeder extends Seeder
                 'cnpj' => (strlen($row['cnpj_cpf_empresa']) >= 12) ? strval($row['cnpj_cpf_empresa']) : null,
                 'cpf' => (strlen($row['cnpj_cpf_empresa']) < 12) ? strval($row['cnpj_cpf_empresa']) : null,
                 'cep' => (strlen($row['cep']) > 3) ? strval($row['cep']) : null,
+                'city' => $row['cidade'],
+                'state' => $row['state'],
+                'neighborhood' => $row['bairro'],
+                'address' => $row['endereco'],
+                'number_address' => $row['número'],
                 'complement' => $row['complemento'],
                 'subscription_id' => $subscription->id,
                 'code_financial' => $row['sistema_contabil']
