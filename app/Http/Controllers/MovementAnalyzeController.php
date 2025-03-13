@@ -71,7 +71,9 @@ class MovementAnalyzeController
             $result = PhoneHelper::validPhone($request->input('phone'));
 
             if ($result) {
-                return response()->json(200);
+                return response()->json([
+                    'message' => 'Número de telefone registrado',
+                ], 200);
             }
         } catch (\Exception $e) {
             Log::error('Erro ao registrar pré-movimentação: ' . $e->getMessage());
