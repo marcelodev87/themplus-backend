@@ -61,10 +61,14 @@ class MovementAnalyzeController
         }
     }
 
-    public function checkPhone($phone)
+    public function checkPhone(Request $request)
     {
         try {
-            $result = PhoneHelper::validPhone($phone);
+            $request->validate([
+                'phone' => 'required|string',
+
+            ]);
+            $result = PhoneHelper::validPhone($request->input('phone'));
 
             if ($result) {
                 return response()->json(200);
