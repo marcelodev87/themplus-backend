@@ -72,7 +72,7 @@ class MovementAnalyzeController
 
             if ($result) {
                 return response()->json([
-                    'message' => 'Número de telefone registrado',
+                    'result' => 'Número de telefone registrado',
                 ], 200);
             }
         } catch (\Exception $e) {
