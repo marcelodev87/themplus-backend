@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\PhoneHelper;
+use App\Helpers\Wpp\InformationsHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\MovementAnalyzeRepository;
 use App\Repositories\UserRepository;
@@ -73,6 +74,29 @@ class MovementAnalyzeController
             if ($result) {
                 return response()->json([
                     'result' => 'Número de telefone registrado',
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            Log::error('Erro ao registrar pré-movimentação: ' . $e->getMessage());
+            $status = $e->getCode() ? $e->getCode() : 500;
+            return response()->json(['message' => $e->getMessage()], $status);
+        }
+    }
+
+    public function informations(Request $request)
+    {
+        try {
+            $request->validate([
+                'phone' => 'required|string',
+
+            ]);
+            $result = PhoneHelper::validPhone($request->input('phone'));
+
+            if ($result) {
+                $informations = InformationsHelper::getAccountsAndCategories($request->input('phone'));
+                return response()->json([
+                    'categories' => $informations['categories'],
+                    'accounts' => $informations['accounts'],
                 ], 200);
             }
         } catch (\Exception $e) {
