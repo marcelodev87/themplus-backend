@@ -14,13 +14,13 @@ class EnterpriseHelper
 
         if ($enterprise) {
             $fieldsFilled = ($enterprise->cnpj !== null || $enterprise->cpf !== null) &&
-                       $enterprise->cep !== null &&
-                       $enterprise->state !== null &&
-                       $enterprise->city !== null &&
-                       $enterprise->neighborhood !== null &&
-                       $enterprise->address !== null &&
-                       $enterprise->number_address !== null &&
-                       $enterprise->email !== null;
+                $enterprise->cep !== null &&
+                $enterprise->state !== null &&
+                $enterprise->city !== null &&
+                $enterprise->neighborhood !== null &&
+                $enterprise->address !== null &&
+                $enterprise->number_address !== null &&
+                $enterprise->email !== null;
 
             return $fieldsFilled;
         }

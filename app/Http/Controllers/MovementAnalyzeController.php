@@ -88,8 +88,8 @@ class MovementAnalyzeController
         try {
             $request->validate([
                 'phone' => 'required|string',
-
             ]);
+
             $result = PhoneHelper::validPhone($request->input('phone'));
 
             if ($result) {
@@ -100,7 +100,7 @@ class MovementAnalyzeController
                 ], 200);
             }
         } catch (\Exception $e) {
-            Log::error('Erro ao registrar pré-movimentação: ' . $e->getMessage());
+            Log::error('Erro ao buscar informações de contas e categorias: ' . $e->getMessage());
             $status = $e->getCode() ? $e->getCode() : 500;
             return response()->json(['message' => $e->getMessage()], $status);
         }
