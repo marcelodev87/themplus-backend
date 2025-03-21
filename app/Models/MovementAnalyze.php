@@ -18,6 +18,18 @@ class MovementAnalyze extends Model
         'description',
         'enterprise_id',
         'date_movement',
-        'receipt'
+        'receipt',
+        'account_id',
+        'category_id'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(Account::class);
+    }
 }

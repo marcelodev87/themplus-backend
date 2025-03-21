@@ -54,6 +54,8 @@ class MovementAnalyzeService
             'value' => $request->input('value'),
             'type' => $request->input('type'),
             'description' => $request->input('description'),
+            'category_id' => $request->input('category_id'),
+            'account_id' => $request->input('account_id'),
             'file' => $fileUrl,
             'enterprise_id' => $enterpriseId
         ];

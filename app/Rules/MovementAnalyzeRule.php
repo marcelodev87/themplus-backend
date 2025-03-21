@@ -12,6 +12,8 @@ class MovementAnalyzeRule
         $rules = [
             'phone' => 'required|string',
             'type' => 'required|string',
+            'category_id' => 'required|string|exists:categories,id',
+            'account_id' => 'required|string|exists:accounts,id',
             'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
             'date' => 'required|date_format:d-m-Y',
 
@@ -22,6 +24,12 @@ class MovementAnalyzeRule
             'phone.string' => 'O número do telefone deve ser uma string',
             'type.required' => 'O tipo de movimentação é obrigatório',
             'type.string' => 'O tipo de movimentação deve ser uma string',
+            'category_id.required' => 'A categoria é obrigatório',
+            'category_id.string' => 'O tipo de categoria deve ser uma string',
+            'category_id.exists' => 'O ID da categoria não existe',
+            'account_id.required' => 'A conta é obrigatório',
+            'account_id.string' => 'O tipo de conta deve ser uma string',
+            'account_id.exists' => 'O ID da conta não existe',
             'value.required' => 'O valor é obrigatório',
             'value.numeric' => 'O valor deve ser um número',
             'value.regex' => 'O valor deve ter no máximo duas casas decimais',

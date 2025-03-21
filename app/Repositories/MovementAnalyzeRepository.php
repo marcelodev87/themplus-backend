@@ -18,6 +18,32 @@ class MovementAnalyzeRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
+    public function getAllByEnterpriseWithRelations($enterpriseId)
+    {
+        $results = $this->model->where('enterprise_id', $enterpriseId)
+            ->with(['category:id,name', 'account:id,name'])
+            ->get()
+            ->map(function ($item) {
+                $data = $item->toArray();
+                if (isset($data['category'])) {
+                    $data['category'] = [
+                        'value' => $data['category']['id'],
+                        'label' => $data['category']['name'],
+                    ];
+                }
+                if (isset($data['account'])) {
+                    $data['account'] = [
+                        'value' => $data['account']['id'],
+                        'label' => $data['account']['name'],
+                    ];
+                }
+                return $data;
+            });
+
+        return $results;
+
+    }
+
     public function countByEnterprise($enterpriseId)
     {
         return $this->model->where('enterprise_id', $enterpriseId)->count();

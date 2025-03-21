@@ -43,7 +43,7 @@ class MovementAnalyzeController
     public function index(Request $request)
     {
         try {
-            $movements = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $movements = $this->repository->getAllByEnterpriseWithRelations($request->user()->enterprise_id);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaultsOnlyActive(
                 $request->user()->enterprise_id,
                 null
