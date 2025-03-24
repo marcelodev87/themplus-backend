@@ -15,11 +15,13 @@ use Illuminate\Support\Facades\Storage;
 class MovementAnalyzeService
 {
     protected $rule;
+
     protected $repository;
 
     protected $movementRepository;
 
     protected $accountRepository;
+
     protected $userRepository;
 
     protected $categoryRepository;
@@ -57,10 +59,12 @@ class MovementAnalyzeService
             'category_id' => $request->input('category_id'),
             'account_id' => $request->input('account_id'),
             'file' => $fileUrl,
-            'enterprise_id' => $enterpriseId
+            'enterprise_id' => $enterpriseId,
         ];
+
         return $this->repository->create($data);
     }
+
     public function finalize($request)
     {
         $fileUrl = null;
@@ -161,6 +165,7 @@ class MovementAnalyzeService
         }
 
         $user = $users[0]->toArray();
+
         return $user['enterprise_id'];
     }
 

@@ -4,7 +4,6 @@ namespace App\Helpers\Wpp;
 
 use Illuminate\Support\Facades\DB;
 
-
 class InformationsHelper
 {
     public static function getAccountsAndCategories($phone)
@@ -15,7 +14,7 @@ class InformationsHelper
                 'O número de telefone não pertence a nenhum usuário.',
                 404
             );
-        } else if ($result > 1) {
+        } elseif ($result > 1) {
             throw new \Exception(
                 'O número de telefone está registrado em mais de um usuário, entre em contato com o administrador',
                 403

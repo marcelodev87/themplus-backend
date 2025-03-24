@@ -115,6 +115,7 @@ class MovementAnalyzeRule
 
         return true;
     }
+
     public function delete($id)
     {
         $rules = [

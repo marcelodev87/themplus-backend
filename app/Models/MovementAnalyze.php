@@ -20,7 +20,7 @@ class MovementAnalyze extends Model
         'date_movement',
         'receipt',
         'account_id',
-        'category_id'
+        'category_id',
     ];
 
     public function category()

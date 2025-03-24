@@ -37,6 +37,7 @@ class MovementAnalyzeRepository
                         'label' => $data['account']['name'],
                     ];
                 }
+
                 return $data;
             });
 

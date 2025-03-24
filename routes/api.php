@@ -10,13 +10,13 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MovementAnalyzeController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
-use App\Http\Controllers\MovementAnalyzeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 

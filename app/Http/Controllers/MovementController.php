@@ -38,6 +38,7 @@ class MovementController
     private $enterpriseRepository;
 
     private $financialRepository;
+
     private $movementAnalyzeRepository;
 
     private $rule;
@@ -82,10 +83,10 @@ class MovementController
                 'categories' => CategorySelect::collection($categories),
                 'notifications' => $notifications,
                 'delivered' => $delivered,
-                'movements_analyze' => $movements_analyze
+                'movements_analyze' => $movements_analyze,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as movimentações: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as movimentações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -108,7 +109,7 @@ class MovementController
                 'delivered' => $delivered,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar movimentações com base nos filtros: ' . $e->getMessage());
+            Log::error('Erro ao buscar movimentações com base nos filtros: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -151,7 +152,7 @@ class MovementController
     {
         $filePath = storage_path("app/private/receipts/{$file}");
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             throw new \Exception('Não existe este arquivo');
         }
 
@@ -168,7 +169,7 @@ class MovementController
     {
         $filePath = storage_path('app/public/exports/movements_example.xlsx');
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             abort(404);
         }
 
@@ -209,7 +210,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar movimentação: ' . $e->getMessage());
+            Log::error('Erro ao registrar movimentação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -231,7 +232,7 @@ class MovementController
                 'accounts' => AccountResource::collection($accounts),
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar informações: ' . $e->getMessage());
+            Log::error('Erro ao buscar informações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -278,7 +279,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar movimentação: ' . $e->getMessage());
+            Log::error('Erro ao registrar movimentação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -322,7 +323,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar movimentação: ' . $e->getMessage());
+            Log::error('Erro ao atualizar movimentação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -357,7 +358,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao salvar observação: ' . $e->getMessage());
+            Log::error('Erro ao salvar observação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -379,7 +380,7 @@ class MovementController
 
             return response()->json(['bonds' => $bonds, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os vínculos: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas os vínculos: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -395,7 +396,7 @@ class MovementController
             $movementActual = $this->repository->findById($id);
 
             if ($movementActual->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movementActual->receipt);
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $movementActual->receipt);
                 Storage::disk('s3')->delete($oldFilePath);
             }
 
@@ -420,7 +421,7 @@ class MovementController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar movimentação: ' . $e->getMessage());
+            Log::error('Erro ao deletar movimentação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

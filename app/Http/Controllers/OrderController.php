@@ -61,7 +61,7 @@ class OrderController
 
             return response()->json(['bonds' => $bonds, 'filled_data' => $filledData, 'notifications' => $notifications], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas os vínculos: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas os vínculos: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -77,7 +77,7 @@ class OrderController
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData, 'notifications' => $notifications], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as solicitações: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as solicitações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -92,7 +92,7 @@ class OrderController
 
             return response()->json(['orders' => $orders, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as solicitações: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as solicitações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -125,7 +125,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao enviar solicitação: ' . $e->getMessage());
+            Log::error('Erro ao enviar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -160,7 +160,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar solicitação: ' . $e->getMessage());
+            Log::error('Erro ao atualizar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -180,7 +180,7 @@ class OrderController
                 $request->user()->enterprise_id,
                 'invite',
                 'order',
-                $request->input('status') . '|' . $orderData->counter->name
+                $request->input('status').'|'.$orderData->counter->name
             );
 
             if ($register) {
@@ -197,7 +197,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao Aceitar/Rejeitar solicitação: ' . $e->getMessage());
+            Log::error('Erro ao Aceitar/Rejeitar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -232,7 +232,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar solicitação: ' . $e->getMessage());
+            Log::error('Erro ao deletar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -258,6 +258,7 @@ class OrderController
 
             if ($order && $register) {
                 DB::commit();
+
                 return response()->json(['message' => 'Vínculo desfeito com sucesso'], 200);
             }
 
@@ -265,7 +266,7 @@ class OrderController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar solicitação: ' . $e->getMessage());
+            Log::error('Erro ao deletar solicitação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

@@ -2,17 +2,18 @@
 
 namespace Database\Seeders;
 
+use App\Helpers\CategoryHelper;
 use App\Models\Enterprise;
-use Illuminate\Database\Seeder;
-use Rap2hpoutre\FastExcel\FastExcel;
-use Illuminate\Support\Facades\DB;
 use App\Repositories\AccountRepository;
 use App\Repositories\SettingsCounterRepository;
-use App\Helpers\CategoryHelper;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Rap2hpoutre\FastExcel\FastExcel;
 
 class TransferEnterpriseSeeder extends Seeder
 {
     protected $accountRepository;
+
     protected $settingsCounterRepository;
 
     public function __construct(AccountRepository $accountRepository, SettingsCounterRepository $settingsCounterRepository)
@@ -42,7 +43,7 @@ class TransferEnterpriseSeeder extends Seeder
                 'number_address' => $row['número'],
                 'complement' => $row['complemento'],
                 'subscription_id' => $subscription->id,
-                'code_financial' => $row['sistema_contabil']
+                'code_financial' => $row['sistema_contabil'],
             ]);
 
             $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];

@@ -31,7 +31,7 @@ class Enterprise extends Model
         'position',
         'counter_enterprise_id',
         'code_financial',
-        'coupon_id'
+        'coupon_id',
     ];
 
     public function users()
