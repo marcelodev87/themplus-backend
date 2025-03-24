@@ -9,7 +9,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('enterprises', function (Blueprint $table) {
-            $table->uuid('coupon_id')->nullable()->after('subscription_id');
+            $table->string('coupon_id')->nullable()->after('subscription_id');
         });
     }
 

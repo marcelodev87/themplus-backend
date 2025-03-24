@@ -39,7 +39,7 @@ class Enterprise extends Model
         return $this->hasMany(User::class, 'enterprise_id');
     }
 
-    public function account()
+    public function coupon()
     {
         return $this->belongsTo(CouponExternal::class, 'coupon_id');
     }
