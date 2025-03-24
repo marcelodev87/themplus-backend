@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\External\CouponExternal;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
@@ -29,11 +30,17 @@ class Enterprise extends Model
         'created_by',
         'position',
         'counter_enterprise_id',
-        'code_financial'
+        'code_financial',
+        'coupon_id'
     ];
 
     public function users()
     {
         return $this->hasMany(User::class, 'enterprise_id');
+    }
+
+    public function account()
+    {
+        return $this->belongsTo(CouponExternal::class, 'coupon_id');
     }
 }
