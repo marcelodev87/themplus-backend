@@ -77,7 +77,7 @@ class UserService
 
         $user = $this->repository->findByEmail($data['email']);
 
-        UserHelper::clearTokenReset($user->email);
+        UserHelper::clearTokenReset($user);
 
         return $user;
     }

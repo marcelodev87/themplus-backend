@@ -62,7 +62,7 @@ class MovementAnalyzeController
                 'accounts' => $accounts,
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as pré-movimentações: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as pré-movimentações: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -83,7 +83,7 @@ class MovementAnalyzeController
                 ], 200);
             }
         } catch (\Exception $e) {
-            Log::error('Erro ao registrar pré-movimentação: ' . $e->getMessage());
+            Log::error('Erro ao registrar pré-movimentação: '.$e->getMessage());
             $status = $e->getCode() ? $e->getCode() : 500;
 
             return response()->json(['message' => $e->getMessage()], $status);
@@ -108,7 +108,7 @@ class MovementAnalyzeController
                 ], 200);
             }
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar informações de contas e categorias: ' . $e->getMessage());
+            Log::error('Erro ao buscar informações de contas e categorias: '.$e->getMessage());
             $status = $e->getCode() ? $e->getCode() : 500;
 
             return response()->json(['message' => $e->getMessage()], $status);
@@ -135,7 +135,7 @@ class MovementAnalyzeController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar pré-movimentação: ' . $e->getMessage());
+            Log::error('Erro ao registrar pré-movimentação: '.$e->getMessage());
 
             $status = $e->getCode() ? $e->getCode() : 500;
 
@@ -167,7 +167,7 @@ class MovementAnalyzeController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao atualizar pré-movimentação com alerta: ' . $e->getMessage());
+            Log::error('Erro ao atualizar pré-movimentação com alerta: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -202,7 +202,7 @@ class MovementAnalyzeController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao validar pré-movimentação : ' . $e->getMessage());
+            Log::error('Erro ao validar pré-movimentação : '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -226,7 +226,7 @@ class MovementAnalyzeController
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao deletar pré-movimentação: ' . $e->getMessage());
+            Log::error('Erro ao deletar pré-movimentação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

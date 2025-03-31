@@ -6,6 +6,7 @@ use App\Repositories\EnterpriseRepository;
 use App\Repositories\NotificationRepository;
 use App\Rules\UserRule;
 use App\Services\UserService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -37,7 +38,13 @@ class UserController
 
             $user->view_enterprise_name = $enterpriseView->name;
 
-            $token = $user->createToken('my-app-token')->plainTextToken;
+            $newToken = $user->createToken('my-app-token');
+
+            $newToken->accessToken->update([
+                'expires_at' => Carbon::now()->addHours(3),
+            ]);
+
+            $token = $newToken->plainTextToken;
 
             return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by, 'enterprise_position' => $enterprise->position], 200);
         } catch (\Exception $e) {
@@ -55,7 +62,13 @@ class UserController
             $user = $this->service->create($request);
 
             if ($user) {
-                $token = $user->createToken('my-app-token')->plainTextToken;
+                $newToken = $user->createToken('my-app-token');
+
+                $newToken->accessToken->update([
+                    'expires_at' => Carbon::now()->addMinute(),
+                ]);
+
+                $token = $newToken->plainTextToken;
 
                 $dataNotification = [
                     'user_id' => $user->id,
