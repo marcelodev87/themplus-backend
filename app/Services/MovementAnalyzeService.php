@@ -54,7 +54,7 @@ class MovementAnalyzeService
         $data = [
             'date_movement' => Carbon::parse($request->input('date'))->format('Y-m-d'),
             'value' => $request->input('value'),
-            'type' => $request->input('type'),
+            'type' => strtolower($request->input('type')) !== 'entrada' ? 'saída' : 'entrada',
             'description' => $request->input('description'),
             'category_id' => $request->input('category_id'),
             'account_id' => $request->input('account_id'),

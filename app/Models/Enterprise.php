@@ -31,16 +31,10 @@ class Enterprise extends Model
         'position',
         'counter_enterprise_id',
         'code_financial',
-        'coupon_id',
     ];
 
     public function users()
     {
         return $this->hasMany(User::class, 'enterprise_id');
-    }
-
-    public function coupon()
-    {
-        return $this->belongsTo(CouponExternal::class, 'coupon_id');
     }
 }
