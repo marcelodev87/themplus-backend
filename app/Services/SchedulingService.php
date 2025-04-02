@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\AccountHelper;
 use App\Repositories\FinancialRepository;
 use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
@@ -29,6 +30,8 @@ class SchedulingService
     public function create($request)
     {
         $this->rule->create($request);
+
+        AccountHelper::openingBalance($request->input('account'));
 
         $fileUrl = null;
 
@@ -88,6 +91,8 @@ class SchedulingService
     public function update($request)
     {
         $this->rule->update($request);
+        AccountHelper::openingBalance($request->input('account'));
+
         $scheduling = $this->repository->findById($request->input('id'));
 
         $data = [

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AccountHelper;
 use App\Helpers\PhoneHelper;
 use App\Helpers\Wpp\InformationsHelper;
 use App\Repositories\AccountRepository;
@@ -178,6 +179,9 @@ class MovementAnalyzeController
         try {
             DB::beginTransaction();
             $this->rule->finalize($request);
+
+            AccountHelper::openingBalance($request->input('account'));
+
             $movement = $this->service->finalize($request);
 
             if ($movement) {

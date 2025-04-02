@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\Example\MovementInsertExample;
 use App\Exports\MovementExport;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
@@ -159,12 +158,6 @@ class MovementController
         return response()->download($filePath, $file);
     }
 
-    // public function insertExample()
-    // {
-    //     $fileName = 'movements_insert_example.xlsx';
-
-    //     return (new MovementInsertExample)->download($fileName);
-    // }
     public function insertExample()
     {
         $filePath = storage_path('app/public/exports/movements_example.xlsx');

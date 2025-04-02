@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\AccountHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
@@ -40,6 +41,8 @@ class MovementService
     public function create($request)
     {
         $this->rule->create($request);
+
+        AccountHelper::openingBalance($request->input('account'));
 
         $fileUrl = null;
 
@@ -134,6 +137,8 @@ class MovementService
                 'enterprise_id' => $request->user()->enterprise_id,
             ];
 
+            AccountHelper::openingBalance($movementData['account']);
+
             $movement = $this->repository->create($data);
             if ($movement) {
                 $createdMovements[] = $movement;
@@ -184,6 +189,8 @@ class MovementService
         $this->rule->update($request);
         $movement = $this->repository->findById($request->input('id'));
 
+        AccountHelper::openingBalance($request->input('account'));
+
         $data = [
             'type' => $request->input('type'),
             'value' => $request->input('value'),
@@ -208,6 +215,8 @@ class MovementService
     {
         $this->rule->update($request);
         $movement = $this->repository->findById($request->input('id'));
+
+        AccountHelper::openingBalance($request->input('account'));
 
         $data = [
             'value' => $request->input('value'),

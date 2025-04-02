@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\SchedulingExport;
+use App\Helpers\AccountHelper;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
@@ -227,6 +228,9 @@ class SchedulingController
 
             $this->rule->finalize($id);
             $schedulingData = $this->repository->findByIdWithRelations($id);
+
+            AccountHelper::openingBalance($schedulingData->account_id);
+
             $movement = $this->repository->finalize($id);
 
             $register = RegisterHelper::create(

@@ -55,6 +55,12 @@ class CategoryHelper
             ['name' => 'Tarifa bancária', 'type' => 'saída'],
             ['name' => 'Deposito', 'type' => 'entrada'],
             ['name' => 'Saque', 'type' => 'saída'],
+            ['name' => 'Seguros', 'type' => 'entrada'],
+            ['name' => 'Consórcios', 'type' => 'saída'],
+            ['name' => 'Empréstimos', 'type' => 'saída'],
+            ['name' => 'Alimentação', 'type' => 'saída'],
+            ['name' => 'Aplicação financeira', 'type' => 'saída'],
+            ['name' => 'Folha de pagamento de funcionários', 'type' => 'saída'],
         ];
 
         foreach ($categories as $category) {
