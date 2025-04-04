@@ -25,22 +25,25 @@ class AccountHelper
         }
     }
 
-    public static function openingBalance($accountId)
+    public static function openingBalance($accountId, $categoryId)
     {
-        $account = DB::table('accounts')->where('id', $accountId)->first();
+        $category = DB::table('categories')->where('id', $categoryId)->first();
+        if (strtolower($category->name) === 'saldo inicial') {
 
-        $category = DB::table('categories')
-            ->where('enterprise_id', $account->enterprise_id)
-            ->where('name', 'Saldo inicial')
-            ->first();
+            $account = DB::table('accounts')->where('id', $accountId)->first();
+            $category = DB::table('categories')
+                ->where('enterprise_id', $account->enterprise_id)
+                ->where('name', 'Saldo inicial')
+                ->first();
 
-        $result = DB::table('movements')
-            ->where('account_id', $account->id)
-            ->where('category_id', $category->id)
-            ->count();
+            $result = DB::table('movements')
+                ->where('account_id', $account->id)
+                ->where('category_id', $category->id)
+                ->count();
 
-        if ($result > 0) {
-            throw new \Exception('Não é permitido lançar mais de uma vez a categoria "Saldo inicial" para a mesma conta', 403);
+            if ($result > 0) {
+                throw new \Exception('Não é permitido lançar mais de uma vez a categoria "Saldo inicial" para a mesma conta', 403);
+            }
         }
     }
 }

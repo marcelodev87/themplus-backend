@@ -31,7 +31,7 @@ class SchedulingService
     {
         $this->rule->create($request);
 
-        AccountHelper::openingBalance($request->input('account'));
+        AccountHelper::openingBalance($request->input('account'), $request->input('category'));
 
         $fileUrl = null;
 
@@ -91,7 +91,7 @@ class SchedulingService
     public function update($request)
     {
         $this->rule->update($request);
-        AccountHelper::openingBalance($request->input('account'));
+        AccountHelper::openingBalance($request->input('account'), $request->input('category'));
 
         $scheduling = $this->repository->findById($request->input('id'));
 

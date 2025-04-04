@@ -180,7 +180,7 @@ class MovementAnalyzeController
             DB::beginTransaction();
             $this->rule->finalize($request);
 
-            AccountHelper::openingBalance($request->input('account'));
+            AccountHelper::openingBalance($request->input('account'), $request->input('category'));
 
             $movement = $this->service->finalize($request);
 

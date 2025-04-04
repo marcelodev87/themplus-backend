@@ -229,7 +229,7 @@ class SchedulingController
             $this->rule->finalize($id);
             $schedulingData = $this->repository->findByIdWithRelations($id);
 
-            AccountHelper::openingBalance($schedulingData->account_id);
+            AccountHelper::openingBalance($schedulingData->account_id, $schedulingData->category->id);
 
             $movement = $this->repository->finalize($id);
 

@@ -42,7 +42,7 @@ class MovementService
     {
         $this->rule->create($request);
 
-        AccountHelper::openingBalance($request->input('account'));
+        AccountHelper::openingBalance($request->input('account'), $request->input('category'));
 
         $fileUrl = null;
 
@@ -137,7 +137,7 @@ class MovementService
                 'enterprise_id' => $request->user()->enterprise_id,
             ];
 
-            AccountHelper::openingBalance($movementData['account']);
+            AccountHelper::openingBalance($movementData['account'], $movementData['category']);
 
             $movement = $this->repository->create($data);
             if ($movement) {
@@ -189,7 +189,7 @@ class MovementService
         $this->rule->update($request);
         $movement = $this->repository->findById($request->input('id'));
 
-        AccountHelper::openingBalance($request->input('account'));
+        AccountHelper::openingBalance($request->input('account'), $request->input('category'));
 
         $data = [
             'type' => $request->input('type'),
@@ -216,7 +216,7 @@ class MovementService
         $this->rule->update($request);
         $movement = $this->repository->findById($request->input('id'));
 
-        AccountHelper::openingBalance($request->input('account'));
+        AccountHelper::openingBalance($request->input('account'), $request->input('category'));
 
         $data = [
             'value' => $request->input('value'),
