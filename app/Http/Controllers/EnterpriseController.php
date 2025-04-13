@@ -6,6 +6,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\OfficeResource;
+use App\Repositories\EnterpriseHasCouponRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\SettingsCounterRepository;
@@ -30,9 +31,11 @@ class EnterpriseController
 
     private $settingsCounterRepository;
 
+    private $enterpriseHasCouponRepository;
+
     private $rule;
 
-    public function __construct(EnterpriseService $service, EnterpriseRepository $repository, EnterpriseRule $rule, UserRepository $userRepository, EnterpriseRepository $enterpriseRepository, FinancialRepository $financialRepository, SettingsCounterRepository $settingsCounterRepository)
+    public function __construct(EnterpriseService $service, EnterpriseRepository $repository, EnterpriseRule $rule, UserRepository $userRepository, EnterpriseRepository $enterpriseRepository, FinancialRepository $financialRepository, SettingsCounterRepository $settingsCounterRepository, EnterpriseHasCouponRepository $enterpriseHasCouponRepository)
     {
         $this->service = $service;
         $this->repository = $repository;
@@ -41,6 +44,7 @@ class EnterpriseController
         $this->enterpriseRepository = $enterpriseRepository;
         $this->financialRepository = $financialRepository;
         $this->settingsCounterRepository = $settingsCounterRepository;
+        $this->enterpriseHasCouponRepository = $enterpriseHasCouponRepository;
     }
 
     public function indexOffices(Request $request)
@@ -58,6 +62,72 @@ class EnterpriseController
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as filiais: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function getCoupons(Request $request)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $coupons = $this->service->getCoupons($enterpriseId);
+
+            // TODO: Aplicar RESOURCE
+            return response()->json([
+                'coupons' => $coupons,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar cupons vinculados: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function setCoupon(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $enterpriseId = $request->user()->enterprise_id;
+            $coupon = $this->service->setCoupon($enterpriseId, $request->input('coupon'));
+
+            if ($coupon) {
+                DB::commit();
+
+                $coupons = $this->service->getCoupons($enterpriseId);
+
+                // TODO: Aplicar RESOURCE
+                return response()->json([
+                    'coupons' => $coupons,
+                ], 200);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao aplicar cupom: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function removeCoupon($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->rule->removeCoupon($id);
+            $coupon = $this->enterpriseHasCouponRepository->delete($id);
+
+            if ($coupon) {
+                DB::commit();
+
+                return response()->json(['message' => 'Cupom removido com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao remover cupom');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao remover cupom: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

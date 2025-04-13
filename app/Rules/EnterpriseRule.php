@@ -117,4 +117,24 @@ class EnterpriseRule
 
         return true;
     }
+
+    public function removeCoupon($id)
+    {
+        $rules = [
+            'id' => 'required|string',
+        ];
+
+        $messages = [
+            'id.required' => 'O ID do cupom é obrigatória',
+            'id.string' => 'O ID do cupom deve ser uma string',
+        ];
+
+        $validator = Validator::make(['id' => $id], $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

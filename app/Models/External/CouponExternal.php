@@ -16,11 +16,10 @@ class CouponExternal extends Model
 
     protected $fillable = [
         'name',
-        'movements',
-        'allow_financial',
-        'allow_members',
-        'allow_assistant_whatsapp',
+        'type',
+        'service',
+        'subscription_id',
         'discount',
-        'date_expires',
+        'date_expiration',
     ];
 }

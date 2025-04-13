@@ -6,7 +6,9 @@ use App\Helpers\CategoryHelper;
 use App\Helpers\EnterpriseHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
+use App\Repositories\EnterpriseHasCouponRepository;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\External\CouponExternalRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
@@ -28,6 +30,10 @@ class EnterpriseService
 
     protected $settingsCounterRepository;
 
+    protected $enterpriseHasCouponRepository;
+
+    protected $couponExternalRepository;
+
     public function __construct(
         EnterpriseRule $rule,
         EnterpriseRepository $repository,
@@ -35,7 +41,9 @@ class EnterpriseService
         SubscriptionRepository $subscriptionRepository,
         AccountRepository $accountRepository,
         SettingsCounterRepository $settingsCounterRepository,
-        CategoryRepository $categoryRepository
+        CategoryRepository $categoryRepository,
+        EnterpriseHasCouponRepository $enterpriseHasCouponRepository,
+        CouponExternalRepository $couponExternalRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -44,6 +52,8 @@ class EnterpriseService
         $this->accountRepository = $accountRepository;
         $this->settingsCounterRepository = $settingsCounterRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->enterpriseHasCouponRepository = $enterpriseHasCouponRepository;
+        $this->couponExternalRepository = $couponExternalRepository;
     }
 
     public function createOffice($request)
@@ -158,6 +168,39 @@ class EnterpriseService
         $data = ['view_enterprise_id' => $request->input('viewEnterprise') ?? $request->user()->enterprise_id];
 
         return $this->userRepository->update($request->user()->id, $data);
+    }
+
+    public function getCoupons($enterpriseId)
+    {
+        return $this->enterpriseHasCouponRepository->getAllByEnterprise($enterpriseId);
+    }
+
+    public function setCoupon($enterpriseId, $coupon)
+    {
+        $coupon = $this->checkCoupon($coupon);
+
+        return $this->enterpriseHasCouponRepository->create([
+            'enterprise_id' => $enterpriseId,
+            'coupon_id' => $coupon->id,
+        ]);
+    }
+
+    public function checkCoupon($couponName)
+    {
+        $coupon = $this->couponExternalRepository->findByName($couponName);
+        if (! $coupon) {
+            throw new \Exception('O cupom informado não existe', 404);
+        }
+
+        if ($coupon->limit) {
+            $using = $this->enterpriseHasCouponRepository->countCouponUsing($coupon->id);
+
+            if ($using >= $coupon->limit) {
+                throw new \Exception('O cupom informado atingiu o limite de uso', 403);
+            }
+        }
+
+        return $coupon;
     }
 
     public function unlink($request)

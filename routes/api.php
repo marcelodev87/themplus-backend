@@ -183,6 +183,12 @@ Route::prefix('enterprise')->middleware(['auth:sanctum', 'token.expiration'])->g
     Route::put('/unlink', [EnterpriseController::class, 'unlink'])->middleware('admin');
     Route::put('/code-financial', [EnterpriseController::class, 'updateCodeFinancial'])->middleware('admin');
     Route::delete('/{id}', [EnterpriseController::class, 'destroy'])->middleware('admin');
+
+    Route::prefix('coupon')->group(function () {
+        Route::get('/', [EnterpriseController::class, 'getCoupons']);
+        Route::post('/', [EnterpriseController::class, 'setCoupon']);
+        Route::delete('/{id}', [EnterpriseController::class, 'removeCoupon']);
+    });
 });
 
 Route::prefix('office')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
