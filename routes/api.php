@@ -186,7 +186,7 @@ Route::prefix('enterprise')->middleware(['auth:sanctum', 'token.expiration'])->g
 
     Route::prefix('coupon')->group(function () {
         Route::get('/', [EnterpriseController::class, 'getCoupons']);
-        Route::post('/', [EnterpriseController::class, 'setCoupon']);
+        Route::post('/{name}', [EnterpriseController::class, 'setCoupon']);
         Route::delete('/{id}', [EnterpriseController::class, 'removeCoupon']);
     });
 });
