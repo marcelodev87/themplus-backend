@@ -30,13 +30,13 @@ class CategoryRepository
         $defaultSystem = $request->has('defaultSystem') ? filter_var($request->query('defaultSystem'), FILTER_VALIDATE_BOOLEAN) : null;
 
         $query = $this->model->with(['alert']);
+        $query->where('enterprise_id', $request->user()->view_enterprise_id);
 
-        if (! is_null($createdByMe) && $createdByMe) {
-            $query->where('enterprise_id', $request->user()->view_enterprise_id)
-                ->where('default', 0);
+        if (!is_null($createdByMe) && $createdByMe) {
+            $query->where('default', 0);
         }
 
-        if (! is_null($defaultSystem) && $defaultSystem) {
+        if (!is_null($defaultSystem) && $defaultSystem) {
             $query->where('default', 1);
         }
 
