@@ -13,7 +13,7 @@ class PopulateClient1Seeder extends Seeder
 {
     public function run()
     {
-        $enterprise = DB::table('enterprises')->where('id', '726bcd7c-9fd7-4ca8-a289-61f6729113d5')->first();
+        $enterprise = DB::table('enterprises')->where('cnpj', '15243496000100')->first();
 
         $account = Account::create([
             'name' => 'Bradesco2',
