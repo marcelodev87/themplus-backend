@@ -17,6 +17,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -195,4 +196,9 @@ Route::prefix('office')->middleware(['auth:sanctum', 'token.expiration'])->group
     Route::get('/', [EnterpriseController::class, 'indexOffices']);
     Route::post('/', [EnterpriseController::class, 'storeOffice'])->middleware('admin');
     Route::delete('/{id}', [EnterpriseController::class, 'destroyOffice'])->middleware('admin');
+});
+
+Route::prefix('resource')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/subscription', [EnterpriseController::class, 'mySubscription']);
+    Route::get('/coupons', [EnterpriseController::class, 'myCoupons']);
 });

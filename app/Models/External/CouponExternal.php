@@ -14,6 +14,8 @@ class CouponExternal extends Model
 
     protected $table = 'coupons';
 
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'name',
         'type',

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
+use App\Http\Resources\EnterpriseCoupons\CouponEnterpriseResource;
 use App\Http\Resources\OfficeResource;
+use App\Http\Resources\SubscriptionResource;
 use App\Repositories\EnterpriseHasCouponRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
@@ -67,6 +69,37 @@ class EnterpriseController
         }
     }
 
+    public function mySubscription(Request $request)
+    {
+        try {
+            $enterpriseId = $request->user()->enterprise_id;
+            $enterprise = $this->repository->findById($enterpriseId)->load('subscription');
+
+            return response()->json([
+                'subscription' => new SubscriptionResource($enterprise->subscription),
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar dados da assinatura: ' . $e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+    public function myCoupons(Request $request)
+    {
+        try {
+            $coupons = $this->enterpriseHasCouponRepository->getAllByEnterprise($request->user()->enterprise_id);
+
+            // $teste = DB::connection('external')->table('users')->get();
+            dd($coupons);
+
+
+            return response()->json(['coupons' => CouponEnterpriseResource::collection($coupons)], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar cupons: ' . $e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
     public function getCoupons(Request $request)
     {
         try {

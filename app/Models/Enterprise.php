@@ -36,4 +36,9 @@ class Enterprise extends Model
     {
         return $this->hasMany(User::class, 'enterprise_id');
     }
+
+    public function subscription()
+    {
+        return $this->belongsTo(Subscription::class, 'subscription_id');
+    }
 }
