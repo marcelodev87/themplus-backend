@@ -8,10 +8,6 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('enterprises', function (Blueprint $table) {
-            $table->dropColumn('coupon_id');
-        });
-
         Schema::create('enterprise_has_coupons', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('enterprise_id')->constrained('enterprises');
@@ -22,10 +18,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::table('enterprises', function (Blueprint $table) {
-            $table->string('coupon_id')->nullable();
-        });
-
         Schema::dropIfExists('enterprise_has_coupons');
     }
 };
