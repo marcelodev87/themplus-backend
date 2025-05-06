@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\MovementExport;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
@@ -321,5 +322,23 @@ class ReportController
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    public function downloadReport($reportId)
+    {
+        $financial = $this->financialRepository->findById($reportId);
+
+        $month = str_pad($financial->month, 2, '0', STR_PAD_LEFT);
+        $year = $financial->year;
+        $date = "{$month}-{$year}";
+
+        $movements = $this->movementRepository->export(null, null, $date, null, $financial->enterprise_id);
+
+        $movements = collect($movements)->sortByDesc('date_movement');
+
+        $dateTime = now()->format('Ymd_His');
+        $fileName = "reports_{$financial->enterprise_id}_{$dateTime}.xlsx";
+
+        return (new MovementExport($movements))->download($fileName);
     }
 }

@@ -149,6 +149,7 @@ Route::prefix('report')->middleware(['auth:sanctum', 'token.expiration'])->group
     Route::get('/details/{id}', [ReportController::class, 'details']);
     Route::post('/undo/{id}', [ReportController::class, 'undo']);
     Route::post('/finalize/{id}', [ReportController::class, 'finalize']);
+    Route::post('/export/{reportId}', [ReportController::class, 'downloadReport']);
     Route::post('/movement/update/', [ReportController::class, 'updateMovementByCounter']);
     Route::delete('/movement/{id}', [ReportController::class, 'destroyMovement']);
     Route::delete('/reopen/{id}', [ReportController::class, 'reopen']);
