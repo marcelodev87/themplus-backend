@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\SchedulingExport;
 use App\Helpers\AccountHelper;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\FinancialMovementHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
@@ -228,6 +229,14 @@ class SchedulingController
 
             $this->rule->finalize($id);
             $schedulingData = $this->repository->findByIdWithRelations($id);
+
+            $now = now()->setTimezone('America/Sao_Paulo');
+            $dateMovement = $now->format('Y-m-d');
+
+            FinancialMovementHelper::reportFinalized(
+                $request->user()->enterprise_id,
+                $dateMovement
+            );
 
             AccountHelper::openingBalance($schedulingData->account_id, $schedulingData->category->id);
 

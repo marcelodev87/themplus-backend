@@ -32,11 +32,11 @@ class CategoryRepository
         $query = $this->model->with(['alert']);
         $query->where('enterprise_id', $request->user()->view_enterprise_id);
 
-        if (!is_null($createdByMe) && $createdByMe) {
+        if (! is_null($createdByMe) && $createdByMe) {
             $query->where('default', 0);
         }
 
-        if (!is_null($defaultSystem) && $defaultSystem) {
+        if (! is_null($defaultSystem) && $defaultSystem) {
             $query->where('default', 1);
         }
 

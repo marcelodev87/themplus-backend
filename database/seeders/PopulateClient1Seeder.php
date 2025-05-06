@@ -63,7 +63,7 @@ class PopulateClient1Seeder extends Seeder
             };
 
             $dateFormatted = null;
-            if (!empty($row['dia'])) {
+            if (! empty($row['dia'])) {
                 try {
                     $dateFormatted = Carbon::createFromFormat('d/m/Y', trim($row['dia']))->format('Y-m-d');
                 } catch (\Exception $e) {
@@ -77,10 +77,9 @@ class PopulateClient1Seeder extends Seeder
                 'account_id' => $account->id,
                 'enterprise_id' => $enterprise->id,
                 'type' => $category->type,
-                'category_id' => $category->id
+                'category_id' => $category->id,
             ]);
         });
 
     }
-
 }

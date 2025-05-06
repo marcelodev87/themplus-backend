@@ -115,6 +115,7 @@ class EnterpriseService
             'counter_enterprise_id' => $request->user()->enterprise_id,
             'cnpj' => $request->input('cnpj'),
             'cpf' => $request->input('cpf'),
+            'code_financial' => $request->input('code'),
         ];
 
         $enterprise = $this->repository->createOffice($data);

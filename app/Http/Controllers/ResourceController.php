@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\RegisterHelper;
 use App\Repositories\CategoryRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Rules\AlertRule;
 use App\Services\AlertService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ResourceController
@@ -36,11 +33,9 @@ class ResourceController
 
             return response()->json(['categories' => $categories], 200);
         } catch (\Exception $e) {
-            Log::error('Erro ao buscar todas as categorias: ' . $e->getMessage());
+            Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-
-
 }
