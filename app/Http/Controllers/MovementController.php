@@ -7,6 +7,7 @@ use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
+use App\Http\Resources\AccountSelect;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategorySelect;
 use App\Repositories\AccountRepository;
@@ -72,6 +73,7 @@ class MovementController
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $delivered = $this->repository->checkDelivered($enterpriseId, $date);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
             $movements_analyze = $this->movementAnalyzeRepository->countByEnterprise($enterpriseId);
 
@@ -80,6 +82,7 @@ class MovementController
                 'filled_data' => $filledData,
                 'months_years' => $months_years,
                 'categories' => CategorySelect::collection($categories),
+                'accounts' => AccountSelect::collection($accounts),
                 'notifications' => $notifications,
                 'delivered' => $delivered,
                 'movements_analyze' => $movements_analyze,
@@ -100,11 +103,13 @@ class MovementController
             $months_years = $this->repository->getMonthYears($enterpriseId);
             $delivered = $this->repository->checkDelivered($enterpriseId, $date);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
             return response()->json([
                 'movements' => $movements,
                 'months_years' => $months_years,
                 'categories' => CategorySelect::collection($categories),
+                'accounts' => AccountSelect::collection($accounts),
                 'delivered' => $delivered,
             ], 200);
         } catch (\Exception $e) {
@@ -188,11 +193,13 @@ class MovementController
                 $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
                 $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
                 $notifications = NotificationsHelper::getNoRead($request->user()->id);
+                $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
                 return response()->json([
                     'movements' => $movements,
                     'months_years' => $months_years,
                     'categories' => CategorySelect::collection($categories),
+                    'accounts' => AccountSelect::collection($accounts),
                     'notifications' => $notifications,
                     'message' => 'Inserção de movimentações em lote realizada com sucesso',
                     'delivered' => $delivered,
@@ -259,11 +266,15 @@ class MovementController
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
                 $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
+                $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+                $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
                 return response()->json([
                     'movements' => $movements,
                     'message' => 'Movimentação cadastrada com sucesso',
                     'months_years' => $months_years,
+                    'categories' => CategorySelect::collection($categories),
+                    'accounts' => AccountSelect::collection($accounts),
                     'delivered' => $delivered,
                 ], 201);
             }
@@ -303,12 +314,16 @@ class MovementController
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
                 $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
+                $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+                $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
                 return response()->json([
                     'movements' => $movements,
                     'message' => 'Movimentação atualizada com sucesso',
                     'months_years' => $months_years,
                     'delivered' => $delivered,
+                    'categories' => CategorySelect::collection($categories),
+                    'accounts' => AccountSelect::collection($accounts),
                 ], 200);
             }
 
