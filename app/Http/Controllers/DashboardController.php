@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
+use App\Http\Resources\AccountSelect;
+use App\Repositories\AccountRepository;
 use App\Repositories\DashboardRepository;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
@@ -13,9 +15,12 @@ class DashboardController
 {
     private $repository;
 
-    public function __construct(DashboardRepository $repository)
+    private $accountRepository;
+
+    public function __construct(DashboardRepository $repository, AccountRepository $accountRepository)
     {
         $this->repository = $repository;
+        $this->accountRepository = $accountRepository;
     }
 
     public function index(Request $request)
@@ -26,6 +31,7 @@ class DashboardController
             $dashboard = $this->repository->mountDashboard($enterpriseId, $request);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
+            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
             return response()->json([
                 'months_years' => $dashboard['months_years'],
@@ -39,6 +45,7 @@ class DashboardController
                 'general' => $dashboard['general'],
                 'notifications' => $notifications,
                 'filled_data' => $filledData,
+                'accounts' => AccountSelect::collection($accounts),
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar informações para o dashboard: '.$e->getMessage());

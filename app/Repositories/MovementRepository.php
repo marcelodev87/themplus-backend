@@ -317,7 +317,7 @@ class MovementRepository
         ];
     }
 
-    public function getMovementsByCategoriesDashboard($enterpriseId, $date, $mode, $category)
+    public function getMovementsByCategoriesDashboard($enterpriseId, $date, $mode, $category, $account)
     {
         $query = $this->model
             ->select('movements.category_id')
@@ -346,10 +346,15 @@ class MovementRepository
             $query->where('movements.category_id', $category);
         }
 
+        if ($account !== null) {
+            $query->where('movements.account_id', $account);
+        }
+
         return $query->get()
             ->map(function ($movement) {
                 return [
                     'category_id' => $movement->category_id,
+                    'account_id' => $movement->account_id,
                     'name' => $movement->category->name,
                     'type' => $movement->category->type,
                     'value' => $movement->value,

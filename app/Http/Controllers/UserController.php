@@ -46,7 +46,7 @@ class UserController
 
             $token = $newToken->plainTextToken;
 
-            return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by, 'enterprise_position' => $enterprise->position], 200);
+            return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by, 'enterprise_position' => $enterprise->position, 'enterprise_name' => $enterprise->name], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao logar com usuário: '.$e->getMessage());
 
@@ -87,6 +87,7 @@ class UserController
                     'enterprise_created' => $enterprise->created_by,
                     'enterprise_position' => $enterprise->position,
                     'message' => 'Cadastro realizado com sucesso',
+                    'enterprise_name' => $enterprise->name,
                 ], 201);
             }
 

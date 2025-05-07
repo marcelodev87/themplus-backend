@@ -78,7 +78,7 @@ class SchedulingRepository
         ];
     }
 
-    public function getSchedulesByCategoriesDashboard($enterpriseId, $date, $mode, $category)
+    public function getSchedulesByCategoriesDashboard($enterpriseId, $date, $mode, $category, $account)
     {
         $query = $this->model
             ->select('schedulings.category_id')
@@ -107,10 +107,15 @@ class SchedulingRepository
             $query->where('schedulings.category_id', $category);
         }
 
+        if ($account !== null) {
+            $query->where('schedulings.account_id', $account);
+        }
+
         return $query->get()
             ->map(function ($schedule) {
                 return [
                     'category_id' => $schedule->category_id,
+                    'account_id' => $schedule->account_id,
                     'name' => $schedule->category->name,
                     'type' => $schedule->category->type,
                     'value' => $schedule->value,

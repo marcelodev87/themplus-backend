@@ -45,10 +45,11 @@ class DashboardRepository
         $mode = $request->input('mode');
         $date = $request->input('date');
         $category = $request->input('category');
+        $account = $request->input('account');
 
         $months_years = $this->movementRepository->getMonthYears($enterpriseId);
-        $categories_movements_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId, $date, $mode, $category);
-        $categories_schedules_dashboard = $this->schedulingRepository->getSchedulesByCategoriesDashboard($enterpriseId, $date, $mode, $category);
+        $categories_movements_dashboard = $this->movementRepository->getMovementsByCategoriesDashboard($enterpriseId, $date, $mode, $category, $account);
+        $categories_schedules_dashboard = $this->schedulingRepository->getSchedulesByCategoriesDashboard($enterpriseId, $date, $mode, $category, $account);
         $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
         $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId, $date, $mode);
         $users_dashboard = $this->userRepository->getUsersDashboard($enterpriseId);
