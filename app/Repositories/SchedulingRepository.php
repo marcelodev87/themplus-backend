@@ -156,6 +156,7 @@ class SchedulingRepository
         $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
         $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
+        $accountId = ($request->query('account') === 'null') ? null : $request->query('account');
 
         $query = $this->model->with(['account', 'category'])
             ->where('enterprise_id', $request->user()->view_enterprise_id);
@@ -175,6 +176,10 @@ class SchedulingRepository
 
         if ($categoryId !== null) {
             $query->where('category_id', $categoryId);
+        }
+
+        if ($accountId !== null) {
+            $query->where('account_id', $accountId);
         }
 
         if ($date) {

@@ -9,6 +9,7 @@ use App\Helpers\FinancialMovementHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
+use App\Http\Resources\AccountSelect;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategorySelect;
 use App\Repositories\AccountRepository;
@@ -57,6 +58,7 @@ class SchedulingController
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
+            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
             return response()->json([
                 'schedulings' => $schedulings,
@@ -64,6 +66,7 @@ class SchedulingController
                 'months_years' => $monthsYears,
                 'notifications' => $notifications,
                 'categories' => CategorySelect::collection($categories),
+                'accounts' => AccountSelect::collection($accounts),
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os agendamentos: '.$e->getMessage());
@@ -78,11 +81,13 @@ class SchedulingController
             $schedulings = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
             $monthsYears = $this->repository->getMonthYears($request->user()->view_enterprise_id);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($request->user()->view_enterprise_id);
+            $accounts = $this->accountRepository->getAllByEnterprise($request->user()->view_enterprise_id);
 
             return response()->json([
                 'schedulings' => $schedulings,
                 'months_years' => $monthsYears,
                 'categories' => CategorySelect::collection($categories),
+                'accounts' => AccountSelect::collection($accounts),
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar agendamentos com base nos filtros: '.$e->getMessage());
@@ -171,8 +176,16 @@ class SchedulingController
 
                 $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $monthsYears = $this->repository->getMonthYears($enterpriseId);
+                $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($request->user()->view_enterprise_id);
+                $accounts = $this->accountRepository->getAllByEnterprise($request->user()->view_enterprise_id);
 
-                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento cadastrado com sucesso', 'months_years' => $monthsYears], 201);
+                return response()->json([
+                    'schedulings' => $schedulings,
+                    'categories' => CategorySelect::collection($categories),
+                    'accounts' => AccountSelect::collection($accounts),
+                    'message' => 'Agendamento cadastrado com sucesso',
+                    'months_years' => $monthsYears],
+                    201);
             }
 
             throw new \Exception('Falha ao criar agendamento');
@@ -208,8 +221,16 @@ class SchedulingController
                 $enterpriseId = $request->user()->enterprise_id;
                 $schedulings = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $monthsYears = $this->repository->getMonthYears($enterpriseId);
+                $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($request->user()->view_enterprise_id);
+                $accounts = $this->accountRepository->getAllByEnterprise($request->user()->view_enterprise_id);
 
-                return response()->json(['schedulings' => $schedulings, 'message' => 'Agendamento atualizado com sucesso', 'months_years' => $monthsYears], 200);
+                return response()->json([
+                    'schedulings' => $schedulings,
+                    'categories' => CategorySelect::collection($categories),
+                    'accounts' => AccountSelect::collection($accounts),
+                    'message' => 'Agendamento atualizado com sucesso',
+                    'months_years' => $monthsYears],
+                    200);
             }
 
             throw new \Exception('Falha ao atualizar agendamento');
