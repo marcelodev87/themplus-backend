@@ -55,6 +55,19 @@ class OrderController
 
                 return $bond;
             });
+            $verified = $request->query('verified');
+            if ($verified !== null) {
+                $bonds = $bonds->filter(function ($bond) use ($verified) {
+                    if ($verified === 'true') {
+                        return $bond->no_verified > 0;
+                    }
+                    if ($verified === 'false') {
+                        return $bond->no_verified == 0;
+                    }
+
+                    return true;
+                })->values();
+            }
 
             $filledData = EnterpriseHelper::filledData($enterpriseId);
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
