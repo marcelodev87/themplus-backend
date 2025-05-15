@@ -331,4 +331,67 @@ class MovementService
 
         return $this->accountRepository->updateBalance($accountId, $newValueAccount);
     }
+
+    public function getDashboardDetailsMovement($enterpriseId)
+    {
+        $movements = $this->repository->getDashboardDetailsMovement($enterpriseId);
+        $financialPeriods = $this->financialRepository->getAllByEnterprise($enterpriseId);
+
+        $financialPeriodsArray = $financialPeriods->all();
+
+        $allowedPeriods = array_flip(array_map(
+            fn($fp) => sprintf('%04d/%02d', $fp->year, $fp->month),
+            $financialPeriodsArray
+        ));
+
+        $results = [
+            'amount' => [],
+            'quantity' => []
+        ];
+
+        foreach ($movements as $movement) {
+            $period = Carbon::parse($movement->date_movement)->format('Y/m');
+
+            if (!isset($allowedPeriods[$period])) {
+                continue;
+            }
+
+            if (!isset($results['amount'][$period])) {
+                $results['amount'][$period] = [
+                    'period' => $period,
+                    'entry_value' => 0,
+                    'out_value' => 0,
+                ];
+                $results['quantity'][$period] = [
+                    'period' => $period,
+                    'entry_quantity' => 0,
+                    'out_quantity' => 0,
+                ];
+            }
+
+            switch (strtolower($movement->type)) {
+                case 'entrada':
+                    $results['amount'][$period]['entry_value'] += $movement->value;
+                    $results['quantity'][$period]['entry_quantity']++;
+                    break;
+                case 'saída':
+                    $results['amount'][$period]['out_value'] += $movement->value;
+                    $results['quantity'][$period]['out_quantity']++;
+                    break;
+            }
+        }
+
+        $sortByPeriod = fn($a, $b) => $a['period'] <=> $b['period'];
+
+        $amountResults = array_values($results['amount']);
+        $quantityResults = array_values($results['quantity']);
+
+        usort($amountResults, $sortByPeriod);
+        usort($quantityResults, $sortByPeriod);
+
+        return [
+            'amount_registers' => $amountResults,
+            'quantity_registers' => $quantityResults
+        ];
+    }
 }

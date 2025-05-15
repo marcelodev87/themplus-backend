@@ -50,6 +50,11 @@ class MovementRepository
         return $query->get();
     }
 
+    public function getDashboardDetailsMovement($enterpriseId)
+    {
+        return $this->model->where('enterprise_id', $enterpriseId)->get();
+    }
+
     public function getAllByEnterpriseWithRelationsByDateWithObservation($enterpriseId, $date)
     {
         $query = $this->model->with(['account', 'category'])
