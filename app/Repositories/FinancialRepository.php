@@ -35,6 +35,17 @@ class FinancialRepository
             ->get();
     }
 
+    public function getReportByDateAndEnterprise($enterpriseId, $monthYear)
+    {
+        [$month, $year] = explode('-', $monthYear);
+
+        return $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->where('month', $month)
+            ->where('year', $year)
+            ->first();
+    }
+
     public function countNoVerified($enterpriseId)
     {
         return $this->model

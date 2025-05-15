@@ -9,6 +9,7 @@ use App\Http\Controllers\EnterpriseController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FinancialController;
+use App\Http\Controllers\FinancialReceiptController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MovementAnalyzeController;
 use App\Http\Controllers\MovementController;
@@ -142,6 +143,12 @@ Route::prefix('financial')->middleware(['auth:sanctum', 'token.expiration'])->gr
     Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
     Route::get('/settings-counter', [SettingsCounterController::class, 'index'])->middleware('admin');
     Route::put('/settings-counter', [SettingsCounterController::class, 'update'])->middleware('admin');
+
+    Route::prefix('file-financial')->group(function () {
+        Route::get('/{monthYear}', [FinancialReceiptController::class, 'index']);
+        Route::post('/{monthYear}', [FinancialReceiptController::class, 'store']);
+        Route::delete('/{id}', [FinancialReceiptController::class, 'destroy']);
+    });
 });
 
 Route::prefix('report')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
