@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\FinancialMovementReceiptRepository;
 use App\Repositories\FinancialRepository;
 use App\Rules\ReportRule;
 
@@ -12,16 +13,20 @@ class ReportService
 
     protected $financialRepository;
 
+    protected $financialMovementReceiptRepository;
+
     protected $enterpriseRepository;
 
     public function __construct(
         ReportRule $rule,
         FinancialRepository $financialRepository,
-        EnterpriseRepository $enterpriseRepository
+        EnterpriseRepository $enterpriseRepository,
+        FinancialMovementReceiptRepository $financialMovementReceiptRepository
     ) {
         $this->rule = $rule;
         $this->financialRepository = $financialRepository;
         $this->enterpriseRepository = $enterpriseRepository;
+        $this->financialMovementReceiptRepository = $financialMovementReceiptRepository;
     }
 
     public function index($request, $id)
@@ -34,11 +39,15 @@ class ReportService
             $client = $this->enterpriseRepository->findById($id);
 
             $formattedReports = $reports->map(function ($report) {
+
+                $receipts = $this->financialMovementReceiptRepository->countAllByFinancial($report->id);
+
                 return [
                     'id' => $report->id,
                     'date_delivery' => $report->date_delivery,
                     'month_year' => "$report->month/$report->year",
                     'check_counter' => $report->check_counter,
+                    'receipts' => $receipts,
                 ];
             });
 

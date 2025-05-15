@@ -32,7 +32,7 @@ class FinancialMovementReceiptRule
     public function delete($id)
     {
         $rules = [
-            'id' => 'required|string|exists:movements,id',
+            'id' => 'required|string|exists:financial_movements_receipts,id',
         ];
 
         $messages = [

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\MovementExport;
 use App\Helpers\RegisterHelper;
 use App\Repositories\EnterpriseRepository;
+use App\Repositories\FinancialMovementReceiptRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\MovementRepository;
 use App\Repositories\NotificationRepository;
@@ -39,7 +40,9 @@ class ReportController
 
     private $userRepository;
 
-    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule, MovementRepository $movementRepository, EnterpriseRepository $enterpriseRepository, SettingsCounterRepository $settingsCounterRepository, NotificationRepository $notificationRepository, UserRepository $userRepository, MovementService $movementService)
+    private $financialMovementReceiptRepository;
+
+    public function __construct(ReportService $service, FinancialRepository $financialRepository, ReportRule $rule, MovementRepository $movementRepository, EnterpriseRepository $enterpriseRepository, SettingsCounterRepository $settingsCounterRepository, NotificationRepository $notificationRepository, UserRepository $userRepository, MovementService $movementService, FinancialMovementReceiptRepository $financialMovementReceiptRepository)
     {
         $this->service = $service;
         $this->rule = $rule;
@@ -48,6 +51,7 @@ class ReportController
         $this->settingsCounterRepository = $settingsCounterRepository;
         $this->enterpriseRepository = $enterpriseRepository;
         $this->notificationRepository = $notificationRepository;
+        $this->financialMovementReceiptRepository = $financialMovementReceiptRepository;
         $this->userRepository = $userRepository;
         $this->movementService = $movementService;
     }
@@ -139,6 +143,7 @@ class ReportController
 
             $this->rule->reopen($id);
             $report = $this->financialRepository->findById($id);
+            $this->financialMovementReceiptRepository->deleteAllByFinancial($id);
             $this->financialRepository->delete($id);
 
             $enterpriseName = $report->enterprise->name;

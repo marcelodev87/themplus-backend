@@ -31,7 +31,10 @@ class FinancialReceiptController
     public function index(Request $request, $monthYear)
     {
         try {
-            $financial = $this->financialRepository->getReportByDateAndEnterprise($request->user()->enterprise_id, $monthYear);
+            $enterpriseId = $request->query('client') ?? $request->user()->enterprise_id;
+
+            $financial = $this->financialRepository->getReportByDateAndEnterprise($enterpriseId, $monthYear);
+
             $receipts = $this->repository->getAllByFinancial($financial->id);
 
             return response()->json(['files_financial' => $receipts], 200);
