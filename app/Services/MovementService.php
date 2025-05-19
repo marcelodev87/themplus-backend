@@ -332,9 +332,10 @@ class MovementService
         return $this->accountRepository->updateBalance($accountId, $newValueAccount);
     }
 
-    public function getDashboardDetailsMovement($enterpriseId)
+    public function getDashboardDetailsMovement($enterpriseId, $year)
     {
-        $movements = $this->repository->getDashboardDetailsMovement($enterpriseId);
+        $movements = $this->repository->getDashboardDetailsMovement($enterpriseId, $year);
+        $yearsMovements = $this->repository->getDashboardYearsMovement($enterpriseId);
         $financialPeriods = $this->financialRepository->getAllByEnterprise($enterpriseId);
 
         $financialPeriodsArray = $financialPeriods->all();
@@ -391,7 +392,8 @@ class MovementService
 
         return [
             'amount_registers' => $amountResults,
-            'quantity_registers' => $quantityResults
+            'quantity_registers' => $quantityResults,
+            'list_years' => $yearsMovements
         ];
     }
 }

@@ -50,9 +50,23 @@ class MovementRepository
         return $query->get();
     }
 
-    public function getDashboardDetailsMovement($enterpriseId)
+    public function getDashboardDetailsMovement($enterpriseId, $year)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)->get();
+        return $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->whereYear('date_movement', $year)
+            ->get();
+    }
+
+    public function getDashboardYearsMovement($enterpriseId)
+    {
+        return $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->selectRaw('DISTINCT YEAR(date_movement) as year')
+            ->orderBy('year', 'asc')
+            ->pluck('year')
+            ->map(fn($year) => (string) $year)
+            ->toArray();
     }
 
     public function getAllByEnterpriseWithRelationsByDateWithObservation($enterpriseId, $date)

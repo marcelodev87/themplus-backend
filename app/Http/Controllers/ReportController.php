@@ -59,10 +59,12 @@ class ReportController
     public function index(Request $request, $id)
     {
         try {
+            $year = (int) $request->query('year_graph') ?? Carbon::now()->year;
+
             $data = $this->service->index($request, $id);
             $enterprise = $this->enterpriseRepository->findById($id);
             $permissions = $this->settingsCounterRepository->getByEnterprise($id);
-            $dashboard = $this->movementService->getDashboardDetailsMovement($id);
+            $dashboard = $this->movementService->getDashboardDetailsMovement($id, $year);
 
 
             return response()->json([
