@@ -25,4 +25,9 @@ class Category extends Model
     {
         return $this->belongsTo(Alert::class);
     }
+
+    public function enterprise()
+    {
+        return $this->belongsTo(Enterprise::class, 'enterprise_id');
+    }
 }

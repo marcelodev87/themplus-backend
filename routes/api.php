@@ -68,10 +68,12 @@ Route::prefix('member')->middleware(['auth:sanctum', 'token.expiration'])->group
 
 Route::prefix('category')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
+    Route::get('/panel', [CategoryController::class, 'categoryPanel']);
     Route::get('/filter', [CategoryController::class, 'filterCategories']);
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/active/{id}', [CategoryController::class, 'active']);
     Route::put('/', [CategoryController::class, 'update']);
+    Route::put('/updateDefaultCategoryByName',[CategoryController::class, 'updateAllDefaultsWithName']);
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
 });
 

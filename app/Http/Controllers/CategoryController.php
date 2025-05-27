@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
+use App\Http\Resources\CategoryPanelResource;
 use App\Repositories\CategoryRepository;
 use App\Rules\CategoryRule;
 use App\Services\CategoryService;
@@ -41,6 +42,22 @@ class CategoryController
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    public function categoryPanel(Request $request)
+    {
+       try {
+        $type = $request->query('type')?? 'all';
+        $classification = $request->query('classification') ?? 'all';
+        $categories = $this->repository->getEnterpriseCategoryByCounter($request->user()->enterprise_id, $type, $classification);
+        return response()->json([
+            'categories' => CategoryPanelResource::collection($categories)
+        ], 200);
+       } catch (\Exception $e) {
+        Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
+
+        return response()->json(['message' => $e->getMessage()], 500);
+       }
     }
 
     public function filterCategories(Request $request)
@@ -86,6 +103,40 @@ class CategoryController
             Log::error('Erro ao registrar categoria: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function updateAllDefaultsWithName(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'name' => 'required|string|max:255',
+                'status' => 'sometimes|string',
+                'description' => 'sometimes|string'
+            ]);
+
+            $categories = $this->repository->updateAllDefaultsWithName($data);
+
+            if (!$categories) {
+                return response()->json([
+                    'message' => 'Nenhuma categoria default encontrada com o nome especificado'
+                ], 404);
+            }
+
+            return response()->json([
+                'message' => 'Categorias atualizadas com sucesso',
+                'data' => $categories
+            ]);
+
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao atualizar categorias'
+            ], 500);
         }
     }
 
