@@ -65,7 +65,7 @@ class MovementRepository
             ->selectRaw('DISTINCT YEAR(date_movement) as year')
             ->orderBy('year', 'asc')
             ->pluck('year')
-            ->map(fn($year) => (string) $year)
+            ->map(fn ($year) => (string) $year)
             ->toArray();
     }
 

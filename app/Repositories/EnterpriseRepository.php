@@ -110,60 +110,59 @@ class EnterpriseRepository
     }
 
     public function deleteOffice($id)
-{
-    $enterprise = $this->findById($id);
-    
-    if ($enterprise) {
-        $movements = DB::table('movements')->where('enterprise_id', $id)->get();
-        foreach ($movements as $movement) {
-            if ($movement->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movement->receipt);
-                Storage::disk('s3')->delete($oldFilePath);
+    {
+        $enterprise = $this->findById($id);
+
+        if ($enterprise) {
+            $movements = DB::table('movements')->where('enterprise_id', $id)->get();
+            foreach ($movements as $movement) {
+                if ($movement->receipt) {
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
             }
-        }
-        DB::table('movements')->where('enterprise_id', $id)->delete();
+            DB::table('movements')->where('enterprise_id', $id)->delete();
 
-        $schedulings = DB::table('schedulings')->where('enterprise_id', $id)->get();
-        foreach ($schedulings as $scheduling) {
-            if ($scheduling->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $scheduling->receipt);
-                Storage::disk('s3')->delete($oldFilePath);
+            $schedulings = DB::table('schedulings')->where('enterprise_id', $id)->get();
+            foreach ($schedulings as $scheduling) {
+                if ($scheduling->receipt) {
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $scheduling->receipt);
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
             }
-        }
-        DB::table('schedulings')->where('enterprise_id', $id)->delete();
+            DB::table('schedulings')->where('enterprise_id', $id)->delete();
 
-        $financial_receipts = DB::table('financial_movements_receipts')->where('enterprise_id', $id)->get();
-        foreach ($financial_receipts as $fr) {
-            if ($fr->receipt) {
-                $oldFilePath = str_replace(env('AWS_URL') . '/', '', $fr->receipt);
-                Storage::disk('s3')->delete($oldFilePath);
+            $financial_receipts = DB::table('financial_movements_receipts')->where('enterprise_id', $id)->get();
+            foreach ($financial_receipts as $fr) {
+                if ($fr->receipt) {
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $fr->receipt);
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
             }
+            DB::table('financial_movements_receipts')->where('enterprise_id', $id)->delete();
+
+            DB::table('accounts')->where('enterprise_id', $id)->delete();
+            DB::table('categories')->where('enterprise_id', $id)->delete();
+
+            DB::table('users')->where('enterprise_id', $id)
+                ->whereNotNull('department_id')
+                ->update(['department_id' => null]);
+
+            DB::table('departments')->where('enterprise_id', $id)->delete();
+            DB::table('feedbacks')->where('enterprise_id', $id)->delete();
+            DB::table('financial_movements')->where('enterprise_id', $id)->delete();
+            DB::table('orders')->where('enterprise_id', $id)->delete();
+            DB::table('registers')->where('enterprise_id', $id)->delete();
+            DB::table('notifications')->where('enterprise_id', $id)->delete();
+            DB::table('users')->where('enterprise_id', $id)->delete();
+            DB::table('settings_counter')->where('enterprise_id', $id)->delete();
+
+            // Remover a empresa
+            return $enterprise->delete();
         }
-        DB::table('financial_movements_receipts')->where('enterprise_id', $id)->delete();
 
-        DB::table('accounts')->where('enterprise_id', $id)->delete();
-        DB::table('categories')->where('enterprise_id', $id)->delete();
-
-        DB::table('users')->where('enterprise_id', $id)
-            ->whereNotNull('department_id')
-            ->update(['department_id' => null]);
-            
-        DB::table('departments')->where('enterprise_id', $id)->delete();
-        DB::table('feedbacks')->where('enterprise_id', $id)->delete();
-        DB::table('financial_movements')->where('enterprise_id', $id)->delete();
-        DB::table('orders')->where('enterprise_id', $id)->delete();
-        DB::table('registers')->where('enterprise_id', $id)->delete();
-        DB::table('notifications')->where('enterprise_id', $id)->delete();
-        DB::table('users')->where('enterprise_id', $id)->delete();
-        DB::table('settings_counter')->where('enterprise_id', $id)->delete();
-
-        // Remover a empresa
-        return $enterprise->delete();
+        return false;
     }
-
-    return false;
-}
-
 
     public function delete($id)
     {
@@ -177,7 +176,7 @@ class EnterpriseRepository
                 $movements = DB::table('movements')->where('enterprise_id', $office->id)->get();
                 foreach ($movements as $movement) {
                     if ($movement->receipt) {
-                        $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movement->receipt);
+                        $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
                         Storage::disk('s3')->delete($oldFilePath);
                     }
                 }
@@ -186,7 +185,7 @@ class EnterpriseRepository
                 $schedulings = DB::table('schedulings')->where('enterprise_id', $office->id)->get();
                 foreach ($schedulings as $scheduling) {
                     if ($scheduling->receipt) {
-                        $oldFilePath = str_replace(env('AWS_URL') . '/', '', $scheduling->receipt);
+                        $oldFilePath = str_replace(env('AWS_URL').'/', '', $scheduling->receipt);
                         Storage::disk('s3')->delete($oldFilePath);
                     }
                 }
@@ -195,7 +194,7 @@ class EnterpriseRepository
                 $financial_receipts = DB::table('financial_movements_receipts')->where('enterprise_id', $office->id)->get();
                 foreach ($financial_receipts as $fr) {
                     if ($fr->receipt) {
-                        $oldFilePath = str_replace(env('AWS_URL') . '/', '', $fr->receipt);
+                        $oldFilePath = str_replace(env('AWS_URL').'/', '', $fr->receipt);
                         Storage::disk('s3')->delete($oldFilePath);
                     }
                 }
@@ -223,7 +222,7 @@ class EnterpriseRepository
             $movements = DB::table('movements')->where('enterprise_id', $id)->get();
             foreach ($movements as $movement) {
                 if ($movement->receipt) {
-                    $oldFilePath = str_replace(env('AWS_URL') . '/', '', $movement->receipt);
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $movement->receipt);
                     Storage::disk('s3')->delete($oldFilePath);
                 }
             }
@@ -232,7 +231,7 @@ class EnterpriseRepository
             $schedulings = DB::table('schedulings')->where('enterprise_id', $id)->get();
             foreach ($schedulings as $scheduling) {
                 if ($scheduling->receipt) {
-                    $oldFilePath = str_replace(env('AWS_URL') . '/', '', $scheduling->receipt);
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $scheduling->receipt);
                     Storage::disk('s3')->delete($oldFilePath);
                 }
             }
@@ -241,7 +240,7 @@ class EnterpriseRepository
             $financial_receipts = DB::table('financial_movements_receipts')->where('enterprise_id', $id)->get();
             foreach ($financial_receipts as $fr) {
                 if ($fr->receipt) {
-                    $oldFilePath = str_replace(env('AWS_URL') . '/', '', $fr->receipt);
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $fr->receipt);
                     Storage::disk('s3')->delete($oldFilePath);
                 }
             }

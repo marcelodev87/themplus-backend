@@ -66,13 +66,12 @@ class ReportController
             $permissions = $this->settingsCounterRepository->getByEnterprise($id);
             $dashboard = $this->movementService->getDashboardDetailsMovement($id, $year);
 
-
             return response()->json([
                 'reports' => $data['reports'],
                 'enterprise_inspected' => $enterprise,
                 'client_name' => $data['client_name'],
                 'permissions' => $permissions,
-                'dashboard' => $dashboard
+                'dashboard' => $dashboard,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar relatório do cliente: '.$e->getMessage());

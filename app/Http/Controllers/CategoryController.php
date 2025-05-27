@@ -46,18 +46,20 @@ class CategoryController
 
     public function categoryPanel(Request $request)
     {
-       try {
-        $type = $request->query('type')?? 'all';
-        $classification = $request->query('classification') ?? 'all';
-        $categories = $this->repository->getEnterpriseCategoryByCounter($request->user()->enterprise_id, $type, $classification);
-        return response()->json([
-            'categories' => CategoryPanelResource::collection($categories)
-        ], 200);
-       } catch (\Exception $e) {
-        Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
+        try {
+            $type = $request->query('type') ?? 'all';
+            $classification = $request->query('classification') ?? 'all';
 
-        return response()->json(['message' => $e->getMessage()], 500);
-       }
+            $categories = $this->repository->getEnterpriseCategoryByCounter($request->user()->enterprise_id, $type, $classification);
+
+            return response()->json([
+                'categories' => CategoryPanelResource::collection($categories),
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as categorias: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 
     public function filterCategories(Request $request)
@@ -106,37 +108,22 @@ class CategoryController
         }
     }
 
-    public function updateAllDefaultsWithName(Request $request)
+    public function updateCategoryCode(Request $request)
     {
         try {
-            $data = $request->validate([
-                'name' => 'required|string|max:255',
-                'status' => 'sometimes|string',
-                'description' => 'sometimes|string'
-            ]);
+            $this->service->updateCode($request);
 
-            $categories = $this->repository->updateAllDefaultsWithName($data);
-
-            if (!$categories) {
-                return response()->json([
-                    'message' => 'Nenhuma categoria default encontrada com o nome especificado'
-                ], 404);
-            }
+            $categories = $this->repository->getEnterpriseCategoryByCounter($request->user()->enterprise_id, 'all', 'all');
 
             return response()->json([
-                'message' => 'Categorias atualizadas com sucesso',
-                'data' => $categories
-            ]);
-
-        } catch (\InvalidArgumentException $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 400);
+                'categories' => CategoryPanelResource::collection($categories),
+                'message' => "Código de categoria atualizado com sucesso"
+            ], 200);
 
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Erro ao atualizar categorias'
-            ], 500);
+            Log::error('Erro ao atualizar código de categoria: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 

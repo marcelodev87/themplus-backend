@@ -341,23 +341,23 @@ class MovementService
         $financialPeriodsArray = $financialPeriods->all();
 
         $allowedPeriods = array_flip(array_map(
-            fn($fp) => sprintf('%04d/%02d', $fp->year, $fp->month),
+            fn ($fp) => sprintf('%04d/%02d', $fp->year, $fp->month),
             $financialPeriodsArray
         ));
 
         $results = [
             'amount' => [],
-            'quantity' => []
+            'quantity' => [],
         ];
 
         foreach ($movements as $movement) {
             $period = Carbon::parse($movement->date_movement)->format('Y/m');
 
-            if (!isset($allowedPeriods[$period])) {
+            if (! isset($allowedPeriods[$period])) {
                 continue;
             }
 
-            if (!isset($results['amount'][$period])) {
+            if (! isset($results['amount'][$period])) {
                 $results['amount'][$period] = [
                     'period' => $period,
                     'entry_value' => 0,
@@ -382,7 +382,7 @@ class MovementService
             }
         }
 
-        $sortByPeriod = fn($a, $b) => $a['period'] <=> $b['period'];
+        $sortByPeriod = fn ($a, $b) => $a['period'] <=> $b['period'];
 
         $amountResults = array_values($results['amount']);
         $quantityResults = array_values($results['quantity']);
@@ -393,7 +393,7 @@ class MovementService
         return [
             'amount_registers' => $amountResults,
             'quantity_registers' => $quantityResults,
-            'list_years' => $yearsMovements
+            'list_years' => $yearsMovements,
         ];
     }
 }

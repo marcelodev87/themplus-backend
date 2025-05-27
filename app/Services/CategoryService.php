@@ -64,6 +64,20 @@ class CategoryService
         return $this->repository->update($request->input('id'), $data);
     }
 
+    public function updateCode($request)
+    {
+        $this->rule->updateCode($request);
+
+        $data = [
+            'id' => $request->input('id'),
+            'name' => $request->input('name'),
+            'codeCredit' => $request->input('codeCredit'),
+            'codeDebt' => $request->input('codeDebt'),
+        ];
+
+        $this->repository->updateCode($request->user()->enterprise_id, $data);
+    }
+
     public function updateActive($id)
     {
         $data['active'] = 1;

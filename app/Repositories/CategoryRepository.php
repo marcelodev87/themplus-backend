@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use App\Models\Enterprise;
 use Illuminate\Support\Facades\DB;
 
 class CategoryRepository
@@ -23,7 +24,7 @@ class CategoryRepository
     {
         $subquery = $this->model->newQuery()
             ->selectRaw('FIRST_VALUE(id) OVER (PARTITION BY name, type ORDER BY created_at) as first_id')
-            ->whereHas('enterprise', function($q) use ($enterpriseId) {
+            ->whereHas('enterprise', function ($q) use ($enterpriseId) {
                 $q->where('counter_enterprise_id', $enterpriseId);
             })
             ->where('default', 1);
@@ -33,14 +34,14 @@ class CategoryRepository
             ->pluck('first_id');
 
         $nonDefaultQuery = $this->model->where('default', '!=', 1)
-            ->whereHas('enterprise', function($q) use ($enterpriseId) {
+            ->whereHas('enterprise', function ($q) use ($enterpriseId) {
                 $q->where('counter_enterprise_id', $enterpriseId);
             });
 
-        if(in_array($type, ['entrada', 'saida'])){
+        if (in_array($type, ['entrada', 'saida'])) {
             $nonDefaultQuery->where('type', $type);
         }
-        if(in_array($classification, ['1', '0'])){
+        if (in_array($classification, ['1', '0'])) {
             $nonDefaultQuery->where('default', (int) $classification);
         }
 
@@ -49,14 +50,14 @@ class CategoryRepository
         $allIds = $ids->merge($nonDefaultIds);
 
         $query = $this->model->whereIn('id', $allIds)
-            ->with(['enterprise' => function($query) use ($enterpriseId) {
+            ->with(['enterprise' => function ($query) use ($enterpriseId) {
                 $query->where('counter_enterprise_id', $enterpriseId);
             }]);
 
-        if(in_array($type, ['entrada', 'saida'])){
+        if (in_array($type, ['entrada', 'saida'])) {
             $query->where('type', $type);
         }
-        if(in_array($classification, ['1', '0'])){
+        if (in_array($classification, ['1', '0'])) {
             $query->where('default', (int) $classification);
         }
 
@@ -131,29 +132,31 @@ class CategoryRepository
         return $this->model->create($data);
     }
 
-    public function updateAllDefaultsWithName(array $data)
+    public function updateCode($enterpriseId, $data)
     {
-        if (!isset($data['name'])) {
-            throw new \InvalidArgumentException("O campo 'name' é obrigatório para a atualização");
-        }
-
-        $categories = Category::where('default', 1)
-                            ->where('name', $data['name'])
-                            ->get();
-
-        if ($categories->isEmpty()) {
-            return null;
-        }
-
-        if($categories){
-            foreach ($categories as $category) {
-                $category->update($data);
+        if (! empty($data['id'])) {
+            $category = $this->findById($data['id']);
+            if ($category) {
+                $category->update([
+                    'code_credit' => $data['codeCredit'],
+                    'code_debt' => $data['codeDebt'],
+                ]);
             }
-            return $categories;
-        }
-        return null;
-    }
+        } else {
+            $enterpriseIds = Enterprise::where('counter_enterprise_id', $enterpriseId)
+                ->pluck('id')
+                ->toArray();
 
+            if (! empty($data['name'])) {
+                Category::where('name', $data['name'])
+                    ->whereIn('enterprise_id', $enterpriseIds)
+                    ->update([
+                        'code_credit' => $data['codeCredit'],
+                        'code_debt' => $data['codeDebt'],
+                    ]);
+            }
+        }
+    }
 
     public function update($id, array $data)
     {

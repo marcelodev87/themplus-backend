@@ -19,6 +19,8 @@ class Category extends Model
         'alert',
         'active',
         'default',
+        'code_credit',
+        'code_debt'
     ];
 
     public function alert()

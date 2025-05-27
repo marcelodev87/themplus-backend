@@ -72,8 +72,8 @@ Route::prefix('category')->middleware(['auth:sanctum', 'token.expiration'])->gro
     Route::get('/filter', [CategoryController::class, 'filterCategories']);
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/active/{id}', [CategoryController::class, 'active']);
+    Route::put('/code', [CategoryController::class, 'updateCategoryCode']);
     Route::put('/', [CategoryController::class, 'update']);
-    Route::put('/updateDefaultCategoryByName',[CategoryController::class, 'updateAllDefaultsWithName']);
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
 });
 

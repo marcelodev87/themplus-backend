@@ -61,6 +61,32 @@ class CategoryRule
         return true;
     }
 
+    public function updateCode($request)
+    {
+        $rules = [
+            'id' => 'nullable|string|max:100|exists:categories,id',
+            'name' => 'required|string|min:3|max:30',
+        ];
+
+        $messages = [
+            'id.string' => 'O ID da categoria deve ser uma string.',
+            'id.max' => 'O ID da categoria não pode ter mais de 100 caracteres.',
+            'id.exists' => 'O ID da categoria deve corresponder a uma categoria existente.',
+            'name.required' => 'O nome da categoria é obrigatório.',
+            'name.string' => 'O nome da categoria deve ser uma string.',
+            'name.min' => 'O nome da categoria deve ter pelo menos 3 caracteres.',
+            'name.max' => 'O nome da categoria não pode ter mais de 30 caracteres.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
+
     public function delete($id)
     {
         $rules = [
