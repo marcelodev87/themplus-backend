@@ -20,7 +20,7 @@ class Category extends Model
         'active',
         'default',
         'code_credit',
-        'code_debt'
+        'code_debt',
     ];
 
     public function alert()

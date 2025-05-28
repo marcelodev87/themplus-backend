@@ -50,4 +50,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Enterprise::class);
     }
+
+    public function enterpriseView()
+    {
+        return $this->belongsTo(Enterprise::class, 'view_enterprise_id');
+    }
 }

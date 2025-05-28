@@ -117,7 +117,7 @@ class CategoryController
 
             return response()->json([
                 'categories' => CategoryPanelResource::collection($categories),
-                'message' => "Código de categoria atualizado com sucesso"
+                'message' => 'Código de categoria atualizado com sucesso',
             ], 200);
 
         } catch (\Exception $e) {

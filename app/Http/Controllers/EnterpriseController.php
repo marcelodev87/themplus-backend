@@ -274,11 +274,39 @@ class EnterpriseController
                 ], 200);
             }
 
-            throw new \Exception('Falha ao criar filial');
+            throw new \Exception('Falha ao trocar a visão');
         } catch (\Exception $e) {
             DB::rollBack();
 
-            Log::error('Erro ao registrar filial: '.$e->getMessage());
+            Log::error('Erro ao trocar visão : '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function setViewByCounter(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $user = $this->service->updateViewEnterprise($request);
+
+            if ($user) {
+                DB::commit();
+
+                $user->load('enterpriseView');
+                $user->view_enterprise_name = $user->enterpriseView->name ?? null;
+
+                return response()->json([
+                    'user' => $user,
+                    'message' => 'Visualização atualizada',
+                ], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar visualização');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar visualização: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

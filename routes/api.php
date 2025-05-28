@@ -190,6 +190,7 @@ Route::prefix('enterprise')->middleware(['auth:sanctum', 'token.expiration'])->g
     Route::post('/view', [EnterpriseController::class, 'saveViewEnterprise'])->middleware('admin');
     Route::post('/enterprise-counter', [EnterpriseController::class, 'storeByCounter']);
     Route::put('/', [EnterpriseController::class, 'update'])->middleware('admin');
+    Route::put('/viewByCounter', [EnterpriseController::class, 'setViewByCounter'])->middleware('admin');
     Route::put('/unlink', [EnterpriseController::class, 'unlink'])->middleware('admin');
     Route::put('/code-financial', [EnterpriseController::class, 'updateCodeFinancial'])->middleware('admin');
     Route::delete('/{id}', [EnterpriseController::class, 'destroy'])->middleware('admin');
