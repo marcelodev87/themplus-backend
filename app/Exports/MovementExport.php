@@ -22,7 +22,7 @@ class MovementExport
                 'TIPO' => $movement->type,
                 'VALOR' => 'R$ '.number_format($movement->value, 2, ',', '.'),
                 'DATA DE MOVIMENTAÇÃO' => Carbon::parse($movement->date_movement)->format('d/m/Y'),
-                'DESCRIÇÃO' => $movement->description,
+                'DESCRIÇÃO' => $movement->description ?? '',
                 'CATEGORIA' => $movement->category->name ?? '',
                 'CODIGO CREDITO' => $movement->category->code_credit ?? '',
                 'CODIGO DEBITO' => $movement->category->code_debt ?? '',
