@@ -24,6 +24,8 @@ class MovementExport
                 'DATA DE MOVIMENTAÇÃO' => Carbon::parse($movement->date_movement)->format('d/m/Y'),
                 'DESCRIÇÃO' => $movement->description,
                 'CATEGORIA' => $movement->category->name ?? '',
+                'CODIGO CREDITO' => $movement->category->code_credit ?? '',
+                'CODIGO DEBITO' => $movement->category->code_debt ?? '',
                 'CONTA' => $movement->account->name ?? '',
                 'NÚMERO CONTA' => $movement->account->account_number ?? '',
                 'AGÊNCIA' => $movement->account->agency_number ?? '',
