@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('feedbacks', function (Blueprint $table) {
-            $table->text('message', 5000)->change();
+            $table->longText('message')->change();
         });
     }
 
