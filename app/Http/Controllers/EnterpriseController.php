@@ -137,6 +137,7 @@ class EnterpriseController
             }
 
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Erro ao aplicar cupom: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
