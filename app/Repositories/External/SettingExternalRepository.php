@@ -15,9 +15,7 @@ class SettingExternalRepository
 
     public function getAllSettings()
     {
-        $response = $this->model->all();
-
-        return $response;
+        return $this->model->all();
     }
 
     public function getSettingKey($key)

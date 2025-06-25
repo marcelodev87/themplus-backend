@@ -2,12 +2,10 @@
 
 namespace App\Models\External;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SettingExternal extends Model
 {
-    use HasFactory;
 
     protected $connection = 'external';
 
@@ -19,6 +17,6 @@ class SettingExternal extends Model
 
     protected $fillable = [
         'key',
-        'valeu',
+        'value',
     ];
 }

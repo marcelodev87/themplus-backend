@@ -22,11 +22,6 @@ class FeedbackController
         $this->service = $service;
     }
 
-    public function index(Request $request)
-    {
-        // Definir como vai ser para ler as sugestoes
-    }
-
     public function store(Request $request)
     {
         try {
@@ -47,10 +42,5 @@ class FeedbackController
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
-    }
-
-    public function destroy(string $id)
-    {
-        // Definir se vai ser possivel deletar
     }
 }
