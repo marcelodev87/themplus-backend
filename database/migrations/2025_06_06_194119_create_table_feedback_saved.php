@@ -6,10 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
-        Schema::create('feedbacks_saved', function(Blueprint $table) {
+        Schema::create('feedbacks_saved', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('user_name');
             $table->string('user_email');
@@ -20,10 +19,8 @@ return new class extends Migration
         });
     }
 
-
     public function down(): void
     {
         Schema::dropIfExists('feedbacks_saved');
     }
 };
-

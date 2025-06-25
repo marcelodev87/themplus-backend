@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\FeedbackRepository;
 use App\Rules\FeedbackRule;
+use App\Services\FeedbackService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class FeedbackController
 {
-    private $repository;
-
     private $rule;
 
-    public function __construct(FeedbackRepository $repository, FeedbackRule $rule)
-    {
-        $this->repository = $repository;
+    private $service;
+
+    public function __construct(
+        FeedbackRule $rule,
+        FeedbackService $service
+    ) {
         $this->rule = $rule;
+        $this->service = $service;
     }
 
     public function index(Request $request)
@@ -28,22 +30,16 @@ class FeedbackController
     public function store(Request $request)
     {
         try {
+
             DB::beginTransaction();
+
             $this->rule->create($request);
-            $data = [
-                'user_id' => $request->user()->id,
-                'enterprise_id' => $request->user()->enterprise_id,
-                'message' => $request->input('message'),
-            ];
-            $feedback = $this->repository->create($data);
 
-            if ($feedback) {
-                DB::commit();
+            $this->service->saveFeedbackBySettings($request);
 
-                return response()->json(['message' => 'Mensagem enviada com sucesso'], 201);
-            }
+            DB::commit();
 
-            throw new \Exception('Falha ao enviar mensagem');
+            return response()->json(['message' => 'Mensagem enviada com sucesso'], 201);
         } catch (\Exception $e) {
             DB::rollBack();
 
