@@ -189,7 +189,8 @@ class MovementService
         $this->rule->update($request);
         $movement = $this->repository->findById($request->input('id'));
 
-        AccountHelper::openingBalance($request->input('account'), $request->input('category'));
+        // AccountHelper::openingBalance($request->input('account'), $request->input('category'));
+        // Dicidir se é melhor remover o código ou manter comentado
 
         $data = [
             'type' => $request->input('type'),
