@@ -28,33 +28,39 @@ class FeedbackService
 
     public function saveFeedbackBySettings(Request $request)
     {
-        $keySetting = $this->settingExternalRepository->getSettingKey('allow_feedback_saved');
+            $keySetting = $this->settingExternalRepository->getSettingKey('allow_feedback_saved');
+            
+            $user = $request->user();
+            $message = $request->input('message');
+            
+            $data = $keySetting->value === '1'
+                ? $this->prepareFullFeedbackData($user, $message)
+                : $this->prepareBasicFeedbackData($user, $message);
 
-        if ($keySetting->value === '1') {
-            $data = [
-                'user_name' => $request->user()->name,
-                'user_email' => $request->user()->email,
-                'enterprise_name' => $request->user()->load('enterprise')->name,
-                'date_feedback' => Carbon::now()->format('Y-m-d'),
-                'message' => $request->input('message'),
-            ];
-            $feedbackSaved = $this->feedbackSavedRepository->create($data);
-        }
+            $keySetting->value === '1'
+                ? $this->feedbackSavedRepository->create($data)
+                : $this->repository->create($data);
+    }
 
-        if ($keySetting->value === '0') {
-            $data = [
-                'user_id' => $request->user()->id,
-                'enterprise_id' => $request->user()->enterprise_id,
-                'message' => $request->input('message'),
-            ];
+    protected function prepareFullFeedbackData($user, $message): array
+    {
+        $enterprise = $user->load('enterprise')->enterprise;
+        
+        return [
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'enterprise_name' => $enterprise->name ?? 'N/A',
+            'date_feedback' => now()->format('Y-m-d'),
+            'message' => $message,
+        ];
+    }
 
-            $feedbackSaved = $this->repository->create($data);
-        }
-
-        if (! $feedbackSaved) {
-            throw new \Exception('Falha ao enviar mensagem');
-        }
-
-        return $feedbackSaved;
+    protected function prepareBasicFeedbackData($user, $message): array
+    {
+        return [
+            'user_id' => $user->id,
+            'enterprise_id' => $user->enterprise_id,
+            'message' => $message,
+        ];
     }
 }
