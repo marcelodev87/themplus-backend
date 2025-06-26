@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Repositories\External\SettingExternalRepository;
 use App\Repositories\FeedbackRepository;
 use App\Repositories\FeedbacksSavedRepository;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class FeedbackService
@@ -28,24 +27,24 @@ class FeedbackService
 
     public function saveFeedbackBySettings(Request $request)
     {
-            $keySetting = $this->settingExternalRepository->getSettingKey('allow_feedback_saved');
-            
-            $user = $request->user();
-            $message = $request->input('message');
-            
-            $data = $keySetting->value === '1'
-                ? $this->prepareFullFeedbackData($user, $message)
-                : $this->prepareBasicFeedbackData($user, $message);
+        $keySetting = $this->settingExternalRepository->getSettingKey('allow_feedback_saved');
 
-            $keySetting->value === '1'
-                ? $this->feedbackSavedRepository->create($data)
-                : $this->repository->create($data);
+        $user = $request->user();
+        $message = $request->input('message');
+
+        $data = $keySetting->value === '1'
+            ? $this->prepareFullFeedbackData($user, $message)
+            : $this->prepareBasicFeedbackData($user, $message);
+
+        $keySetting->value === '1'
+            ? $this->feedbackSavedRepository->create($data)
+            : $this->repository->create($data);
     }
 
     protected function prepareFullFeedbackData($user, $message): array
     {
         $enterprise = $user->load('enterprise')->enterprise;
-        
+
         return [
             'user_name' => $user->name,
             'user_email' => $user->email,

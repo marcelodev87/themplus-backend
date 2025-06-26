@@ -189,8 +189,9 @@ class MovementService
         $this->rule->update($request);
         $movement = $this->repository->findById($request->input('id'));
 
-        if($this->checkCategorySaldoInicial($movement->category_id))
-        {
+        if ($this->checkCategorySaldoInicial($movement->category_id) 
+            || $this->isDifferentAccounts($movement->account_id, $request->input('account')
+        )) {
             AccountHelper::openingBalance($request->input('account'), $request->input('category'));
         }
 
@@ -214,10 +215,16 @@ class MovementService
         return null;
     }
 
-    public function checkCategorySaldoInicial($categoryId)
+    private function checkCategorySaldoInicial($categoryId)
     {
         $category = $this->categoryRepository->findById($categoryId);
+
         return $category->name !== 'Saldo inicial';
+    }
+
+    private function isDifferentAccounts($accountOld, $accountNew)
+    {
+        return $accountOld !== $accountNew;
     }
 
     public function updateMovementByCounter($request)

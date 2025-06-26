@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SettingExternal extends Model
 {
-
     protected $connection = 'external';
 
     protected $table = 'settings';
