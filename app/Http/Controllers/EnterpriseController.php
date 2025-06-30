@@ -264,8 +264,9 @@ class EnterpriseController
                 });
 
                 $user = $this->userRepository->findById($request->user()->id);
-
+                
                 $enterpriseView = $this->repository->findById($user->view_enterprise_id);
+                $user->view_enterprise_code = $enterpriseView->code_financial;
                 $user->view_enterprise_name = $enterpriseView->name;
 
                 return response()->json([
@@ -296,6 +297,7 @@ class EnterpriseController
 
                 $user->load('enterpriseView');
                 $user->view_enterprise_name = $user->enterpriseView->name ?? null;
+                $user->view_enterprise_code = $user->enterpriseView->code_financial ?? null;
 
                 return response()->json([
                     'user' => $user,

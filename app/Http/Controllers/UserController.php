@@ -35,8 +35,9 @@ class UserController
             $user = $this->service->login($request);
             $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
             $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
-
+            
             $user->view_enterprise_name = $enterpriseView->name;
+            $user->view_enterprise_code = $enterpriseView->code_financial;
 
             $newToken = $user->createToken('my-app-token');
 
@@ -46,7 +47,14 @@ class UserController
 
             $token = $newToken->plainTextToken;
 
-            return response()->json(['user' => $user, 'token' => $token, 'enterprise_created' => $enterprise->created_by, 'enterprise_position' => $enterprise->position, 'enterprise_name' => $enterprise->name], 200);
+            return response()->json([
+                'user' => $user, 
+                'token' => $token, 
+                'enterprise_created' => $enterprise->created_by, 
+                'enterprise_position' => $enterprise->position, 
+                'enterprise_name' => $enterprise->name,
+            ], 
+                200);
         } catch (\Exception $e) {
             Log::error('Erro ao logar com usuário: '.$e->getMessage());
 
@@ -159,6 +167,7 @@ class UserController
                 DB::commit();
 
                 $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
+                $user->view_enterprise_code = $enterpriseView->code_financial;
                 $user->view_enterprise_name = $enterpriseView->name;
 
                 return response()->json(['user' => $user, 'message' => 'Seus dados foram atualizados com sucesso'], 200);
