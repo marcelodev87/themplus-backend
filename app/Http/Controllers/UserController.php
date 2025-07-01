@@ -88,6 +88,10 @@ class UserController
 
                 DB::commit();
                 $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
+                $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
+            
+                $user->view_enterprise_name = $enterpriseView->name;
+                $user->view_enterprise_code = $enterpriseView->code_financial;
 
                 return response()->json([
                     'user' => $user,
