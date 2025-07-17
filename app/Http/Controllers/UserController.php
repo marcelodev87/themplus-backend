@@ -35,7 +35,7 @@ class UserController
             $user = $this->service->login($request);
             $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
             $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
-            
+
             $user->view_enterprise_name = $enterpriseView->name;
             $user->view_enterprise_code = $enterpriseView->code_financial;
 
@@ -48,12 +48,12 @@ class UserController
             $token = $newToken->plainTextToken;
 
             return response()->json([
-                'user' => $user, 
-                'token' => $token, 
-                'enterprise_created' => $enterprise->created_by, 
-                'enterprise_position' => $enterprise->position, 
+                'user' => $user,
+                'token' => $token,
+                'enterprise_created' => $enterprise->created_by,
+                'enterprise_position' => $enterprise->position,
                 'enterprise_name' => $enterprise->name,
-            ], 
+            ],
                 200);
         } catch (\Exception $e) {
             Log::error('Erro ao logar com usuário: '.$e->getMessage());
@@ -89,7 +89,7 @@ class UserController
                 DB::commit();
                 $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
                 $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
-            
+
                 $user->view_enterprise_name = $enterpriseView->name;
                 $user->view_enterprise_code = $enterpriseView->code_financial;
 

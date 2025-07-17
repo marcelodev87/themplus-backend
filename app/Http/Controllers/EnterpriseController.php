@@ -264,7 +264,7 @@ class EnterpriseController
                 });
 
                 $user = $this->userRepository->findById($request->user()->id);
-                
+
                 $enterpriseView = $this->repository->findById($user->view_enterprise_id);
                 $user->view_enterprise_code = $enterpriseView->code_financial;
                 $user->view_enterprise_name = $enterpriseView->name;
