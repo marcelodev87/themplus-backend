@@ -65,7 +65,7 @@ class MovementRepository
             ->selectRaw('DISTINCT YEAR(date_movement) as year')
             ->orderBy('year', 'asc')
             ->pluck('year')
-            ->map(fn ($year) => (string) $year)
+            ->map(fn($year) => (string) $year)
             ->toArray();
     }
 
@@ -227,7 +227,7 @@ class MovementRepository
                     return Carbon::parse($date)->format('Y-m');
                 })
                 ->unique()
-                ->sort()
+                ->sortDesc()
                 ->values()
                 ->toArray();
 
@@ -275,9 +275,8 @@ class MovementRepository
             }
 
             return $resultArray;
-
         } catch (\Exception $e) {
-            \Log::error('Erro ao buscar entregas: '.$e->getMessage());
+            \Log::error('Erro ao buscar entregas: ' . $e->getMessage());
 
             return [];
         }
@@ -298,7 +297,8 @@ class MovementRepository
         $query = $this->model
             ->where('movements.enterprise_id', $enterpriseId)
             ->join('categories', 'movements.category_id', '=', 'categories.id')
-            ->selectRaw('
+            ->selectRaw(
+                '
             SUM(CASE WHEN categories.type = "entrada" THEN movements.value ELSE 0 END) as entry_value,
             SUM(CASE WHEN categories.type = "saida" THEN movements.value ELSE 0 END) as out_value'
             );
