@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CategoryExport;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
@@ -60,6 +61,18 @@ class CategoryController
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+
+    public function export(Request $request)
+    {
+        $enterpriseId = $request->user()->view_enterprise_id;
+
+        $categories = $this->repository->getAllByEnterpriseWithDefaults($enterpriseId);
+
+        $dateTime = now()->format('Ymd_His');
+        $fileName = "categories_{$enterpriseId}_{$dateTime}.xlsx";
+
+        return (new CategoryExport($categories))->download($fileName);
     }
 
     public function filterCategories(Request $request)

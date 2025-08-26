@@ -70,6 +70,7 @@ Route::prefix('category')->middleware(['auth:sanctum', 'token.expiration'])->gro
     Route::get('/', [CategoryController::class, 'index']);
     Route::get('/panel', [CategoryController::class, 'categoryPanel']);
     Route::get('/filter', [CategoryController::class, 'filterCategories']);
+    Route::post('/export', [CategoryController::class, 'export']);
     Route::post('/', [CategoryController::class, 'store']);
     Route::put('/active/{id}', [CategoryController::class, 'active']);
     Route::put('/code', [CategoryController::class, 'updateCategoryCode']);
