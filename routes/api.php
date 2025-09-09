@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CongregationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
@@ -21,7 +22,6 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
-use App\Http\Controllers\CongregationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 

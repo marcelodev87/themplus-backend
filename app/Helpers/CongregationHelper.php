@@ -5,25 +5,25 @@ namespace App\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
-class MinistryHelper
+class CongregationHelper
 {
-    public static function existsNetwork($enterpriseId, $name, $mode, $ministryID = null)
+    public static function existsCongregation($enterpriseId, $name, $mode, $congregationID = null)
     {
-        $existingMinistry = DB::table('ministries')
+        $existingCongregation = DB::table('congregations')
             ->where('enterprise_id', $enterpriseId)
             ->where('name', $name)
             ->first();
 
         if ($mode === 'create') {
-            if ($existingMinistry) {
+            if ($existingCongregation) {
                 throw ValidationException::withMessages([
-                    'name' => ['Já existe um ministério com esse nome.'],
+                    'name' => ['Já existe uma congregação com esse nome.'],
                 ]);
             }
         } else {
-            if ($existingMinistry && $existingMinistry->id !== $ministryID) {
+            if ($existingCongregation && $existingCongregation->id !== $congregationID) {
                 throw ValidationException::withMessages([
-                    'name' => ['Já existe outro ministério com esse nome.'],
+                    'name' => ['Já existe outra congregação com esse nome.'],
                 ]);
             }
         }

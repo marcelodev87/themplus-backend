@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\CongregationHelper;
 use App\Repositories\CongregationRepository;
 use App\Rules\CongregationRule;
 
@@ -23,6 +24,12 @@ class CongregationService
     {
         $this->rule->create($request);
 
+        CongregationHelper::existsCongregation(
+            $request->user()->enterprise_id,
+            $request->input('name'),
+            'create',
+        );
+
         $data = $request->only([
             'name',
             'cnpj',
@@ -33,7 +40,7 @@ class CongregationService
             'address',
             'neighborhood',
             'city',
-            'complement'
+            'complement',
         ]);
         $data['date_foundation'] = $request->input('dateFoundation');
         $data['address_number'] = $request->input('addressNumber');
@@ -47,6 +54,13 @@ class CongregationService
     {
         $this->rule->update($request);
 
+        CongregationHelper::existsCongregation(
+            $request->user()->enterprise_id,
+            $request->input('name'),
+            'update',
+            $request->input('id')
+        );
+
         $data = $request->only([
             'name',
             'cnpj',
@@ -57,13 +71,13 @@ class CongregationService
             'address',
             'neighborhood',
             'city',
-            'complement'
+            'complement',
         ]);
         $data['date_foundation'] = $request->input('dateFoundation');
         $data['address_number'] = $request->input('addressNumber');
         $data['member_id'] = $request->input('memberID');
 
-        return $this->repository->update($request->input('id'),$data);
+        return $this->repository->update($request->input('id'), $data);
 
     }
 }
