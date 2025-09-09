@@ -10,10 +10,10 @@ return new class extends Migration
     {
         Schema::create('member_ministries', function (Blueprint $table) {
             $table->foreignUuid('member_id')
-                  ->constrained('members');
+                ->constrained('members');
 
             $table->foreignUuid('ministry_id')
-                  ->constrained('ministries');
+                ->constrained('ministries');
 
             $table->primary(['member_id', 'ministry_id']);
         });

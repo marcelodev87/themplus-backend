@@ -16,6 +16,7 @@ use App\Http\Controllers\MovementController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
 use App\Http\Controllers\UserController;
@@ -90,6 +91,13 @@ Route::prefix('alert')->middleware(['auth:sanctum', 'token.expiration'])->group(
     Route::post('/', [AlertController::class, 'store']);
     Route::put('/', [AlertController::class, 'update']);
     Route::delete('/{id}', [AlertController::class, 'destroy']);
+});
+
+Route::prefix('role')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/', [RoleController::class, 'index']);
+    Route::post('/', [RoleController::class, 'store']);
+    Route::put('/', [RoleController::class, 'update']);
+    Route::delete('/{id}', [RoleController::class, 'destroy']);
 });
 
 Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
