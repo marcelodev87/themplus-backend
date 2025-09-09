@@ -11,15 +11,16 @@ use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\FinancialReceiptController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\MovementAnalyzeController;
 use App\Http\Controllers\MovementController;
+use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
-use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -106,6 +107,13 @@ Route::prefix('network')->middleware(['auth:sanctum', 'token.expiration'])->grou
     Route::post('/', [NetworkController::class, 'store']);
     Route::put('/', [NetworkController::class, 'update']);
     Route::delete('/{id}', [NetworkController::class, 'destroy']);
+});
+
+Route::prefix('ministry')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/', [MinistryController::class, 'index']);
+    Route::post('/', [MinistryController::class, 'store']);
+    Route::put('/', [MinistryController::class, 'update']);
+    Route::delete('/{id}', [MinistryController::class, 'destroy']);
 });
 
 Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {

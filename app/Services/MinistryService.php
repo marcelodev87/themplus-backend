@@ -2,18 +2,18 @@
 
 namespace App\Services;
 
-use App\Repositories\NetworkRepository;
-use App\Rules\NetworkRule;
+use App\Repositories\MinistryRepository;
+use App\Rules\MinistryRule;
 
-class NetworkService
+class MinistryService
 {
     protected $rule;
 
     protected $repository;
 
     public function __construct(
-        NetworkRule $rule,
-        NetworkRepository $repository,
+        MinistryRule $rule,
+        MinistryRepository $repository,
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -23,7 +23,7 @@ class NetworkService
     {
         $this->rule->create($request);
 
-        $data = $request->only(['name', 'member_id', 'congregation_id']);
+        $data = $request->only(['name', 'member_id']);
         $data['enterprise_id'] = $request->user()->enterprise_id;
 
         return $this->repository->create($data);
@@ -33,7 +33,7 @@ class NetworkService
     {
         $this->rule->update($request);
 
-        $data = $request->only(['name', 'member_id', 'congregation_id']);
+        $data = $request->only(['name', 'member_id']);
         $data['enterprise_id'] = $request->user()->enterprise_id;
 
         return $this->repository->update($request->input('id'), $data);

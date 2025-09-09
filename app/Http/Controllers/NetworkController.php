@@ -70,7 +70,7 @@ class NetworkController
             if ($network) {
                 DB::commit();
 
-                 $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
 
                 return response()->json(['networks' => $networks, 'message' => 'Rede atualizada com sucesso'], 200);
             }

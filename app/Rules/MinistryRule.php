@@ -5,14 +5,13 @@ namespace App\Rules;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class NetworkRule
+class MinistryRule
 {
     public function create($request)
     {
         $rules = [
             'name' => 'required|string|min:2|max:50',
             'member_id' => 'nullable|exists:members,id',
-            'congregation_id' => 'nullable|exists:congregations,id',
         ];
 
         $messages = [
@@ -21,7 +20,6 @@ class NetworkRule
             'name.min' => 'O nome do cargo não pode ter menos de 2 caracteres',
             'name.max' => 'O nome do cargo não pode ter mais de 50 caracteres',
             'member_id.exists' => 'O membro selecionado não existe',
-            'congregation_id.exists' => 'A congregação selecionada não existe',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -36,10 +34,9 @@ class NetworkRule
     public function update($request)
     {
         $rules = [
-            'id' => 'required|exists:networks,id',
+            'id' => 'required|exists:ministries,id',
             'name' => 'required|string|min:2|max:50',
             'member_id' => 'nullable|exists:members,id',
-            'congregation_id' => 'nullable|exists:congregations,id',
         ];
 
         $messages = [
@@ -48,7 +45,6 @@ class NetworkRule
             'name.min' => 'O nome do cargo não pode ter menos de 2 caracteres',
             'name.max' => 'O nome do cargo não pode ter mais de 50 caracteres',
             'member_id.exists' => 'O membro selecionado não existe',
-            'congregation_id.exists' => 'A congregação selecionada não existe',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -63,12 +59,12 @@ class NetworkRule
     public function delete($id)
     {
         $rules = [
-            'id' => 'required|exists:networks,id',
+            'id' => 'required|exists:ministries,id',
         ];
 
         $messages = [
-            'id.required' => 'O ID da rede é obrigatória',
-            'id.exists' => 'O ID da rede não existe',
+            'id.required' => 'O ID do ministério é obrigatória',
+            'id.exists' => 'O ID do ministério não existe',
         ];
 
         $validator = Validator::make(['id' => $id], $rules, $messages);
