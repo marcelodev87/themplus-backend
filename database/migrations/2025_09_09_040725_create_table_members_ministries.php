@@ -8,13 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('member_ministry
-        ', function (Blueprint $table) {
+        Schema::create('member_ministries', function (Blueprint $table) {
             $table->foreignUuid('member_id')
-                ->constrained('members');
+                  ->constrained('members');
 
             $table->foreignUuid('ministry_id')
-                ->constrained('ministries');
+                  ->constrained('ministries');
 
             $table->primary(['member_id', 'ministry_id']);
         });
@@ -22,6 +21,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('member_ministry');
+        Schema::dropIfExists('member_ministries');
     }
 };
