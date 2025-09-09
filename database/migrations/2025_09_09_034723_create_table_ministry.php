@@ -11,8 +11,8 @@ return new class extends Migration
         Schema::create('ministries', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->foreignUuid('member_id')->constrained('members');
-            $table->foreignUuid('enterprise_id')->constrained('enterprises');
+            $table->foreignUuid('member_id')->nullable()->constrained('members');
+            $table->foreignUuid('enterprise_id')->nullable()->constrained('enterprises');
             $table->timestamps();
         });
     }

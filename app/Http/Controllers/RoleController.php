@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\RoleRepository;
 use App\Rules\RoleRule;
 use App\Services\RoleService;
 use Illuminate\Http\Request;
@@ -18,17 +19,17 @@ class RoleController
 
     private $rule;
 
-    public function __construct(RoleService $service, RoleRepositoy $repository, RoleRule $rule)
+    public function __construct(RoleService $service, RoleRepository $repository, RoleRule $rule)
     {
         $this->service = $service;
         $this->repository = $repository;
         $this->rule = $rule;
     }
 
-    public function index($id)
+    public function index(Request $request)
     {
         try {
-            $roles = $this->repository->getAllByEnterprise($id);
+            $roles = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
 
             return response()->json(['roles' => $roles], 200);
         } catch (\Exception $e) {
@@ -75,7 +76,7 @@ class RoleController
                 $enterpriseId = $request->user()->enterprise_id;
                 $roles = $this->repository->getAllByEnterprise($enterpriseId);
 
-                return response()->json(['roles' => $roles, 'message' => 'Cargo atualizado com sucesso'], 201);
+                return response()->json(['roles' => $roles, 'message' => 'Cargo atualizado com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao atualizar cargo');

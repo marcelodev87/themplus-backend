@@ -12,14 +12,14 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->boolean('active')->nullable();
             $table->string('date_baptismo')->nullable();
-            $table->foreignUuid('congregation_id')->constrained('congregations');
+            $table->foreignUuid('congregation_id')->nullable()->constrained('congregations');
             $table->string('start_date')->nullable();
             $table->string('reason_start_date')->nullable();
             $table->string('church_start_date')->nullable();
             $table->string('end_date')->nullable();
             $table->string('reason_end_date')->nullable();
             $table->string('church_end_date')->nullable();
-            $table->foreignUuid('role_id')->constrained('roles');
+            $table->foreignUuid('role_id')->nullable()->constrained('roles');
         });
     }
 

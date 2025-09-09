@@ -11,12 +11,23 @@ return new class extends Migration
         Schema::create('networks', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->foreignUuid('member_id')->constrained('members');
-            $table->foreignUuid('congregation_id')->constrained('congregations');
-            $table->foreignUuid('enterprise_id')->constrained('enterprises');
+
+            $table->foreignUuid('member_id')
+                ->nullable()
+                ->constrained('members');
+
+            $table->foreignUuid('congregation_id')
+                ->nullable()
+                ->constrained('congregations');
+
+            $table->foreignUuid('enterprise_id')
+                ->nullable()
+                ->constrained('enterprises');
+
             $table->timestamps();
         });
     }
+
 
     public function down(): void
     {

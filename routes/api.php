@@ -19,6 +19,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
+use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -98,6 +99,13 @@ Route::prefix('role')->middleware(['auth:sanctum', 'token.expiration'])->group(f
     Route::post('/', [RoleController::class, 'store']);
     Route::put('/', [RoleController::class, 'update']);
     Route::delete('/{id}', [RoleController::class, 'destroy']);
+});
+
+Route::prefix('network')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/', [NetworkController::class, 'index']);
+    Route::post('/', [NetworkController::class, 'store']);
+    Route::put('/', [NetworkController::class, 'update']);
+    Route::delete('/{id}', [NetworkController::class, 'destroy']);
 });
 
 Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {

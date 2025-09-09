@@ -13,11 +13,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('date_foundation')->nullable();
             $table->string('date_end')->nullable();
-            $table->foreignUuid('member_id')->constrained('members');
-            $table->foreignUuid('network_id')->constrained('members');
-            $table->foreignUuid('congregation_id')->constrained('congregations');
+            $table->foreignUuid('network_id')->nullable()->constrained('members');
+            $table->foreignUuid('congregation_id')->nullable()->constrained('congregations');
             $table->foreignUuid('enterprise_id')->constrained('enterprises');
-            $table->foreignUuid('host_id')->constrained('members');
+            $table->foreignUuid('host_id')->nullable()->constrained('members');
             $table->boolean('active')->default(1);
             $table->string('location');
             $table->string('day_week');
