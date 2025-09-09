@@ -11,8 +11,8 @@ class NetworkRule
     {
         $rules = [
             'name' => 'required|string|min:2|max:50',
-            'member_id' => 'nullable|exists:members,id',
-            'congregation_id' => 'nullable|exists:congregations,id',
+            'memberID' => 'nullable|exists:members,id',
+            'congregationID' => 'nullable|exists:congregations,id',
         ];
 
         $messages = [
@@ -20,8 +20,8 @@ class NetworkRule
             'name.string' => 'O nome deve ser uma string',
             'name.min' => 'O nome do cargo não pode ter menos de 2 caracteres',
             'name.max' => 'O nome do cargo não pode ter mais de 50 caracteres',
-            'member_id.exists' => 'O membro selecionado não existe',
-            'congregation_id.exists' => 'A congregação selecionada não existe',
+            'memberID.exists' => 'O membro selecionado não existe',
+            'congregationID.exists' => 'A congregação selecionada não existe',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -38,8 +38,8 @@ class NetworkRule
         $rules = [
             'id' => 'required|exists:networks,id',
             'name' => 'required|string|min:2|max:50',
-            'member_id' => 'nullable|exists:members,id',
-            'congregation_id' => 'nullable|exists:congregations,id',
+            'memberID' => 'nullable|exists:members,id',
+            'congregationID' => 'nullable|exists:congregations,id',
         ];
 
         $messages = [
@@ -47,8 +47,8 @@ class NetworkRule
             'name.string' => 'O nome deve ser uma string',
             'name.min' => 'O nome do cargo não pode ter menos de 2 caracteres',
             'name.max' => 'O nome do cargo não pode ter mais de 50 caracteres',
-            'member_id.exists' => 'O membro selecionado não existe',
-            'congregation_id.exists' => 'A congregação selecionada não existe',
+            'memberID.exists' => 'O membro selecionado não existe',
+            'congregationID.exists' => 'A congregação selecionada não existe',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

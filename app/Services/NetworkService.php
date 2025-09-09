@@ -24,7 +24,9 @@ class NetworkService
     {
         $this->rule->create($request);
 
-        $data = $request->only(['name', 'member_id', 'congregation_id']);
+        $data = $request->only(['name']);
+        $data['member_id'] = $request->input('memberID');
+        $data['congregation_id'] = $request->input('congregationID');
         $data['enterprise_id'] = $request->user()->enterprise_id;
 
         NetworkHelper::existsNetwork(
@@ -40,8 +42,9 @@ class NetworkService
     {
         $this->rule->update($request);
 
-        $data = $request->only(['name', 'member_id', 'congregation_id']);
-        $data['enterprise_id'] = $request->user()->enterprise_id;
+        $data = $request->only(['name']);
+        $data['member_id'] = $request->input('memberID');
+        $data['congregation_id'] = $request->input('congregationID');
 
         NetworkHelper::existsNetwork(
             $request->user()->enterprise_id,

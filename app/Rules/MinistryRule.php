@@ -11,7 +11,7 @@ class MinistryRule
     {
         $rules = [
             'name' => 'required|string|min:2|max:50',
-            'member_id' => 'nullable|exists:members,id',
+            'memberID' => 'nullable|exists:members,id',
         ];
 
         $messages = [
@@ -19,7 +19,7 @@ class MinistryRule
             'name.string' => 'O nome deve ser uma string',
             'name.min' => 'O nome do cargo não pode ter menos de 2 caracteres',
             'name.max' => 'O nome do cargo não pode ter mais de 50 caracteres',
-            'member_id.exists' => 'O membro selecionado não existe',
+            'memberID.exists' => 'O membro selecionado não existe',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -36,7 +36,7 @@ class MinistryRule
         $rules = [
             'id' => 'required|exists:ministries,id',
             'name' => 'required|string|min:2|max:50',
-            'member_id' => 'nullable|exists:members,id',
+            'memberID' => 'nullable|exists:members,id',
         ];
 
         $messages = [
@@ -44,7 +44,7 @@ class MinistryRule
             'name.string' => 'O nome deve ser uma string',
             'name.min' => 'O nome do cargo não pode ter menos de 2 caracteres',
             'name.max' => 'O nome do cargo não pode ter mais de 50 caracteres',
-            'member_id.exists' => 'O membro selecionado não existe',
+            'memberID.exists' => 'O membro selecionado não existe',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

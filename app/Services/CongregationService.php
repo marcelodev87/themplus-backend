@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Services;
+
+use App\Repositories\CongregationRepository;
+use App\Rules\CongregationRule;
+
+class CongregationService
+{
+    protected $rule;
+
+    protected $repository;
+
+    public function __construct(
+        CongregationRule $rule,
+        CongregationRepository $repository,
+    ) {
+        $this->rule = $rule;
+        $this->repository = $repository;
+    }
+
+    public function create($request)
+    {
+        $this->rule->create($request);
+
+        $data = $request->only([
+            'name',
+            'cnpj',
+            'email',
+            'phone',
+            'cep',
+            'uf',
+            'address',
+            'neighborhood',
+            'city',
+            'complement'
+        ]);
+        $data['date_foundation'] = $request->input('dateFoundation');
+        $data['address_number'] = $request->input('addressNumber');
+        $data['member_id'] = $request->input('memberID');
+        $data['enterprise_id'] = $request->user()->enterprise_id;
+
+        return $this->repository->create($data);
+    }
+
+    public function update($request)
+    {
+        $this->rule->update($request);
+
+        $data = $request->only([
+            'name',
+            'cnpj',
+            'email',
+            'phone',
+            'cep',
+            'uf',
+            'address',
+            'neighborhood',
+            'city',
+            'complement'
+        ]);
+        $data['date_foundation'] = $request->input('dateFoundation');
+        $data['address_number'] = $request->input('addressNumber');
+        $data['member_id'] = $request->input('memberID');
+
+        return $this->repository->update($request->input('id'),$data);
+
+    }
+}

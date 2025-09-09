@@ -21,6 +21,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
+use App\Http\Controllers\CongregationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -114,6 +115,13 @@ Route::prefix('ministry')->middleware(['auth:sanctum', 'token.expiration'])->gro
     Route::post('/', [MinistryController::class, 'store']);
     Route::put('/', [MinistryController::class, 'update']);
     Route::delete('/{id}', [MinistryController::class, 'destroy']);
+});
+
+Route::prefix('congregation')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/', [CongregationController::class, 'index']);
+    Route::post('/', [CongregationController::class, 'store']);
+    Route::put('/', [CongregationController::class, 'update']);
+    Route::delete('/{id}', [CongregationController::class, 'destroy']);
 });
 
 Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
