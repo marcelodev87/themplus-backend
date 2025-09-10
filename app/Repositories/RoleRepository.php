@@ -51,7 +51,7 @@ class RoleRepository
         $role = $this->findById($id);
         if ($role) {
             DB::table('members')->where('role_id', $id)->update(['role_id' => null]);
-            
+
             return $role->delete();
         }
 
