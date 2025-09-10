@@ -13,6 +13,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\FinancialController;
 use App\Http\Controllers\FinancialReceiptController;
+use App\Http\Controllers\MemberChurchController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MinistryController;
 use App\Http\Controllers\MovementAnalyzeController;
@@ -110,6 +111,13 @@ Route::prefix('network')->middleware(['auth:sanctum', 'token.expiration'])->grou
     Route::post('/', [NetworkController::class, 'store']);
     Route::put('/', [NetworkController::class, 'update']);
     Route::delete('/{id}', [NetworkController::class, 'destroy']);
+});
+
+Route::prefix('member-church')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/', [MemberChurchController::class, 'index']);
+    Route::post('/', [MemberChurchController::class, 'store']);
+    Route::put('/', [MemberChurchController::class, 'update']);
+    Route::delete('/{id}', [MemberChurchController::class, 'destroy']);
 });
 
 Route::prefix('ministry')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {

@@ -49,4 +49,9 @@ class Member extends Model
     {
         return $this->belongsTo(Enterprise::class, 'enterprise_id');
     }
+
+    public function role()
+    {
+        return $this->belongsTo(Enterprise::class, 'role_id');
+    }
 }
