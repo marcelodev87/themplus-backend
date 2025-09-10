@@ -3,6 +3,8 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CellController;
+use App\Http\Controllers\CellMemberController;
 use App\Http\Controllers\CongregationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
@@ -122,6 +124,19 @@ Route::prefix('congregation')->middleware(['auth:sanctum', 'token.expiration'])-
     Route::post('/', [CongregationController::class, 'store']);
     Route::put('/', [CongregationController::class, 'update']);
     Route::delete('/{id}', [CongregationController::class, 'destroy']);
+});
+
+Route::prefix('cell')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::prefix('member')->group(function () {
+        Route::post('', [CellMemberController::class, 'store']);
+        Route::delete('', [CellMemberController::class, 'destroy']);
+    });
+
+    Route::get('/', [CellController::class, 'index']);
+    Route::post('/', [CellController::class, 'store']);
+    Route::put('/', [CellController::class, 'update']);
+    Route::delete('/{id}', [CellController::class, 'destroy']);
+
 });
 
 Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
