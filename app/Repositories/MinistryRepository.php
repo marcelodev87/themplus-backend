@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Ministry;
+use Illuminate\Support\Facades\DB;
 
 class MinistryRepository
 {
@@ -49,6 +50,8 @@ class MinistryRepository
     {
         $ministry = $this->findById($id);
         if ($ministry) {
+            DB::table('ministry_members')->where('ministry_id', $id)->delete();
+            
             return $ministry->delete();
         }
 

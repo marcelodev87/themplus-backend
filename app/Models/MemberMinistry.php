@@ -10,7 +10,7 @@ class MemberMinistry extends Model
 {
     use HasUuid, Notifiable;
 
-    protected $table = 'member_ministry';
+    protected $table = 'ministry_members';
 
     protected $fillable = [
         'member_id',

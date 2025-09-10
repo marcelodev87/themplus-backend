@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Congregation;
+use Illuminate\Support\Facades\DB;
 
 class CongregationRepository
 {
@@ -49,6 +50,10 @@ class CongregationRepository
     {
         $congregation = $this->findById($id);
         if ($congregation) {
+            DB::table('members')->where('congregation_id', $id)->update(['congregation_id' => null]);
+            DB::table('networks')->where('congregation_id', $id)->update(['congregation_id' => null]);
+            DB::table('cells')->where('congregation_id', $id)->update(['congregation_id' => null]);
+
             return $congregation->delete();
         }
 

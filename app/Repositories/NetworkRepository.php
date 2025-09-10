@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Network;
+use Illuminate\Support\Facades\DB;
 
 class NetworkRepository
 {
@@ -49,9 +50,12 @@ class NetworkRepository
     {
         $network = $this->findById($id);
         if ($network) {
+            DB::table('cells')->where('network_id', $id)->update(['network_id' => null]);
+
             return $network->delete();
         }
 
         return false;
     }
 }
+

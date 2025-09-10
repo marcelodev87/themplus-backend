@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Member;
+use Illuminate\Support\Facades\DB;
 
 class MemberRepository
 {
@@ -49,6 +50,13 @@ class MemberRepository
     {
         $member = $this->findById($id);
         if ($member) {
+            DB::table('networks')->where('member_id', $id)->update(['member_id' => null]);
+            DB::table('ministries')->where('member_id', $id)->update(['member_id' => null]);
+            DB::table('congregations')->where('member_id', $id)->update(['member_id' => null]);
+            DB::table('cells')->where('host_id', $id)->update(['host_id' => null]);
+            DB::table('cell_members')->where('member_id', $id)->delete();
+            DB::table('ministry_members')->where('member_id', $id)->delete();
+
             return $member->delete();
         }
 
