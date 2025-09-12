@@ -55,10 +55,10 @@ class MemberService
         $data['date_baptismo'] = $request->input('dateBaptismo');
         $data['congregation_id'] = $request->input('congregationID');
         $data['start_date'] = $request->input('startDate');
-        $data['reason_start_date'] = $request->input('reasonStartDate');
+        // $data['reason_start_date'] = $request->input('reasonStartDate');
         $data['church_start_date'] = $request->input('churchStartDate');
         $data['end_date'] = $request->input('endDate');
-        $data['reason_end_date'] = $request->input('reasonEndDate');
+        // $data['reason_end_date'] = $request->input('reasonEndDate');
         $data['church_end_date'] = $request->input('churchEndDate');
         $data['role_id'] = $request->input('roleID');
         $data['enterprise_id'] = $request->user()->enterprise_id;
@@ -102,10 +102,10 @@ class MemberService
         $data['date_baptismo'] = $request->input('dateBaptismo');
         $data['congregation_id'] = $request->input('congregationID');
         $data['start_date'] = $request->input('startDate');
-        $data['reason_start_date'] = $request->input('reasonStartDate');
+        // $data['reason_start_date'] = $request->input('reasonStartDate');
         $data['church_start_date'] = $request->input('churchStartDate');
         $data['end_date'] = $request->input('endDate');
-        $data['reason_end_date'] = $request->input('reasonEndDate');
+        // $data['reason_end_date'] = $request->input('reasonEndDate');
         $data['church_end_date'] = $request->input('churchEndDate');
         $data['role_id'] = $request->input('roleID');
 

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('location');
             $table->string('day_week');
             $table->string('frequency');
-            $table->string('time')->nullable();
+            $table->string('time');
             $table->boolean('location_address_member')->default(1);
             $table->string('cep')->nullable();
             $table->string('uf')->nullable();

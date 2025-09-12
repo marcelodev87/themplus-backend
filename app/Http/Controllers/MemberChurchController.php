@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\MemberRepository;
 use App\Rules\MemberRule;
 use App\Services\MemberService;
@@ -28,8 +29,9 @@ class MemberChurchController
     {
         try {
             $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
-            return response()->json(['members' => $members], 200);
+            return response()->json(['members' => $members, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os membros: '.$e->getMessage());
 
