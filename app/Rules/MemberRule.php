@@ -31,7 +31,6 @@ class MemberRule
             'phoneProfessional' => 'nullable|string',
             'addressNumber' => 'nullable|string',
             'dateBaptismo' => 'nullable|string',
-            'congregationID' => 'nullable|exists:congregations,id',
             'startDate' => 'nullable|string',
             'reasonStartDate' => 'nullable|string',
             'churchStartDate' => 'nullable|string',
@@ -39,6 +38,9 @@ class MemberRule
             'reasonEndDate' => 'nullable|string',
             'churchEndDate' => 'nullable|string',
             'roleID' => 'nullable|exists:roles,id',
+            // 'family' => 'nullable|array',
+            // 'family.*.memberID' => 'required_with:family|exists:members,id',
+            // 'family.*.statusFamily' => 'required_with:family|string',
         ];
 
         $messages = [
@@ -74,7 +76,6 @@ class MemberRule
             'phoneProfessional.string' => 'O telefone profissional deve ser um texto.',
             'addressNumber.string' => 'O número do endereço deve ser um texto.',
             'dateBaptismo.string' => 'A data de batismo deve ser um texto.',
-            'congregationID.exists' => 'A congregação selecionada é inválida.',
             'startDate.string' => 'A data de início deve ser um texto.',
             'reasonStartDate.string' => 'O motivo da data de início deve ser um texto.',
             'churchStartDate.string' => 'A data de início na igreja deve ser um texto.',
@@ -82,6 +83,11 @@ class MemberRule
             'reasonEndDate.string' => 'O motivo da data de término deve ser um texto.',
             'churchEndDate.string' => 'A data de término na igreja deve ser um texto.',
             'roleID.exists' => 'O cargo selecionado é inválido.',
+            // 'family.array' => 'Os familiares devem ser um array.',
+            // 'family.*.memberID.required_with' => 'Cada familiar deve ter um ID de membro.',
+            // 'family.*.memberID.exists' => 'O membro familiar selecionado é inválido.',
+            // 'family.*.statusFamily.required_with' => 'Cada familiar deve ter um status familiar.',
+            // 'family.*.statusFamily.string' => 'O status familiar deve ser um texto.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -118,7 +124,6 @@ class MemberRule
             'phoneProfessional' => 'nullable|string',
             'addressNumber' => 'nullable|string',
             'dateBaptismo' => 'nullable|string',
-            'congregationID' => 'nullable|exists:congregations,id',
             'startDate' => 'nullable|string',
             'reasonStartDate' => 'nullable|string',
             'churchStartDate' => 'nullable|string',
@@ -126,6 +131,9 @@ class MemberRule
             'reasonEndDate' => 'nullable|string',
             'churchEndDate' => 'nullable|string',
             'roleID' => 'nullable|exists:roles,id',
+            'family' => 'nullable|array',
+            'family.*.memberID' => 'required_with:family|exists:members,id',
+            'family.*.statusFamily' => 'required_with:family|string',
         ];
 
         $messages = [
@@ -163,7 +171,6 @@ class MemberRule
             'phoneProfessional.string' => 'O telefone profissional deve ser um texto.',
             'addressNumber.string' => 'O número do endereço deve ser um texto.',
             'dateBaptismo.string' => 'A data de batismo deve ser um texto.',
-            'congregationID.exists' => 'A congregação selecionada é inválida.',
             'startDate.string' => 'A data de início deve ser um texto.',
             'reasonStartDate.string' => 'O motivo da data de início deve ser um texto.',
             'churchStartDate.string' => 'A data de início na igreja deve ser um texto.',
@@ -171,6 +178,11 @@ class MemberRule
             'reasonEndDate.string' => 'O motivo da data de término deve ser um texto.',
             'churchEndDate.string' => 'A data de término na igreja deve ser um texto.',
             'roleID.exists' => 'O cargo selecionado é inválido.',
+            'family.array' => 'Os familiares devem ser um array.',
+            'family.*.memberID.required_with' => 'Cada familiar deve ter um ID de membro.',
+            'family.*.memberID.exists' => 'O membro familiar selecionado é inválido.',
+            'family.*.statusFamily.required_with' => 'Cada familiar deve ter um status familiar.',
+            'family.*.statusFamily.string' => 'O status familiar deve ser um texto.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);

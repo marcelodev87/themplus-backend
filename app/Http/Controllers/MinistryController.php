@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\MinistryRepository;
 use App\Rules\MinistryRule;
 use App\Services\MinistryService;
@@ -29,9 +30,10 @@ class MinistryController
     public function index(Request $request)
     {
         try {
-            $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
+            $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
-            return response()->json(['ministries' => $ministries], 200);
+            return response()->json(['filled_data' => $filledData,'ministries' => $ministries], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os ministérios: '.$e->getMessage());
 
@@ -48,7 +50,7 @@ class MinistryController
             if ($ministry) {
                 DB::commit();
 
-                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id,['member']);
 
                 return response()->json(['ministries' => $ministries, 'message' => 'Ministério cadastrado com sucesso'], 201);
             }
@@ -72,7 +74,7 @@ class MinistryController
             if ($ministry) {
                 DB::commit();
 
-                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id,['member']);
 
                 return response()->json(['ministries' => $ministries, 'message' => 'Ministério atualizado com sucesso'], 200);
             }
@@ -87,7 +89,7 @@ class MinistryController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
@@ -97,8 +99,9 @@ class MinistryController
 
             if ($ministry) {
                 DB::commit();
+                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
 
-                return response()->json(['message' => 'Ministério excluído com sucesso'], 200);
+                return response()->json(['ministries' => $ministries ,'message' => 'Ministério excluído com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar ministério');

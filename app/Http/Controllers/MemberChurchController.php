@@ -63,7 +63,7 @@ class MemberChurchController
         }
     }
 
-    public function udpate(Request $request)
+    public function update(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -87,7 +87,7 @@ class MemberChurchController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
@@ -97,8 +97,9 @@ class MemberChurchController
 
             if ($member) {
                 DB::commit();
+                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
 
-                return response()->json(['message' => 'Membro excluído com sucesso'], 200);
+                return response()->json(['members' => $members, 'message' => 'Membro excluído com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar membro');

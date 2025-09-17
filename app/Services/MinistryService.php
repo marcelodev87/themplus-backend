@@ -41,8 +41,8 @@ class MinistryService
     {
         $this->rule->update($request);
 
-        $data = $request->only(['name', 'member_id']);
-        $data['enterprise_id'] = $request->user()->enterprise_id;
+        $data = $request->only(['name']);
+        $data['member_id'] = $request->input('memberID');
 
         MinistryHelper::existsNetwork(
             $request->user()->enterprise_id,

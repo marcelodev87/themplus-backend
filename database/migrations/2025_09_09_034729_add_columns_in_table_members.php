@@ -12,7 +12,6 @@ return new class extends Migration
             $table->string('type')->nullable();
             $table->boolean('active')->nullable();
             $table->string('date_baptismo')->nullable();
-            $table->foreignUuid('congregation_id')->nullable()->constrained('congregations');
             $table->string('start_date')->nullable();
             $table->string('reason_start_date')->nullable();
             $table->string('church_start_date')->nullable();
@@ -33,7 +32,6 @@ return new class extends Migration
                 'type',
                 'active',
                 'date_baptismo',
-                'congregation_id',
                 'start_date',
                 'reason_start_date',
                 'church_start_date',

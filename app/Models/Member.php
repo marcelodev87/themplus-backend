@@ -34,7 +34,6 @@ class Member extends Model
         'type',
         'active',
         'date_baptismo',
-        'congregation_id',
         'start_date',
         'reason_start_date',
         'church_start_date',
@@ -52,6 +51,6 @@ class Member extends Model
 
     public function role()
     {
-        return $this->belongsTo(Enterprise::class, 'role_id');
+        return $this->belongsTo(Role::class, 'role_id');
     }
 }

@@ -53,7 +53,6 @@ class MemberService
         $data['phone_professional'] = $request->input('phoneProfessional');
         $data['address_number'] = $request->input('addressNumber');
         $data['date_baptismo'] = $request->input('dateBaptismo');
-        $data['congregation_id'] = $request->input('congregationID');
         $data['start_date'] = $request->input('startDate');
         // $data['reason_start_date'] = $request->input('reasonStartDate');
         $data['church_start_date'] = $request->input('churchStartDate');
@@ -100,7 +99,6 @@ class MemberService
         $data['phone_professional'] = $request->input('phoneProfessional');
         $data['address_number'] = $request->input('addressNumber');
         $data['date_baptismo'] = $request->input('dateBaptismo');
-        $data['congregation_id'] = $request->input('congregationID');
         $data['start_date'] = $request->input('startDate');
         // $data['reason_start_date'] = $request->input('reasonStartDate');
         $data['church_start_date'] = $request->input('churchStartDate');
