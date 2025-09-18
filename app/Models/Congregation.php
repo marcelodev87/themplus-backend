@@ -16,6 +16,7 @@ class Congregation extends Model
         'name',
         'date_foundation',
         'cnpj',
+        'cpf',
         'email',
         'phone',
         'cep',

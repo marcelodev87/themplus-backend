@@ -19,10 +19,17 @@ class CongregationRepository
         return $this->model->all();
     }
 
-    public function getAllByEnterprise($enterpriseId)
+    public function getAllByEnterprise($enterpriseId, $relations = null)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)->get();
+        $query = $this->model->where('enterprise_id', $enterpriseId);
+        
+        if ($relations) {
+            $query->with($relations);
+        }
+        
+        return $query->get();
     }
+
 
     public function findById($id)
     {
@@ -50,7 +57,6 @@ class CongregationRepository
     {
         $congregation = $this->findById($id);
         if ($congregation) {
-            DB::table('members')->where('congregation_id', $id)->update(['congregation_id' => null]);
             DB::table('networks')->where('congregation_id', $id)->update(['congregation_id' => null]);
             DB::table('cells')->where('congregation_id', $id)->update(['congregation_id' => null]);
 

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('neighborhood')->nullable();
             $table->string('city')->nullable();
             $table->string('complement')->nullable();
-            $table->foreignUuid('member_id')->constrained('members');
+            $table->foreignUuid('member_id')->nullable()->constrained('members');
             $table->foreignUuid('enterprise_id')->constrained('enterprises');
             $table->timestamps();
         });

@@ -33,6 +33,7 @@ class CongregationService
         $data = $request->only([
             'name',
             'cnpj',
+            'cpf',
             'email',
             'phone',
             'cep',
@@ -64,6 +65,7 @@ class CongregationService
         $data = $request->only([
             'name',
             'cnpj',
+            'cpf',
             'email',
             'phone',
             'cep',

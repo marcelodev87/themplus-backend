@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\CongregationRepository;
 use App\Rules\CongregationRule;
 use App\Services\CongregationService;
@@ -29,9 +30,10 @@ class CongregationController
     public function index(Request $request)
     {
         try {
-            $congregations = $this->repository->getAllByEnterprise($request->user()->view_enterprise_id);
+            $congregations = $this->repository->getAllByEnterprise($request->user()->view_enterprise_id, ['member']);
+            $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
-            return response()->json(['congregations' => $congregations], 200);
+            return response()->json(['filled_data' => $filledData, 'congregations' => $congregations], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as congregações: '.$e->getMessage());
 
@@ -48,7 +50,7 @@ class CongregationController
             if ($congregation) {
                 DB::commit();
 
-                $congregations = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $congregations = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
 
                 return response()->json(['congregations' => $congregations, 'message' => 'Congregação cadastrada com sucesso'], 201);
             }
@@ -72,7 +74,7 @@ class CongregationController
             if ($congregation) {
                 DB::commit();
 
-                $congregations = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $congregations = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
 
                 return response()->json(['congregations' => $congregations, 'message' => 'Congregação atualizada com sucesso'], 200);
             }
@@ -87,7 +89,7 @@ class CongregationController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
@@ -98,13 +100,15 @@ class CongregationController
             if ($congregation) {
                 DB::commit();
 
-                return response()->json(['message' => 'Congregação excluída com sucesso'], 200);
+                $congregations = $this->repository->getAllByEnterprise($request->user()->view_enterprise_id, ['member']);
+
+                return response()->json(['congregations' => $congregations, 'message' => 'Congregação excluída com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar congregação');
         } catch (\Exception $e) {
             DB::rollBack();
-
+ 
             Log::error('Erro ao deletar congregação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);

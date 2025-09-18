@@ -20,7 +20,7 @@ class CongregationRule
             'neighborhood' => 'nullable|string',
             'city' => 'nullable|string',
             'complement' => 'nullable|string',
-            'dateFoundation' => 'nullable|date',
+            'dateFoundation' => 'nullable|date_format:d/m/Y',
             'addressNumber' => 'nullable|string',
             'memberID' => 'nullable|exists:members,id',
         ];
@@ -40,7 +40,7 @@ class CongregationRule
             'neighborhood.string' => 'O bairro deve ser uma string',
             'city.string' => 'A cidade deve ser uma string',
             'complement.string' => 'O complemento deve ser uma string',
-            'dateFoundation.date' => 'A data de fundação deve ser uma data válida',
+            'dateFoundation.date_format' => 'A data de fundação deve estar no formato DD/MM/AAAA', 
             'addressNumber.string' => 'O número do endereço deve ser uma string',
             'memberID.exists' => 'O membro selecionado não existe',
         ];
@@ -68,8 +68,8 @@ class CongregationRule
             'neighborhood' => 'nullable|string',
             'city' => 'nullable|string',
             'complement' => 'nullable|string',
-            'dateFoundation' => 'nullable|date',
             'addressNumber' => 'nullable|string',
+            'dateFoundation' => 'nullable|date_format:d/m/Y',
             'memberID' => 'nullable|exists:members,id',
         ];
 
@@ -90,8 +90,8 @@ class CongregationRule
             'neighborhood.string' => 'O bairro deve ser uma string',
             'city.string' => 'A cidade deve ser uma string',
             'complement.string' => 'O complemento deve ser uma string',
-            'dateFoundation.date' => 'A data de fundação deve ser uma data válida',
             'addressNumber.string' => 'O número do endereço deve ser uma string',
+            'dateFoundation.date_format' => 'A data de fundação deve estar no formato DD/MM/AAAA', 
             'memberID.exists' => 'O membro selecionado não existe',
         ];
 
