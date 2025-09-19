@@ -54,6 +54,7 @@ class MemberRepository
             DB::table('ministries')->where('member_id', $id)->update(['member_id' => null]);
             DB::table('congregations')->where('member_id', $id)->update(['member_id' => null]);
             DB::table('cells')->where('host_id', $id)->update(['host_id' => null]);
+            DB::table('cells')->where('leader_id', $id)->update(['leader_id' => null]);
             DB::table('cell_members')->where('member_id', $id)->delete();
             DB::table('ministry_members')->where('member_id', $id)->delete();
 

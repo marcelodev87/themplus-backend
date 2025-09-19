@@ -28,7 +28,7 @@ class CellController
     public function index(Request $request)
     {
         try {
-            $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['host', 'leader']);
+            $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['network', 'leader']);
             $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
             return response()->json(['filled_data' => $filledData, 'cells' => $cells], 200);
