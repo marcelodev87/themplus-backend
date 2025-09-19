@@ -16,17 +16,15 @@ class Cell extends Model
         'name',
         'date_foundation',
         'date_end',
-        'member_id',
-        'network_id',
-        'congregation_id',
-        'enterprise_id',
+        'leader_id',
         'host_id',
+        'network_id',
+        'enterprise_id',
         'active',
         'location',
         'day_week',
         'frequency',
         'time',
-        'location_address_member',
         'cep',
         'uf',
         'address',
@@ -41,23 +39,18 @@ class Cell extends Model
         return $this->belongsTo(Enterprise::class, 'enterprise_id');
     }
 
-    public function member()
+    public function leader()
     {
-        return $this->belongsTo(Member::class, 'member_id');
-    }
-
-    public function network()
-    {
-        return $this->belongsTo(Network::class, 'network_id');
-    }
-
-    public function congregation()
-    {
-        return $this->belongsTo(Congregation::class, 'congregation_id');
+        return $this->belongsTo(Member::class, 'leader_id');
     }
 
     public function host()
     {
         return $this->belongsTo(Member::class, 'host_id');
+    }
+
+    public function network()
+    {
+        return $this->belongsTo(Network::class, 'network_id');
     }
 }

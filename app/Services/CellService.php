@@ -33,14 +33,13 @@ class CellService
         $data['date_foundation'] = $request->input('dateFoundation');
         $data['date_end'] = $request->input('dateEnd');
         $data['network_id'] = $request->input('networkID');
-        $data['congregation_id'] = $request->input('congregationID');
+        $data['leader_id'] = $request->input('leaderID');
         $data['host_id'] = $request->input('hostID');
         $data['active'] = $request->input('active');
         $data['location'] = $request->input('location');
         $data['day_week'] = $request->input('dayWeek');
         $data['frequency'] = $request->input('frequency');
         $data['time'] = $request->input('time');
-        $data['location_address_member'] = $request->input('locationAddressMember');
         $data['cep'] = $request->input('cep');
         $data['uf'] = $request->input('uf');
         $data['address'] = $request->input('address');
@@ -56,18 +55,7 @@ class CellService
             'create'
         );
 
-        $cell = $this->repository->create($data);
-
-        if ($request->has('members') && is_array($request->members)) {
-            foreach ($request->members as $member) {
-                $this->cellMemberRepository->create([
-                    'member_id' => $member['id'],
-                    'cell_id' => $cell->id,
-                ]);
-            }
-        }
-
-        return $cell;
+        return $this->repository->create($data);
     }
 
     public function update($request)
@@ -85,14 +73,13 @@ class CellService
         $data['date_foundation'] = $request->input('dateFoundation');
         $data['date_end'] = $request->input('dateEnd');
         $data['network_id'] = $request->input('networkID');
-        $data['congregation_id'] = $request->input('congregationID');
+        $data['leader_id'] = $request->input('leaderID');
         $data['host_id'] = $request->input('hostID');
         $data['active'] = $request->input('active');
         $data['location'] = $request->input('location');
         $data['day_week'] = $request->input('dayWeek');
         $data['frequency'] = $request->input('frequency');
         $data['time'] = $request->input('time');
-        $data['location_address_member'] = $request->input('locationAddressMember');
         $data['cep'] = $request->input('cep');
         $data['uf'] = $request->input('uf');
         $data['address'] = $request->input('address');

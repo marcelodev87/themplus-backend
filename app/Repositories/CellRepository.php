@@ -18,7 +18,7 @@ class CellRepository
         return $this->model->all();
     }
 
-    public function getAllByEnterprise(int $enterpriseId, array|string|null $relations = null)
+    public function getAllByEnterprise(string $enterpriseId, array|string|null $relations = null)
     {
         $query = $this->model->where('enterprise_id', $enterpriseId);
 

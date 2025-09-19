@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\CellRepository;
 use App\Rules\CellRule;
 use App\Services\CellService;
@@ -27,9 +28,10 @@ class CellController
     public function index(Request $request)
     {
         try {
-            $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['members']);
+            $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['host', 'leader']);
+            $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
-            return response()->json(['cells' => $cells], 200);
+            return response()->json(['filled_data' => $filledData, 'cells' => $cells], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as células: '.$e->getMessage());
 
@@ -46,7 +48,7 @@ class CellController
             if ($cell) {
                 DB::commit();
 
-                $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['members']);
+                $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['network', 'leader']);
 
                 return response()->json(['cells' => $cells, 'message' => 'Célula cadastrada com sucesso'], 201);
             }
@@ -61,7 +63,7 @@ class CellController
         }
     }
 
-    public function udpate(Request $request)
+    public function update(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -70,7 +72,7 @@ class CellController
             if ($cell) {
                 DB::commit();
 
-                $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['members']);
+                $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['network', 'leader']);
 
                 return response()->json(['cells' => $cells, 'message' => 'Célula atualizada com sucesso'], 200);
             }
@@ -85,7 +87,7 @@ class CellController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
@@ -96,7 +98,9 @@ class CellController
             if ($cell) {
                 DB::commit();
 
-                return response()->json(['message' => 'Célula excluída com sucesso'], 200);
+                $cells = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['network', 'leader']);
+
+                return response()->json(['cells' => $cells, 'message' => 'Célula excluída com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar célula');

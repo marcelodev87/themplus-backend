@@ -11,7 +11,6 @@ class ModifyEnterpriseIdInCategoriesTable extends Migration
         Schema::table('categories', function (Blueprint $table) {
             $table->dropForeign(['enterprise_id']);
             $table->dropColumn('enterprise_id');
-
             $table->foreignUuid('enterprise_id')->nullable()->constrained('enterprises');
             $table->string('type')->nullable();
         });
@@ -22,9 +21,8 @@ class ModifyEnterpriseIdInCategoriesTable extends Migration
         Schema::table('categories', function (Blueprint $table) {
             $table->dropForeign(['enterprise_id']);
             $table->dropColumn('enterprise_id');
-
-            $table->foreignUuid('enterprise_id')->constrained('enterprises');
             $table->dropColumn('type');
+            $table->foreignUuid('enterprise_id')->constrained('enterprises');
         });
     }
 }
