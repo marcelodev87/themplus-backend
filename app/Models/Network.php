@@ -10,7 +10,7 @@ class Network extends Model
 {
     use HasUuid, Notifiable;
 
-    protected $table = 'members';
+    protected $table = 'networks';
 
     protected $fillable = [
         'name',

@@ -108,7 +108,7 @@ class CongregationController
             throw new \Exception('Falha ao deletar congregação');
         } catch (\Exception $e) {
             DB::rollBack();
- 
+
             Log::error('Erro ao deletar congregação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);

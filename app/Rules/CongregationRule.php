@@ -40,7 +40,7 @@ class CongregationRule
             'neighborhood.string' => 'O bairro deve ser uma string',
             'city.string' => 'A cidade deve ser uma string',
             'complement.string' => 'O complemento deve ser uma string',
-            'dateFoundation.date_format' => 'A data de fundação deve estar no formato DD/MM/AAAA', 
+            'dateFoundation.date_format' => 'A data de fundação deve estar no formato DD/MM/AAAA',
             'addressNumber.string' => 'O número do endereço deve ser uma string',
             'memberID.exists' => 'O membro selecionado não existe',
         ];
@@ -91,7 +91,7 @@ class CongregationRule
             'city.string' => 'A cidade deve ser uma string',
             'complement.string' => 'O complemento deve ser uma string',
             'addressNumber.string' => 'O número do endereço deve ser uma string',
-            'dateFoundation.date_format' => 'A data de fundação deve estar no formato DD/MM/AAAA', 
+            'dateFoundation.date_format' => 'A data de fundação deve estar no formato DD/MM/AAAA',
             'memberID.exists' => 'O membro selecionado não existe',
         ];
 

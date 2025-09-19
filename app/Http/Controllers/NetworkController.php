@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\EnterpriseHelper;
 use App\Repositories\NetworkRepository;
 use App\Rules\NetworkRule;
 use App\Services\NetworkService;
@@ -27,9 +28,10 @@ class NetworkController
     public function index(Request $request)
     {
         try {
-            $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+            $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
+            $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
-            return response()->json(['networks' => $networks], 200);
+            return response()->json(['filled_data' => $filledData, 'networks' => $networks], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas as redes: '.$e->getMessage());
 
@@ -46,7 +48,7 @@ class NetworkController
             if ($network) {
                 DB::commit();
 
-                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
 
                 return response()->json(['networks' => $networks, 'message' => 'Rede cadastrada com sucesso'], 201);
             }
@@ -61,7 +63,7 @@ class NetworkController
         }
     }
 
-    public function udpate(Request $request)
+    public function update(Request $request)
     {
         try {
             DB::beginTransaction();
@@ -70,7 +72,7 @@ class NetworkController
             if ($network) {
                 DB::commit();
 
-                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
 
                 return response()->json(['networks' => $networks, 'message' => 'Rede atualizada com sucesso'], 200);
             }
@@ -85,7 +87,7 @@ class NetworkController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
@@ -96,7 +98,9 @@ class NetworkController
             if ($network) {
                 DB::commit();
 
-                return response()->json(['message' => 'Rede excluída com sucesso'], 200);
+                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
+
+                return response()->json(['networks' => $networks, 'message' => 'Rede excluída com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar rede');

@@ -33,7 +33,7 @@ class MinistryController
             $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
             $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
-            return response()->json(['filled_data' => $filledData,'ministries' => $ministries], 200);
+            return response()->json(['filled_data' => $filledData, 'ministries' => $ministries], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os ministérios: '.$e->getMessage());
 
@@ -50,7 +50,7 @@ class MinistryController
             if ($ministry) {
                 DB::commit();
 
-                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id,['member']);
+                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
 
                 return response()->json(['ministries' => $ministries, 'message' => 'Ministério cadastrado com sucesso'], 201);
             }
@@ -74,7 +74,7 @@ class MinistryController
             if ($ministry) {
                 DB::commit();
 
-                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id,['member']);
+                $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
 
                 return response()->json(['ministries' => $ministries, 'message' => 'Ministério atualizado com sucesso'], 200);
             }
@@ -101,7 +101,7 @@ class MinistryController
                 DB::commit();
                 $ministries = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member']);
 
-                return response()->json(['ministries' => $ministries ,'message' => 'Ministério excluído com sucesso'], 200);
+                return response()->json(['ministries' => $ministries, 'message' => 'Ministério excluído com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar ministério');

@@ -9,14 +9,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('congregations', function (Blueprint $table) {
-           $table->bigInteger('cpf')->nullable();
+            $table->bigInteger('cpf')->nullable();
         });
     }
 
     public function down(): void
     {
         Schema::table('congregations', function (Blueprint $table) {
-           $table->dropColumn('cpf');
+            $table->dropColumn('cpf');
         });
     }
 };

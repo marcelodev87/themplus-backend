@@ -22,11 +22,11 @@ class MinistryRepository
     public function getAllByEnterprise($enterpriseId, $relations = null)
     {
         $query = $this->model->where('enterprise_id', $enterpriseId);
-        
+
         if ($relations) {
             $query->with($relations);
         }
-        
+
         return $query->get();
     }
 
