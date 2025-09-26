@@ -56,7 +56,7 @@ class CellRule
             'frequency.max' => 'A frequência não pode ter mais de 20 caracteres.',
             'time.string' => 'O horário deve ser um texto.',
             'cep.string' => 'O CEP deve ser um texto.',
-           'cep.size' => 'O CEP deve ter 8 caracteres (sem hífen).',
+            'cep.size' => 'O CEP deve ter 8 caracteres (sem hífen).',
             'uf.string' => 'A UF deve ser um texto.',
             'address.string' => 'O endereço deve ser um texto.',
             'address.max' => 'O endereço não pode ter mais de 255 caracteres.',

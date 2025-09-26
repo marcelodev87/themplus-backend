@@ -10,6 +10,7 @@ use App\Repositories\FinancialRepository;
 use App\Repositories\MovementRepository;
 use App\Rules\MovementRule;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MovementService
@@ -195,6 +196,17 @@ class MovementService
             AccountHelper::openingBalance($request->input('account'), $request->input('category'));
         }
 
+        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
+        $financial = $this->financialRepository->getReports($request->user()->enterprise_id);
+
+        $month = $initialDate->month;
+        $year = $initialDate->year;
+
+        $exists = $financial->where('month', $month)->where('year', $year)->isNotEmpty();
+        if ($exists) {
+            throw new \Exception('Nos períodos de movimentação mencionado, contém período em que os relatórios ja foram entregues');
+        }
+
         $data = [
             'type' => $request->input('type'),
             'value' => $request->input('value'),
@@ -202,6 +214,7 @@ class MovementService
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
             'enterprise_id' => $request->user()->enterprise_id,
+            'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d'),
         ];
 
         $data = $this->handleFileUpdate($request, $movement, $data);
@@ -297,6 +310,18 @@ class MovementService
 
     public function includeScheduling($scheduling)
     {
+
+        $initialDate = Carbon::now('America/Sao_Paulo');
+
+        $financial = $this->financialRepository->getReports(Auth::user()->enterprise_id);
+
+        $month = $initialDate->month;
+        $year = $initialDate->year;
+
+        $exists = $financial->where('month', $month)->where('year', $year)->isNotEmpty();
+        if ($exists) {
+            throw new \Exception('Nos períodos de movimentação mencionado, contém período em que os relatórios ja foram entregues');
+        }
 
         $data = [
             'type' => $scheduling['type'],
