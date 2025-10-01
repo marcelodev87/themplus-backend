@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->foreignUuid('congregation_id')
                 ->nullable()
-                ->constrained('congregations');
+                ->constrained('enterprises');
 
             $table->foreignUuid('enterprise_id')
                 ->nullable()

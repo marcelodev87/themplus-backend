@@ -31,6 +31,6 @@ class Network extends Model
 
     public function congregation()
     {
-        return $this->belongsTo(Congregation::class, 'congregation_id');
+        return $this->belongsTo(Enterprise::class, 'congregation_id');
     }
 }

@@ -12,7 +12,7 @@ class NetworkRule
         $rules = [
             'name' => 'required|string|min:2|max:50',
             'memberID' => 'nullable|exists:members,id',
-            'congregationID' => 'nullable|exists:congregations,id',
+            'congregationID' => 'nullable|exists:enterprises,id',
         ];
 
         $messages = [
@@ -39,7 +39,7 @@ class NetworkRule
             'id' => 'required|exists:networks,id',
             'name' => 'required|string|min:2|max:50',
             'memberID' => 'nullable|exists:members,id',
-            'congregationID' => 'nullable|exists:congregations,id',
+            'congregationID' => 'nullable|exists:enterprises,id',
         ];
 
         $messages = [

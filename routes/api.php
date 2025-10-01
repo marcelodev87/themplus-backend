@@ -5,7 +5,6 @@ use App\Http\Controllers\AlertController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CellController;
 use App\Http\Controllers\CellMemberController;
-use App\Http\Controllers\CongregationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
@@ -125,13 +124,6 @@ Route::prefix('ministry')->middleware(['auth:sanctum', 'token.expiration'])->gro
     Route::post('/', [MinistryController::class, 'store']);
     Route::put('/', [MinistryController::class, 'update']);
     Route::delete('/{id}', [MinistryController::class, 'destroy']);
-});
-
-Route::prefix('congregation')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
-    Route::get('/', [CongregationController::class, 'index']);
-    Route::post('/', [CongregationController::class, 'store']);
-    Route::put('/', [CongregationController::class, 'update']);
-    Route::delete('/{id}', [CongregationController::class, 'destroy']);
 });
 
 Route::prefix('cell')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {

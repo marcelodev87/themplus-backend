@@ -205,13 +205,6 @@ class EnterpriseRepository
             DB::table('networks')->where('enterprise_id', $id)->delete();
             // ---------------------
 
-            $congregations = DB::table('congregations')->where('enterprise_id', $id)->get();
-            foreach ($congregations as $congregation) {
-                DB::table('members')->where('congregation_id', $congregation->id)->update(['congregation_id' => null]);
-            }
-            DB::table('congregations')->where('enterprise_id', $id)->delete();
-            // ---------------------
-
             DB::table('members')->where('enterprise_id', $id)->delete();
             // ---------------------
 
@@ -324,13 +317,6 @@ class EnterpriseRepository
                 DB::table('networks')->where('enterprise_id', $office->id)->delete();
                 // ---------------------
 
-                $congregations = DB::table('congregations')->where('enterprise_id', $office->id)->get();
-                foreach ($congregations as $congregation) {
-                    DB::table('members')->where('congregation_id', $congregation->id)->update(['congregation_id' => null]);
-                }
-                DB::table('congregations')->where('enterprise_id', $office->id)->delete();
-                // ---------------------
-
                 DB::table('members')->where('enterprise_id', $office->id)->delete();
                 // ---------------------
 
@@ -426,13 +412,6 @@ class EnterpriseRepository
                 DB::table('cells')->where('network_id', $network->id)->update(['network_id' => null]);
             }
             DB::table('networks')->where('enterprise_id', $id)->delete();
-            // ---------------------
-
-            $congregations = DB::table('congregations')->where('enterprise_id', $id)->get();
-            foreach ($congregations as $congregation) {
-                DB::table('members')->where('congregation_id', $congregation->id)->update(['congregation_id' => null]);
-            }
-            DB::table('congregations')->where('enterprise_id', $id)->delete();
             // ---------------------
 
             DB::table('members')->where('enterprise_id', $id)->delete();

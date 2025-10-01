@@ -28,7 +28,7 @@ class NetworkController
     public function index(Request $request)
     {
         try {
-            $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
+            $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'office']);
             $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
             return response()->json(['filled_data' => $filledData, 'networks' => $networks], 200);
@@ -48,7 +48,7 @@ class NetworkController
             if ($network) {
                 DB::commit();
 
-                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
+                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'office']);
 
                 return response()->json(['networks' => $networks, 'message' => 'Rede cadastrada com sucesso'], 201);
             }
@@ -72,7 +72,7 @@ class NetworkController
             if ($network) {
                 DB::commit();
 
-                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
+                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'office']);
 
                 return response()->json(['networks' => $networks, 'message' => 'Rede atualizada com sucesso'], 200);
             }
@@ -98,7 +98,7 @@ class NetworkController
             if ($network) {
                 DB::commit();
 
-                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'congregation']);
+                $networks = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['member', 'office']);
 
                 return response()->json(['networks' => $networks, 'message' => 'Rede excluída com sucesso'], 200);
             }
