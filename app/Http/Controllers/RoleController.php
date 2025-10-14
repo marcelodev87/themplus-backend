@@ -89,7 +89,7 @@ class RoleController
         }
     }
 
-    public function destroy(string $id)
+    public function destroy(Request $request, string $id)
     {
         try {
             DB::beginTransaction();
@@ -100,7 +100,9 @@ class RoleController
             if ($role) {
                 DB::commit();
 
-                return response()->json(['message' => 'Cargo excluído com sucesso'], 200);
+                $roles = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+
+                return response()->json(['roles' => $roles ,'message' => 'Cargo excluído com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar cargo');
