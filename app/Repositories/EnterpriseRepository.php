@@ -402,7 +402,7 @@ class EnterpriseRepository
 
             $roles = DB::table('roles')->where('enterprise_id', $id)->get();
             foreach ($roles as $role) {
-                DB::table('members')->where('role_id', $role->id)->update(['role_id' => null]);
+                DB::table('member_role')->where('role_id', $role->id)->delete();
             }
             DB::table('roles')->where('enterprise_id', $id)->delete();
             // ---------------------

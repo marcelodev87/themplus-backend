@@ -62,7 +62,12 @@ class MemberService
         $data['role_id'] = $request->input('roleID');
         $data['enterprise_id'] = $request->user()->enterprise_id;
 
-        return $this->repository->create($data);
+        $member = $this->repository->create($data);
+         if ($request->has('roles') && is_array($request->input('roles'))) {
+            $member->roles()->sync($request->input('roles'));
+        }
+
+        return $member;
     }
 
     public function update($request)
@@ -105,9 +110,14 @@ class MemberService
         $data['end_date'] = $request->input('endDate');
         // $data['reason_end_date'] = $request->input('reasonEndDate');
         $data['church_end_date'] = $request->input('churchEndDate');
-        $data['role_id'] = $request->input('roleID');
 
-        return $this->repository->update($request->input('id'), $data);
+        $member = $this->repository->update($request->input('id'), $data);
+
+        if($request->has('roles')) {
+            $member->roles()->sync($request->input('roles'));
+        }
+
+        return $member;
 
     }
 }

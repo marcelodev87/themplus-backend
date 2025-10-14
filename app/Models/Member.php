@@ -40,7 +40,6 @@ class Member extends Model
         'end_date',
         'reason_end_date',
         'church_end_date',
-        'role_id',
         'enterprise_id',
     ];
 
@@ -49,8 +48,8 @@ class Member extends Model
         return $this->belongsTo(Enterprise::class, 'enterprise_id');
     }
 
-    public function role()
+    public function roles()
     {
-        return $this->belongsTo(Role::class, 'role_id');
+        return $this->belongsToMany(Role::class, 'member_role', 'member_id', 'role_id');
     }
 }

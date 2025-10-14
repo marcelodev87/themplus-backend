@@ -19,10 +19,17 @@ class RoleRepository
         return $this->model->all();
     }
 
-    public function getAllByEnterprise($enterpriseId)
+    public function getAllByEnterprise($enterpriseId, array $relations = null)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)->get();
+        $query = $this->model->where('enterprise_id', $enterpriseId);
+
+        if (!empty($relations)) {
+            $query->with($relations);
+        }
+
+        return $query->get();
     }
+
 
     public function findById($id)
     {
@@ -50,7 +57,7 @@ class RoleRepository
     {
         $role = $this->findById($id);
         if ($role) {
-            DB::table('members')->where('role_id', $id)->update(['role_id' => null]);
+            DB::table('member_role')->where('role_id', $id)->delete();
 
             return $role->delete();
         }
