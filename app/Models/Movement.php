@@ -20,6 +20,7 @@ class Movement extends Model
         'receipt',
         'category_id',
         'account_id',
+        'member_id',
         'enterprise_id',
         'observation',
     ];
@@ -32,5 +33,9 @@ class Movement extends Model
     public function account()
     {
         return $this->belongsTo(Account::class);
+    }
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
     }
 }

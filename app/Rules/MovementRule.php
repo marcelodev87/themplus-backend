@@ -14,6 +14,7 @@ class MovementRule
             'programmed' => 'required|numeric',
             'value' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/',
             'category' => 'required|string',
+            'member' => 'nullable|string',
             'account' => 'required|string',
         ];
 
@@ -27,6 +28,7 @@ class MovementRule
             'value.regex' => 'O valor deve ter no máximo duas casas decimais',
             'category.required' => 'O ID da categoria é obrigatório',
             'category.string' => 'O ID da categoria deve ser uma string',
+            'member.string' => 'O ID do membro deve ser uma string',
             'account.required' => 'O ID da conta é obrigatório',
             'account.string' => 'O ID da conta deve ser uma string',
         ];
@@ -65,6 +67,7 @@ class MovementRule
             'date' => 'required|date_format:d-m-Y',
             'category' => 'required|string',
             'account' => 'required|string',
+            'member' => 'nullable|string',
         ];
 
         $messages = [
@@ -80,6 +83,7 @@ class MovementRule
             'date.date_format' => 'A data de movimentação deve estar no formato DD-MM-YYYY',
             'category.required' => 'O ID da categoria é obrigatório',
             'category.string' => 'O ID da categoria deve ser uma string',
+            'member.string' => 'O ID da categoria deve ser uma string',
             'account.required' => 'O ID da conta é obrigatório',
             'account.string' => 'O ID da conta deve ser uma string',
         ];

@@ -85,6 +85,7 @@ class MovementService
                 'description' => $request->input('description'),
                 'receipt' => $fileUrl,
                 'category_id' => $request->input('category'),
+                'member_id' => $request->input('member'),
                 'account_id' => $request->input('account'),
                 'enterprise_id' => $request->user()->enterprise_id,
             ];
@@ -213,6 +214,7 @@ class MovementService
             'description' => $request->input('description'),
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
+            'member_id' => $request->input('member'),
             'enterprise_id' => $request->user()->enterprise_id,
             'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d'),
         ];

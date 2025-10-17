@@ -20,6 +20,7 @@ class Scheduling extends Model
         'description',
         'receipt',
         'category_id',
+        'member_id',
         'account_id',
     ];
 
@@ -31,5 +32,10 @@ class Scheduling extends Model
     public function account()
     {
         return $this->belongsTo(Account::class);
+    }
+
+    public function member()
+    {
+        return $this->belongsTo(Member::class);
     }
 }
