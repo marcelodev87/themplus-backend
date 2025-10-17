@@ -45,6 +45,8 @@ class MinistryController
     {
         try {
             DB::beginTransaction();
+            EnterpriseHelper::allowHeadquarters($request->user()->enterprise_id);
+
             $ministry = $this->service->create($request);
 
             if ($ministry) {
@@ -69,6 +71,8 @@ class MinistryController
     {
         try {
             DB::beginTransaction();
+
+            EnterpriseHelper::allowHeadquarters($request->user()->enterprise_id);
             $ministry = $this->service->update($request);
 
             if ($ministry) {
@@ -93,6 +97,7 @@ class MinistryController
     {
         try {
             DB::beginTransaction();
+            EnterpriseHelper::allowHeadquarters($request->user()->enterprise_id);
 
             $this->rule->delete($id);
             $ministry = $this->repository->delete($id);

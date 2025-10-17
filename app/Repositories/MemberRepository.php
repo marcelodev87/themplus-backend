@@ -19,11 +19,11 @@ class MemberRepository
         return $this->model->all();
     }
 
-     public function getAllByEnterprise($enterpriseId, array $relations = null)
+    public function getAllByEnterprise($enterpriseId, ?array $relations = null)
     {
         $query = $this->model->where('enterprise_id', $enterpriseId);
 
-        if (!empty($relations)) {
+        if (! empty($relations)) {
             $query->with($relations);
         }
 

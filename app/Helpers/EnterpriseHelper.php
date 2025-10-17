@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 use App\Models\Enterprise;
 use App\Repositories\EnterpriseRepository;
+use Illuminate\Support\Facades\DB;
 
 class EnterpriseHelper
 {
@@ -43,6 +44,15 @@ class EnterpriseHelper
             if ($enterprise && $enterprise->id !== $request->user()->enterprise_id) {
                 throw new \Exception('O CNPJ já está em uso por outra conta');
             }
+        }
+    }
+
+    public static function allowHeadquarters($enterpriseID)
+    {
+        $enterprise = DB::table('enterprises')->where('id', $enterpriseID)->first();
+
+        if ($enterprise->created_by !== null) {
+            throw new \Exception('Sua organização não é uma filial');
         }
     }
 }

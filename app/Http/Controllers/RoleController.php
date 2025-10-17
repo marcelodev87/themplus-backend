@@ -102,7 +102,7 @@ class RoleController
 
                 $roles = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
 
-                return response()->json(['roles' => $roles ,'message' => 'Cargo excluído com sucesso'], 200);
+                return response()->json(['roles' => $roles, 'message' => 'Cargo excluído com sucesso'], 200);
             }
 
             throw new \Exception('Falha ao deletar cargo');

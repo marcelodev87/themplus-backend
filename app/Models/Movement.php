@@ -34,6 +34,7 @@ class Movement extends Model
     {
         return $this->belongsTo(Account::class);
     }
+
     public function member()
     {
         return $this->belongsTo(Member::class);

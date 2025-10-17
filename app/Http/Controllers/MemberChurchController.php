@@ -43,6 +43,7 @@ class MemberChurchController
     {
         try {
             DB::beginTransaction();
+
             $member = $this->service->create($request);
 
             if ($member) {
@@ -67,6 +68,7 @@ class MemberChurchController
     {
         try {
             DB::beginTransaction();
+
             $member = $this->service->update($request);
 
             if ($member) {

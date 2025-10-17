@@ -35,7 +35,7 @@ class MovementRepository
 
     public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date)
     {
-        $query = $this->model->with(['account', 'category','member'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
         [$month, $year] = explode('-', $date);
@@ -120,7 +120,7 @@ class MovementRepository
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $accountId = ($request->query('account') === 'null') ? null : $request->query('account');
 
-        $query = $this->model->with(['account', 'category','member'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $request->user()->view_enterprise_id);
 
         if ($out !== null && $out) {
@@ -400,7 +400,7 @@ class MovementRepository
 
     public function findByIdWithRelations($id)
     {
-        return $this->model->with(['account', 'category','member'])->find($id);
+        return $this->model->with(['account', 'category', 'member'])->find($id);
     }
 
     public function create(array $data)

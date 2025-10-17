@@ -63,7 +63,7 @@ class MemberService
         $data['enterprise_id'] = $request->user()->enterprise_id;
 
         $member = $this->repository->create($data);
-         if ($request->has('roles') && is_array($request->input('roles'))) {
+        if ($request->has('roles') && is_array($request->input('roles'))) {
             $member->roles()->sync($request->input('roles'));
         }
 
@@ -113,7 +113,7 @@ class MemberService
 
         $member = $this->repository->update($request->input('id'), $data);
 
-        if($request->has('roles')) {
+        if ($request->has('roles')) {
             $member->roles()->sync($request->input('roles'));
         }
 
