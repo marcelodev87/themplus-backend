@@ -58,6 +58,8 @@ class MemberRepository
         if ($member) {
             DB::table('networks')->where('member_id', $id)->update(['member_id' => null]);
             DB::table('ministries')->where('member_id', $id)->update(['member_id' => null]);
+            DB::table('movements')->where('member_id', $id)->update(['member_id' => null]);
+            DB::table('schedulings')->where('member_id', $id)->update(['member_id' => null]);
             DB::table('cells')->where('host_id', $id)->update(['host_id' => null]);
             DB::table('cells')->where('leader_id', $id)->update(['leader_id' => null]);
             DB::table('cell_members')->where('member_id', $id)->delete();

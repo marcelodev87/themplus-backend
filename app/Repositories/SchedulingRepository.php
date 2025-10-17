@@ -125,7 +125,7 @@ class SchedulingRepository
 
     public function getAllByEnterpriseWithRelations($enterpriseId)
     {
-        return $this->model->with(['account', 'category'])
+        return $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId)
             ->get();
     }
@@ -136,7 +136,7 @@ class SchedulingRepository
         $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
         $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
 
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
         if ($out !== null && $out) {
@@ -163,7 +163,7 @@ class SchedulingRepository
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $accountId = ($request->query('account') === 'null') ? null : $request->query('account');
 
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $request->user()->view_enterprise_id);
 
         if ($out !== null && $out) {
@@ -203,7 +203,7 @@ class SchedulingRepository
 
     public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date)
     {
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
         [$month, $year] = explode('-', $date);
@@ -234,7 +234,7 @@ class SchedulingRepository
 
     public function findByIdWithRelations($id)
     {
-        return $this->model->with(['account', 'category'])->find($id);
+        return $this->model->with(['account', 'category', 'member'])->find($id);
     }
 
     public function create(array $data)
@@ -254,7 +254,7 @@ class SchedulingRepository
 
     public function export($out, $entry, $expired, $date, $categoryId, $enterpriseId)
     {
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
         if ($out) {

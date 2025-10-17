@@ -35,7 +35,7 @@ class MovementRepository
 
     public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date)
     {
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category','member'])
             ->where('enterprise_id', $enterpriseId);
 
         [$month, $year] = explode('-', $date);
@@ -71,7 +71,7 @@ class MovementRepository
 
     public function getAllByEnterpriseWithRelationsByDateWithObservation($enterpriseId, $date)
     {
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
         [$month, $year] = explode('-', $date);
@@ -89,7 +89,7 @@ class MovementRepository
 
     public function getAllByEnterpriseWithRelations($enterpriseId)
     {
-        return $this->model->with(['account', 'category'])
+        return $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId)
             ->get();
     }
@@ -99,7 +99,7 @@ class MovementRepository
         $entry = $request->has('entry') ? filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN) : null;
         $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
 
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $request->user()->enterprise_id);
 
         if (! is_null($out) && $out) {
@@ -120,7 +120,7 @@ class MovementRepository
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $accountId = ($request->query('account') === 'null') ? null : $request->query('account');
 
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category','member'])
             ->where('enterprise_id', $request->user()->view_enterprise_id);
 
         if ($out !== null && $out) {
@@ -155,7 +155,7 @@ class MovementRepository
 
     public function export($out, $entry, $date, $categoryId, $enterpriseId)
     {
-        $query = $this->model->with(['account', 'category'])
+        $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
         if ($out) {
@@ -293,7 +293,6 @@ class MovementRepository
 
     public function getMovementsDashboard($enterpriseId, $date, $mode)
     {
-        \Log::info($date);
         $query = $this->model
             ->where('movements.enterprise_id', $enterpriseId)
             ->join('categories', 'movements.category_id', '=', 'categories.id')
@@ -401,7 +400,7 @@ class MovementRepository
 
     public function findByIdWithRelations($id)
     {
-        return $this->model->with(['account', 'category'])->find($id);
+        return $this->model->with(['account', 'category','member'])->find($id);
     }
 
     public function create(array $data)
