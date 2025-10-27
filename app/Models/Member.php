@@ -52,4 +52,9 @@ class Member extends Model
     {
         return $this->belongsToMany(Role::class, 'member_role', 'member_id', 'role_id');
     }
+
+    public function ministries()
+    {
+        return $this->belongsToMany(Ministry::class, 'member_ministry', 'member_id', 'ministry_id');
+    }
 }

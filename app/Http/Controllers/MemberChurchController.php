@@ -28,7 +28,7 @@ class MemberChurchController
     public function index(Request $request)
     {
         try {
-            $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles']);
+            $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles', 'ministries']);
             $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
             return response()->json(['members' => $members, 'filled_data' => $filledData], 200);
@@ -49,7 +49,7 @@ class MemberChurchController
             if ($member) {
                 DB::commit();
 
-                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles']);
+                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles', 'ministries']);
 
                 return response()->json(['members' => $members, 'message' => 'Membro cadastrado com sucesso'], 201);
             }
@@ -74,7 +74,7 @@ class MemberChurchController
             if ($member) {
                 DB::commit();
 
-                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles']);
+                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles', 'ministries']);
 
                 return response()->json(['members' => $members, 'message' => 'Membro atualizado com sucesso'], 200);
             }
@@ -99,7 +99,7 @@ class MemberChurchController
 
             if ($member) {
                 DB::commit();
-                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles']);
+                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles', 'ministries']);
 
                 return response()->json(['members' => $members, 'message' => 'Membro excluído com sucesso'], 200);
             }

@@ -66,6 +66,9 @@ class MemberService
         if ($request->has('roles') && is_array($request->input('roles'))) {
             $member->roles()->sync($request->input('roles'));
         }
+        if ($request->has('ministries') && is_array($request->input('ministries'))) {
+            $member->ministries()->sync($request->input('ministries'));
+        }
 
         return $member;
     }
@@ -115,6 +118,9 @@ class MemberService
 
         if ($request->has('roles')) {
             $member->roles()->sync($request->input('roles'));
+        }
+        if ($request->has('ministries')) {
+            $member->ministries()->sync($request->input('ministries'));
         }
 
         return $member;
