@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Enterprise;
 use App\Models\Network;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +22,12 @@ class NetworkRepository
 
     public function getAllByEnterprise($enterpriseId, $relations = null)
     {
+        $enterprise = Enterprise::find($enterpriseId);
+
+        if ($enterprise && $enterprise->created_by !== null) {
+            $enterpriseId = $enterprise->created_by;
+        }
+
         $query = $this->model->where('enterprise_id', $enterpriseId);
 
         if ($relations) {
