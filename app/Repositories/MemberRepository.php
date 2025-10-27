@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Enterprise;
 use App\Models\Member;
 use Illuminate\Support\Facades\DB;
 
@@ -21,7 +22,11 @@ class MemberRepository
 
     public function getAllByEnterprise($enterpriseId, ?array $relations = null)
     {
-        $query = $this->model->where('enterprise_id', $enterpriseId);
+        $enterpriseIds = Enterprise::where('id', $enterpriseId)
+            ->orWhere('created_by', $enterpriseId)
+            ->pluck('id');
+
+        $query = $this->model->whereIn('enterprise_id', $enterpriseIds);
 
         if (! empty($relations)) {
             $query->with($relations);
