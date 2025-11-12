@@ -94,6 +94,62 @@ class MovementController
         }
     }
 
+    public function indexMovementMember(Request $request)
+    {
+        try {
+            $enterpriseId = $request->user()->view_enterprise_id;
+
+            $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId);
+
+            if ($request->filled('member')) {
+                $movements = $movements->where('member_id', $request->member);
+            }
+
+            if ($request->filled('category')) {
+                $movements = $movements->where('category_id', $request->category);
+            }
+            if ($request->filled('account')) {
+                $movements = $movements->where('account_id', $request->account);
+            }
+
+            if ($request->filled('type')) {
+                $movements = $movements->where('type', $request->type === 'entrada' ? 'entrada' : 'saída');
+            }
+
+            if ($request->filled('period')) {
+                $monthYear = $request->period;
+                $parts = explode('-', $monthYear);
+
+                if (count($parts) === 2) {
+                    [$month, $year] = $parts;
+
+                    $movements = $movements->filter(function ($item) use ($month, $year) {
+                        $itemMonth = date('m', strtotime($item->date_movement));
+                        $itemYear = date('Y', strtotime($item->date_movement));
+
+                        return $itemMonth == $month && $itemYear == $year;
+                    });
+                }
+            }
+
+            $movements = $movements->sortByDesc('date_movement')->values();
+            $months_years = $this->repository->getMonthYears($enterpriseId);
+            $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
+            $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
+
+            return response()->json([
+                'movements' => $movements->values()->toArray(),
+                'months_years' => $months_years,
+                'categories' => CategorySelect::collection($categories),
+                'accounts' => AccountSelect::collection($accounts),
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar todas as movimentações do membro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function filterMovements(Request $request, $date)
     {
         try {

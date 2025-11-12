@@ -140,6 +140,7 @@ Route::prefix('cell')->middleware(['auth:sanctum', 'token.expiration'])->group(f
 });
 
 Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/member', [MovementController::class, 'indexMovementMember']);
     Route::get('/{date}', [MovementController::class, 'index']);
     Route::get('/filter/{date}', [MovementController::class, 'filterMovements']);
     Route::get('/informations/{type}', [MovementController::class, 'getFormInformations']);

@@ -33,19 +33,27 @@ class MovementRepository
         return $exists;
     }
 
-    public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date)
+    public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date = null)
     {
         $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
-        [$month, $year] = explode('-', $date);
+        if (! empty($date)) {
+            $parts = explode('-', $date);
 
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
-            return collect();
+            if (count($parts) !== 2) {
+                return collect();
+            }
+
+            [$month, $year] = $parts;
+
+            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+                return collect();
+            }
+
+            $query->whereMonth('date_movement', $month)
+                ->whereYear('date_movement', $year);
         }
-
-        $query->whereMonth('date_movement', $month)
-            ->whereYear('date_movement', $year);
 
         return $query->get();
     }
