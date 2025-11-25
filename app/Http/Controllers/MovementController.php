@@ -134,12 +134,14 @@ class MovementController
 
             $movements = $movements->sortByDesc('date_movement')->values();
             $months_years = $this->repository->getMonthYears($enterpriseId);
+            $total = $this->repository->getTotalMovementByMember($request->member);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
             $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
             return response()->json([
                 'movements' => $movements->values()->toArray(),
                 'months_years' => $months_years,
+                'total' => $total,
                 'categories' => CategorySelect::collection($categories),
                 'accounts' => AccountSelect::collection($accounts),
             ], 200);

@@ -66,6 +66,19 @@ class MovementRepository
             ->get();
     }
 
+    public function getTotalMovementByMember($memberID)
+    {
+        $items = $this->model
+            ->where('member_id', $memberID)
+            ->get();
+
+        $total = $items->sum(function ($item) {
+            return floatval(str_replace(',', '.', $item->value));
+        });
+
+        return $total;
+    }
+
     public function getDashboardYearsMovement($enterpriseId)
     {
         return $this->model
