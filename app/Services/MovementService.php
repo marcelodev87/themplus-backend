@@ -85,7 +85,7 @@ class MovementService
                 'description' => $request->input('description'),
                 'receipt' => $fileUrl,
                 'category_id' => $request->input('category'),
-                'member_id' => $request->input('member'),
+                'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
                 'account_id' => $request->input('account'),
                 'enterprise_id' => $request->user()->enterprise_id,
             ];
@@ -214,7 +214,7 @@ class MovementService
             'description' => $request->input('description'),
             'category_id' => $request->input('category'),
             'account_id' => $request->input('account'),
-            'member_id' => $request->input('member'),
+            'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
             'enterprise_id' => $request->user()->enterprise_id,
             'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d'),
         ];
@@ -333,6 +333,7 @@ class MovementService
             'receipt' => $scheduling['receipt'],
             'category_id' => $scheduling['category_id'],
             'account_id' => $scheduling['account_id'],
+            'member_id' => $scheduling['type'] !== 'entrada' ? null : $scheduling['member_id'],
             'enterprise_id' => $scheduling['enterprise_id'],
         ];
 

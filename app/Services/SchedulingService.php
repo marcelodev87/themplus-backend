@@ -74,7 +74,7 @@ class SchedulingService
                 'receipt' => $fileUrl,
                 'category_id' => $request->input('category'),
                 'account_id' => $request->input('account'),
-                'member_id' => $request->input('member'),
+                'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
                 'enterprise_id' => $request->user()->enterprise_id,
             ];
 
@@ -102,7 +102,7 @@ class SchedulingService
             'description' => $request->input('description'),
             'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d'),
             'category_id' => $request->input('category'),
-            'member_id' => $request->input('member'),
+            'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
             'account_id' => $request->input('account'),
             'enterprise_id' => $request->user()->enterprise_id,
         ];
