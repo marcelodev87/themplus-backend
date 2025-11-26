@@ -39,6 +39,41 @@ class MemberChurchController
         }
     }
 
+    public function active(Request $request)
+    {
+        try {
+            $activeValue = $request->input('active');
+
+            if (! in_array($activeValue, [1, 0], true)) {
+                return response()->json([
+                    'message' => 'O valor de ativação deve ser estritamente o número 1 (ativo) ou 0 (inativo).',
+                ], 422);
+            }
+
+            DB::beginTransaction();
+
+            $member = $this->repository->update($request->input('userId'), ['active' => $activeValue]);
+
+            if ($member) {
+                DB::commit();
+
+                $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles', 'ministries']);
+
+                $message = $activeValue == 0 ? 'Membro inativado com sucesso' : 'Membro ativado com sucesso';
+
+                return response()->json(['members' => $members, 'message' => $message], 200);
+            }
+
+            throw new \Exception('Falha ao atualizar dados do membro');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao atualizar dados do membro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function store(Request $request)
     {
         try {

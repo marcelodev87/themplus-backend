@@ -116,6 +116,7 @@ Route::prefix('member-church')->middleware(['auth:sanctum', 'token.expiration'])
     Route::get('/', [MemberChurchController::class, 'index']);
     Route::post('/', [MemberChurchController::class, 'store']);
     Route::put('/', [MemberChurchController::class, 'update']);
+    Route::put('/active', [MemberChurchController::class, 'active']);
     Route::delete('/{id}', [MemberChurchController::class, 'destroy']);
 });
 
