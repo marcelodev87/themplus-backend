@@ -69,6 +69,18 @@ class MemberService
         if ($request->has('ministries') && is_array($request->input('ministries'))) {
             $member->ministries()->sync($request->input('ministries'));
         }
+        if ($request->has('family') && is_array($request->input('family'))) {
+            $familyData = $request->input('family');
+            $syncData = [];
+
+            foreach ($familyData as $relation) {
+                $syncData[$relation['memberID']] = [
+                    'relationship_id' => $relation['relationshipID'],
+                ];
+            }
+
+            $member->family()->sync($syncData);
+        }
 
         return $member;
     }
@@ -121,6 +133,18 @@ class MemberService
         }
         if ($request->has('ministries')) {
             $member->ministries()->sync($request->input('ministries'));
+        }
+        if ($request->has('family') && is_array($request->input('family'))) {
+            $familyData = $request->input('family');
+            $syncData = [];
+
+            foreach ($familyData as $relation) {
+                $syncData[$relation['memberID']] = [
+                    'relationship_id' => $relation['relationshipID'],
+                ];
+            }
+
+            $member->family()->sync($syncData);
         }
 
         return $member;

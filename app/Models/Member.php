@@ -57,4 +57,14 @@ class Member extends Model
     {
         return $this->belongsToMany(Ministry::class, 'member_ministry', 'member_id', 'ministry_id');
     }
+
+    public function family()
+    {
+        return $this->belongsToMany(
+            Member::class,
+            'member_relationship',
+            'member_id',
+            'related_member_id'
+        )->withPivot('relationship_id');
+    }
 }

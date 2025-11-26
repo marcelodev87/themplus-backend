@@ -140,7 +140,7 @@ class MemberRule
             'roles.*' => 'exists:roles,id',
             'family' => 'nullable|array',
             'family.*.memberID' => 'required_with:family|exists:members,id',
-            'family.*.statusFamily' => 'required_with:family|string',
+            'family.*.relationshipID' => 'required_with:family|exists:relationships,id',
         ];
 
         $messages = [
@@ -189,8 +189,7 @@ class MemberRule
             'family.array' => 'Os familiares devem ser um array.',
             'family.*.memberID.required_with' => 'Cada familiar deve ter um ID de membro.',
             'family.*.memberID.exists' => 'O membro familiar selecionado é inválido.',
-            'family.*.statusFamily.required_with' => 'Cada familiar deve ter um status familiar.',
-            'family.*.statusFamily.string' => 'O status familiar deve ser um texto.',
+            'family.*.relationshipID.exists' => 'A relação é inválida.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
