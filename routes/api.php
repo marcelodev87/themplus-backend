@@ -20,6 +20,7 @@ use App\Http\Controllers\MovementController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchedulingController;
@@ -89,6 +90,13 @@ Route::prefix('department')->middleware(['auth:sanctum', 'token.expiration'])->g
     Route::post('/', [DepartmentController::class, 'store'])->middleware('admin');
     Route::put('/', [DepartmentController::class, 'update'])->middleware('admin');
     Route::delete('/{id}', [DepartmentController::class, 'destroy'])->middleware('admin');
+});
+
+Route::prefix('relationship')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/', [RelationshipController::class, 'index']);
+    Route::post('/', [RelationshipController::class, 'store'])->middleware('admin');
+    Route::put('/', [RelationshipController::class, 'update'])->middleware('admin');
+    Route::delete('/{id}', [RelationshipController::class, 'destroy'])->middleware('admin');
 });
 
 Route::prefix('alert')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
