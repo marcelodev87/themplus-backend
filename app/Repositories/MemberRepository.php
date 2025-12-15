@@ -77,6 +77,7 @@ class MemberRepository
             DB::table('cells')->where('leader_id', $id)->update(['leader_id' => null]);
             DB::table('cell_members')->where('member_id', $id)->delete();
             DB::table('ministry_members')->where('member_id', $id)->delete();
+            DB::table('member_relationship')->where('related_member_id', $id)->delete();
 
             return $member->delete();
         }
