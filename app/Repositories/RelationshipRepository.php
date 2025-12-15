@@ -20,7 +20,10 @@ class RelationshipRepository
 
     public function getAllByEnterprise($enterpriseId)
     {
-        return $this->model->where('enterprise_id', $enterpriseId)->get();
+        return $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->orderBy('name')
+            ->get();
     }
 
     public function findById($id)
