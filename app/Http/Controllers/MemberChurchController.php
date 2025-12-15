@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\MemberHelper;
 use App\Repositories\MemberRepository;
 use App\Rules\MemberRule;
 use App\Services\MemberService;
@@ -28,7 +29,11 @@ class MemberChurchController
     public function index(Request $request)
     {
         try {
-            $members = $this->repository->getAllByEnterprise($request->user()->enterprise_id, ['roles', 'ministries', 'family']);
+            $members = $this->repository->getAllByEnterprise(
+                $request->user()->enterprise_id,
+                ['roles', 'ministries', 'family'],
+                $request->has('active') ? (int) $request->query('active') : null
+            );
             $filledData = EnterpriseHelper::filledData($request->user()->enterprise_id);
 
             return response()->json(['members' => $members, 'filled_data' => $filledData], 200);
@@ -51,6 +56,10 @@ class MemberChurchController
             }
 
             DB::beginTransaction();
+
+            if($activeValue === 0){
+                MemberHelper::hasLink($request->user()->enterprise_id, $request->input('userId'));
+            }
 
             $member = $this->repository->update($request->input('userId'), ['active' => $activeValue]);
 

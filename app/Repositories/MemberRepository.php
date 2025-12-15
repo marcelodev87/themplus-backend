@@ -20,8 +20,11 @@ class MemberRepository
         return $this->model->all();
     }
 
-    public function getAllByEnterprise($enterpriseId, ?array $relations = null)
-    {
+    public function getAllByEnterprise(
+        string $enterpriseId,
+        ?array $relations = null,
+        ?int $active = null
+    ) {
         $enterpriseIds = Enterprise::where('id', $enterpriseId)
             ->orWhere('created_by', $enterpriseId)
             ->pluck('id');
@@ -32,8 +35,13 @@ class MemberRepository
             $query->with($relations);
         }
 
+        if ($active !== null) {
+            $query->where('active', $active);
+        }
+
         return $query->get();
     }
+
 
     public function findById($id)
     {
