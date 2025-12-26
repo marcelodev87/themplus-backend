@@ -12,7 +12,9 @@ class PreRegistrationRelationship extends Model
     protected $table = 'pre_registration_relationship';
 
     public $incrementing = false;
+
     protected $primaryKey = null;
+
     protected $keyType = 'string';
 
     protected $fillable = [

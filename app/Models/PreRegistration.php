@@ -19,6 +19,20 @@ class PreRegistration extends Model
         'phone',
         'role',
         'description',
+        'profession',
+        'date_birth',
+        'naturalness',
+        'marital_status',
+        'education',
+        'cpf',
+        'cep',
+        'uf',
+        'address',
+        'address_number',
+        'neighborhood',
+        'city',
+        'complement',
+        'date_baptismo',
     ];
 
     public function enterprise()

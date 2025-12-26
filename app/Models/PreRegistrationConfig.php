@@ -11,7 +11,9 @@ class PreRegistrationConfig extends Model
     use HasUuid, Notifiable;
 
     protected $table = 'pre_registration_config';
+
     protected $keyType = 'string';
+
     public $incrementing = false;
 
     protected $fillable = [

@@ -37,19 +37,19 @@ class PreRegistrationConfigController
             if (! $config) {
                 return response()->json([
                     'active' => false,
-                    'message' => 'Configuração não encontrada'
+                    'message' => 'Configuração não encontrada',
                 ], 404);
             }
 
             return response()->json([
-                'active' => (bool) $config->active
+                'active' => (bool) $config->active,
             ], 200);
 
         } catch (\Throwable $e) {
-            Log::error('Erro ao validar formulário: ' . $e->getMessage());
+            Log::error('Erro ao validar formulário: '.$e->getMessage());
 
             return response()->json([
-                'message' => 'Erro interno ao validar formulário'
+                'message' => 'Erro interno ao validar formulário',
             ], 500);
         }
     }

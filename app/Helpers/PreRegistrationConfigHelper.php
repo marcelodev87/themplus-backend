@@ -18,7 +18,7 @@ class PreRegistrationConfigHelper
     {
         $config = PreRegistrationConfig::where('enterprise_id', $enterpriseId)->first();
 
-        if($config->active !== 1){
+        if ($config->active !== 1) {
             throw new \Exception('O formulário para ingresso como membro está desativado');
         }
     }
