@@ -16,7 +16,7 @@ class PreRegistrationRepository
 
     public function getAllByEnterprise(string $enterpriseId, array|string|null $relations = null)
     {
-        $query = $this->model->where('enterprise_id', $enterpriseId);
+        $query = $this->model->where('enterprise_id', $enterpriseId)->orderByDesc('created_at');;
 
         if ($relations) {
             $query->with($relations);

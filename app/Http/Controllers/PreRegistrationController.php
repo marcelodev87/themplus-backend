@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PreRegistrationConfigHelper;
 use App\Repositories\PreRegistrationRepository;
 use App\Repositories\PreRegistrationRelationshipRepository;
 use Illuminate\Http\Request;
@@ -41,6 +42,8 @@ class PreRegistrationController
             DB::beginTransaction();
 
             $this->rule->create($request);
+
+            PreRegistrationConfigHelper::isFormActive($request->input('enterprise_id'));
 
             $member = $this->repository->create([
                 'enterprise_id' => $request->input('enterprise_id'),

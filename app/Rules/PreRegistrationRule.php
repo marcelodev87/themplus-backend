@@ -10,6 +10,7 @@ class PreRegistrationRule
     public function create($request)
     {
          $rules = [
+            'enterprise_id' => 'required|exists:enterprises,id',
             'name'  => 'required|string|min:3|max:255',
             'email' => 'required|email|max:255',
             'role'  => 'nullable|string|min:2|max:100',
@@ -21,6 +22,8 @@ class PreRegistrationRule
         ];
 
         $messages = [
+            'enterprise_id.required' => 'O ID da empresa é obrigatório',
+            'enterprise_id.exists'   => 'A empresa informada não existe',
             'name.required'  => 'O nome é obrigatório',
             'name.string'   => 'O nome deve ser um texto válido',
             'name.min'      => 'O nome deve ter no mínimo 3 caracteres',
