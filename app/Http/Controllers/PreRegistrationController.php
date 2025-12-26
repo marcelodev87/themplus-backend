@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Repositories\PreRegistrationRepository;
+use App\Repositories\PreRegistrationRelationshipRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Rules\PreRegistrationRule;
+
+class PreRegistrationController
+{
+    private $repository;
+    private $relationshipRepository;
+    private $rule;
+
+    public function __construct(PreRegistrationRepository $repository, PreRegistrationRule $rule, PreRegistrationRelationshipRepository $relationshipRepository)
+    {
+        $this->repository = $repository;
+        $this->rule = $rule;
+        $this->relationshipRepository = $relationshipRepository;
+    }
+
+    public function index(Request $request)
+    {
+        try {
+            $registrations = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+
+            return response()->json(['pre_registration' => $registrations], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar pré-registros de membros: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->rule->create($request);
+
+            $member = $this->repository->create([
+                'enterprise_id' => $request->input('enterprise_id'),
+                'name'          => $request->input('name'),
+                'email'         => $request->input('email'),
+                'role'          => $request->input('role'),
+                'phone'         => $request->input('phone'),
+                'description'   => $request->input('description'),
+            ]);
+
+            if ($member && $request->filled('relationship')) {
+                foreach ($request->input('relationship') as $relationship) {
+                    $this->relationshipRepository->create([
+                        'pre_registration_id' => $member->id,
+                        'member'           => $relationship['member'],
+                        'kinship'             => $relationship['kinship'],
+                    ]);
+                }
+            }
+
+            if ($member) {
+                DB::commit();
+
+                return response()->json(['message' => 'Solicitação enviada com sucesso'], 200);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao solicitar : '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy(Request $request, string $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $registration = $this->repository->delete($id);
+
+            if ($registration) {
+                DB::commit();
+
+                $registrations = $this->repository->getAllByEnterprise($request->user()->enterprise_id);
+
+                return response()->json(['pre_registration' => $registrations, 'message' => 'Pré-registro excluído com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar pré-registro');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar pré-registro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+}

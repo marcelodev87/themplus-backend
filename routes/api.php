@@ -19,6 +19,8 @@ use App\Http\Controllers\MovementAnalyzeController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PreRegistrationConfigController;
+use App\Http\Controllers\PreRegistrationController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\ReportController;
@@ -33,6 +35,8 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/reset', [UserController::class, 'reset']);
 Route::post('/verify', [UserController::class, 'verify']);
 Route::post('/newPassword', [UserController::class, 'resetPassword']);
+Route::get('/active-pre-registration/{id}', [PreRegistrationConfigController::class, 'check']);
+Route::post('/create-pre-registration', [PreRegistrationController::class, 'store']);
 
 Route::prefix('external')->group(function () {
     Route::post('/check-phone', [MovementAnalyzeController::class, 'checkPhone']);
@@ -121,6 +125,17 @@ Route::prefix('network')->middleware(['auth:sanctum', 'token.expiration'])->grou
 });
 
 Route::prefix('member-church')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+
+    Route::prefix('pre-registration')->group(function () {
+        Route::prefix('config')->group(function () {
+            Route::get('', [PreRegistrationConfigController::class, 'index']);
+            Route::put('', [PreRegistrationConfigController::class, 'update']);
+        });
+
+        Route::get('', [PreRegistrationController::class, 'index']);
+        Route::delete('{id}', [PreRegistrationController::class, 'destroy']);
+    });
+
     Route::get('/', [MemberChurchController::class, 'index']);
     Route::post('/', [MemberChurchController::class, 'store']);
     Route::put('/', [MemberChurchController::class, 'update']);

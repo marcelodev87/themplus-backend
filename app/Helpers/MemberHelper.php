@@ -29,7 +29,7 @@ class MemberHelper
         }
     }
 
-    public static function hasLink( $enterpriseID,  $memberID): void
+    public static function hasLink($enterpriseID, $memberID): void
     {
         $memberExists = DB::table('members')
             ->where('enterprise_id', $enterpriseID)

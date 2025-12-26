@@ -417,6 +417,16 @@ class EnterpriseRepository
             DB::table('members')->where('enterprise_id', $id)->delete();
             // ---------------------
 
+            $registrations = DB::table('pre_registrations')->where('enterprise_id', $id)->get();
+            foreach ($registrations as $registration) {
+                DB::table('pre_registration_relationship')->where('pre_registration_id', $registration->id)->delete();
+            }
+            DB::table('pre_registrations')->where('enterprise_id', $id)->delete();
+            // ---------------------
+
+            DB::table('pre_registration_config')->where('enterprise_id', $id)->delete();
+            // ---------------------
+
             return $enterprise->delete();
         }
 

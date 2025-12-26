@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Helpers\CategoryHelper;
+use App\Helpers\PreRegistrationConfigHelper;
 use App\Helpers\RelationshipHelper;
 use App\Helpers\UserHelper;
 use App\Jobs\SendResetPasswordEmail;
@@ -149,6 +150,7 @@ class UserService
             $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id]);
             CategoryHelper::createDefault($enterprise->id);
             RelationshipHelper::createDefault($enterprise->id);
+            PreRegistrationConfigHelper::createDefault($enterprise->id);
         }
 
         $data['enterprise_id'] = $enterprise->id;

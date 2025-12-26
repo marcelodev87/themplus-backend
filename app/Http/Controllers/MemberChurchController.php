@@ -57,7 +57,7 @@ class MemberChurchController
 
             DB::beginTransaction();
 
-            if($activeValue === 0){
+            if ($activeValue === 0) {
                 MemberHelper::hasLink($request->user()->enterprise_id, $request->input('userId'));
             }
 

@@ -42,7 +42,6 @@ class MemberRepository
         return $query->get();
     }
 
-
     public function findById($id)
     {
         return $this->model->find($id);
