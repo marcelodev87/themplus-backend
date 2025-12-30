@@ -11,6 +11,7 @@ services:
         ports:
             - "${APP_PORT:-81}:80"
             - "${VITE_PORT:-5174}:${VITE_PORT:-5174}"
+            - '9001:9001'
         environment:
             WWWUSER: "${WWWUSER}"
             LARAVEL_SAIL: 1
@@ -24,6 +25,21 @@ services:
             - themplus-network
         depends_on:
             - mysql_themplus_back
+    ngrok:
+        image: ngrok/ngrok:latest
+        container_name: themplus_ngrok
+        restart: unless-stopped
+        ports:
+            - "4040:4040"
+        environment:
+            NGROK_AUTHTOKEN: "${NGROK_AUTHTOKEN}"
+        command: >
+            http laravel.test:80
+            --domain=${NGROK_DOMAIN}
+        networks:
+            - themplus-network
+        depends_on:
+            - laravel.test
     mysql_themplus_back:
         image: "mysql/mysql-server:8.0"
         ports:

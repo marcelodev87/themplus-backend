@@ -25,7 +25,9 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AsaasWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login']);
@@ -40,6 +42,10 @@ Route::prefix('external')->group(function () {
     Route::prefix('movement-analyze')->group(function () {
         Route::post('/', [MovementAnalyzeController::class, 'store']);
     });
+});
+
+Route::prefix('webhook-asaas')->middleware(['webhook.token'])->group(function (){
+    Route::post('/', [AsaasWebhookController::class, 'webhook']);
 });
 
 Route::prefix('user')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
@@ -269,4 +275,13 @@ Route::prefix('office')->middleware(['auth:sanctum', 'token.expiration'])->group
 Route::prefix('resource')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
     Route::get('/subscription', [EnterpriseController::class, 'mySubscription']);
     Route::get('/coupons', [EnterpriseController::class, 'myCoupons']);
+});
+
+Route::prefix('subscription')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+    Route::get('/', [SubscriptionController::class, 'index']);
+    Route::prefix('payment')->group(function () {
+        Route::post('/credit-card', [SubscriptionController::class, 'paymentCreditCard']);
+        Route::post('/pix', [SubscriptionController::class, 'paymentPix']);
+        Route::post('/free', [SubscriptionController::class, 'updateFreeSubscription']);
+    });
 });

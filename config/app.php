@@ -32,4 +32,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'asaas_webhook_token' => env('ASAAS_WEBHOOK_TOKEN'),
+    'asaas_api_key' => env('ASAAS_API_KEY'),
+    'asaas_url' => env('ASAAS_URL'),
+    'asaas_adress_key' => env('ASAAS_ADDRESS_KEY'),
 ];

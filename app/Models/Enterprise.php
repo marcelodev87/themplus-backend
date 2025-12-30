@@ -30,6 +30,7 @@ class Enterprise extends Model
         'position',
         'counter_enterprise_id',
         'code_financial',
+        'expired_date'
     ];
 
     public function users()

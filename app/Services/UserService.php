@@ -13,6 +13,7 @@ use App\Repositories\NotificationRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\PaymentInfoRepository;
 use App\Rules\UserRule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -33,6 +34,8 @@ class UserService
 
     protected $notificationRepository;
 
+    protected $paymentInfoRepository;
+
     public function __construct(
         UserRule $rule,
         UserRepository $repository,
@@ -40,7 +43,8 @@ class UserService
         SubscriptionRepository $subscriptionRepository,
         AccountRepository $accountRepository,
         SettingsCounterRepository $settingsCounterRepository,
-        NotificationRepository $notificationRepository
+        NotificationRepository $notificationRepository,
+        PaymentInfoRepository $paymentInfoRepository
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -49,6 +53,7 @@ class UserService
         $this->accountRepository = $accountRepository;
         $this->settingsCounterRepository = $settingsCounterRepository;
         $this->notificationRepository = $notificationRepository;
+        $this->paymentInfoRepository = $paymentInfoRepository;
     }
 
     public function login($request)
@@ -80,7 +85,14 @@ class UserService
 
         UserHelper::clearTokenReset($user);
 
+        $this->resetPaymentInfo($user->id);
+
         return $user;
+    }
+
+    private function resetPaymentInfo($userID)
+    {
+        $this->paymentInfoRepository->deleteByUserId($userID);
     }
 
     public function reset($request)
