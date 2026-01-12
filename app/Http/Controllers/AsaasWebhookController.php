@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Services\AsaasWebhookService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AsaasWebhookController
 {
     private $service;
 
-    public function __construct(AsaasWebhookService $service) {
+    public function __construct(AsaasWebhookService $service)
+    {
         $this->service = $service;
     }
 

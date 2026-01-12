@@ -2,23 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\NotificationsHelper;
 use App\Repositories\SubscriptionRepository;
-use App\Services\SubscriptionService;
 use App\Services\CreditCardService;
 use App\Services\PixService;
-use App\Helpers\NotificationsHelper;
+use App\Services\SubscriptionService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SubscriptionController
 {
     protected $repository;
+
     protected $creditCardService;
+
     protected $pixService;
+
     protected $service;
 
-     public function __construct(SubscriptionRepository $repository, CreditCardService $creditCardService, PixService $pixService, SubscriptionService $service)
+    public function __construct(SubscriptionRepository $repository, CreditCardService $creditCardService, PixService $pixService, SubscriptionService $service)
     {
         $this->repository = $repository;
         $this->creditCardService = $creditCardService;
@@ -45,8 +48,9 @@ class SubscriptionController
         try {
             $result = $this->creditCardService->payment($request);
 
-            if($result){
+            if ($result) {
                 $notifications = NotificationsHelper::getNoRead($request->user()->id);
+
                 return response()->json(['result' => $result, 'notifications' => $notifications], 200);
             }
         } catch (\Exception $e) {
@@ -56,13 +60,14 @@ class SubscriptionController
         }
     }
 
-        public function paymentPix(Request $request)
+    public function paymentPix(Request $request)
     {
         try {
             $pix = $this->pixService->payment($request);
 
-            if($pix){
+            if ($pix) {
                 $notifications = NotificationsHelper::getNoRead($request->user()->id);
+
                 return response()->json(['pix' => $pix, 'notifications' => $notifications], 200);
             }
         } catch (\Exception $e) {
@@ -71,15 +76,17 @@ class SubscriptionController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-        public function updateFreeSubscription(Request $request)
+
+    public function updateFreeSubscription(Request $request)
     {
         try {
             DB::beginTransaction();
             $result = $this->service->updateForFreeSubscription($request);
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
 
-            if($result){
+            if ($result) {
                 DB::commit();
+
                 return response()->json(['notifications' => $notifications], 200);
             } else {
                 return response()->json(['notifications' => $notifications], 204);

@@ -11,7 +11,7 @@ class AsaasWebhookMiddleware
     {
         $token = $request->header('asaas-access-token');
 
-        if (!$token || $token !== config('app.asaas_webhook_token')) {
+        if (! $token || $token !== config('app.asaas_webhook_token')) {
             return response()->json(['message' => 'Token inválido'], 403);
         }
 

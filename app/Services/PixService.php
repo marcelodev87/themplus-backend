@@ -3,19 +3,23 @@
 namespace App\Services;
 
 use App\Http\AsaasHttpClient;
-use App\Repositories\SubscriptionRepository;
 use App\Repositories\PaymentInfoRepository;
+use App\Repositories\SubscriptionRepository;
 use App\Rules\SubscriptionRule;
 
 class PixService
 {
     protected $http;
+
     protected $subscriptionRepository;
+
     protected $paymentInfoRepository;
+
     protected $addressKey;
+
     protected $rule;
 
-    public function __construct(SubscriptionRepository $subscriptionRepository, AsaasHttpClient $http, PaymentInfoRepository $paymentInfoRepository, SubscriptionRule $rule) 
+    public function __construct(SubscriptionRepository $subscriptionRepository, AsaasHttpClient $http, PaymentInfoRepository $paymentInfoRepository, SubscriptionRule $rule)
     {
         $this->http = $http;
         $this->subscriptionRepository = $subscriptionRepository;
@@ -43,9 +47,9 @@ class PixService
     {
         $externalReference = sprintf(
             'user_%s|subscription_%s|month_%s',
-             $data['userID'],
-        $data['subscriptionID'],
-        $data['monthQuantity']
+            $data['userID'],
+            $data['subscriptionID'],
+            $data['monthQuantity']
         );
 
         $pixData = [

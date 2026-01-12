@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AlertController;
+use App\Http\Controllers\AsaasWebhookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CellController;
 use App\Http\Controllers\CellMemberController;
@@ -29,7 +30,6 @@ use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\SettingsCounterController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\AsaasWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [UserController::class, 'login']);
@@ -48,7 +48,7 @@ Route::prefix('external')->group(function () {
     });
 });
 
-Route::prefix('webhook-asaas')->middleware(['webhook.token'])->group(function (){
+Route::prefix('webhook-asaas')->middleware(['webhook.token'])->group(function () {
     Route::post('/', [AsaasWebhookController::class, 'webhook']);
 });
 

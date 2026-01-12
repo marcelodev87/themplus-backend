@@ -2,23 +2,24 @@
 
 namespace App\Services;
 
-use App\Rules\CreditCardRule;
-use App\Repositories\SubscriptionRepository;
 use App\Http\AsaasHttpClient;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use App\Repositories\SubscriptionRepository;
+use App\Rules\CreditCardRule;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class CreditCardService
 {
     protected $rule;
+
     protected $subscriptionRepository;
+
     protected $http;
 
     public function __construct(
         CreditCardRule $rule,
         SubscriptionRepository $subscriptionRepository,
-        AsaasHttpClient $http, 
+        AsaasHttpClient $http,
     ) {
         $this->rule = $rule;
         $this->subscriptionRepository = $subscriptionRepository;
@@ -78,21 +79,21 @@ class CreditCardService
     {
         $paymentData = [
             'creditCard' => [
-            'holderName' => $data['creditCard']['holderName'],
-            'number' => $data['creditCard']['number'],
-            'expiryMonth' => $data['creditCard']['expiryMonth'],
-            'expiryYear' => $data['creditCard']['expiryYear'],
-            'ccv' => $data['creditCard']['ccv'],
+                'holderName' => $data['creditCard']['holderName'],
+                'number' => $data['creditCard']['number'],
+                'expiryMonth' => $data['creditCard']['expiryMonth'],
+                'expiryYear' => $data['creditCard']['expiryYear'],
+                'ccv' => $data['creditCard']['ccv'],
             ],
             'creditCardHolderInfo' => [
-            'name' => $data['creditCardHolderInfo']['name'],
-            'email' => $data['creditCardHolderInfo']['email'],
-            'cpfCnpj' => $data['creditCardHolderInfo']['cpfCnpj'],
-            'postalCode' => $data['creditCardHolderInfo']['postalCode'],
-            'addressNumber' => $data['creditCardHolderInfo']['addressNumber'],
-            'addressComplement' => $data['creditCardHolderInfo']['addressComplement'] ?? null,
-            'phone' => $data['creditCardHolderInfo']['phone'],
-            ]
+                'name' => $data['creditCardHolderInfo']['name'],
+                'email' => $data['creditCardHolderInfo']['email'],
+                'cpfCnpj' => $data['creditCardHolderInfo']['cpfCnpj'],
+                'postalCode' => $data['creditCardHolderInfo']['postalCode'],
+                'addressNumber' => $data['creditCardHolderInfo']['addressNumber'],
+                'addressComplement' => $data['creditCardHolderInfo']['addressComplement'] ?? null,
+                'phone' => $data['creditCardHolderInfo']['phone'],
+            ],
         ];
 
         $response = $this->http->post(

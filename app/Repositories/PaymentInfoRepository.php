@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\PaymentInfo;
 
-class PaymentInfoRepository 
+class PaymentInfoRepository
 {
     protected $model;
 
@@ -54,13 +54,13 @@ class PaymentInfoRepository
     {
         $paymentInfo = $this->findByPaymentID($id);
 
-    if (! $paymentInfo) {
-        return null;
-    }
+        if (! $paymentInfo) {
+            return null;
+        }
 
-    $paymentInfo->delete();
+        $paymentInfo->delete();
 
-    return $paymentInfo;
+        return $paymentInfo;
     }
 
     public function deleteByUserId($id)

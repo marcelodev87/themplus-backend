@@ -2,16 +2,15 @@
 
 namespace App\Rules;
 
-use App\Rules\CpfCnpjRule;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Carbon\Carbon;
 
 class CreditCardRule
 {
     public function create($request)
     {
-         $currentYear = Carbon::now('America/Sao_Paulo')->year;
+        $currentYear = Carbon::now('America/Sao_Paulo')->year;
         $rules = [
             'subscriptionID' => 'required|exists:subscriptions,id',
             'creditCard' => 'required|array',
@@ -23,7 +22,7 @@ class CreditCardRule
             'creditCardHolderInfo' => 'required|array',
             'creditCardHolderInfo.name' => 'required|string|max:100',
             'creditCardHolderInfo.email' => 'required|email|max:100',
-            'creditCardHolderInfo.cpfCnpj' => ['required', 'string', 'regex:/^\d{11}$|^\d{14}$/', new CpfCnpjRule()],
+            'creditCardHolderInfo.cpfCnpj' => ['required', 'string', 'regex:/^\d{11}$|^\d{14}$/', new CpfCnpjRule],
             'creditCardHolderInfo.postalCode' => 'required|string',
             'creditCardHolderInfo.addressNumber' => 'required|string|max:16',
             'creditCardHolderInfo.addressComplement' => 'string|nullable|max:100',
@@ -31,7 +30,7 @@ class CreditCardRule
         ];
 
         $messages = [
-             'subscriptionID.required' => 'O ID da assinatura é obrigatória.',
+            'subscriptionID.required' => 'O ID da assinatura é obrigatória.',
             'subscriptionID.exists' => 'O ID da assinatura informado não existe.',
             'creditCard.required' => 'Os dados do cartão são obrigatórios.',
             'creditCard.array' => 'Os dados do cartão devem ser um array.',

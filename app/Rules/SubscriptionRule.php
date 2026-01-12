@@ -14,7 +14,7 @@ class SubscriptionRule
         ];
 
         $messages = [
-             'subscriptionID.required' => 'O ID da assinatura é obrigatória.',
+            'subscriptionID.required' => 'O ID da assinatura é obrigatória.',
             'subscriptionID.exists' => 'O ID da assinatura informado não existe.',
         ];
 

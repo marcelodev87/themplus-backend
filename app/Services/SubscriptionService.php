@@ -2,14 +2,11 @@
 
 namespace App\Services;
 
-use App\Helpers\AccountHelper;
-use App\Repositories\SubscriptionRepository;
-use App\Repositories\UserRepository;
 use App\Repositories\EnterpriseRepository;
 use App\Repositories\NotificationRepository;
+use App\Repositories\SubscriptionRepository;
+use App\Repositories\UserRepository;
 use App\Rules\SubscriptionRule;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 
 class SubscriptionService
 {
@@ -43,16 +40,18 @@ class SubscriptionService
 
         $subscription = $this->subscriptionRepository->findById($request->subscriptionID);
 
-        if($subscription->name === 'free'){
+        if ($subscription->name === 'free') {
             $user = $this->userRepository->findById($request->user()->id);
             $this->notificationRepository->create($user->enterprise_id, 'Assinatura renovada!', sprintf(
                 "O usuário %s renovou a assinatura com sucesso!\n".
                 "Detalhes da Renovação:\n".
-                "Plano: GRATUITO",
+                'Plano: GRATUITO',
                 $user->name,
             ));
+
             return $this->enterpriseRepository->update($user->enterprise_id, ['subscription_id' => $request->subscriptionID, 'expired_date' => null]);
         }
+
         return null;
     }
 }
