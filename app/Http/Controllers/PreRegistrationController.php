@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\PreRegistrationConfigHelper;
+use App\Models\PreRegistration;
 use App\Repositories\PreRegistrationRelationshipRepository;
 use App\Repositories\PreRegistrationRepository;
 use App\Rules\PreRegistrationRule;
@@ -46,6 +47,18 @@ class PreRegistrationController
             $this->rule->create($request);
 
             PreRegistrationConfigHelper::isFormActive($request->input('enterpriseID'));
+
+            $existing = PreRegistration::where('enterprise_id', $request->enterpriseID)
+                ->where('cpf', $request->cpf)
+                ->first();
+
+            if ($existing) {
+                DB::table('pre_registration_relationship')
+                    ->where('pre_registration_id', $existing->id)
+                    ->delete();
+
+                $existing->delete();
+            }
 
             $member = $this->repository->create([
                 'enterprise_id' => $request->input('enterpriseID'),
