@@ -10,6 +10,7 @@ use App\Repositories\DashboardRepository;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class DashboardController
 {
@@ -59,7 +60,22 @@ class DashboardController
         try {
             $enterpriseId = $request->user()->view_enterprise_id;
 
-            $dashboard = $this->repository->mountDashboard($enterpriseId, $request);
+            $dashboard = $this->repository->mountDashboard($enterpriseId, $request, 0);
+
+            $date = $request->input('date');
+
+
+            if (is_array($date)) {
+                $from = Carbon::createFromFormat('Y-m/d', $date['from'])
+                    ->format('d/m/Y');
+
+                $to = Carbon::createFromFormat('Y-m/d', $date['to'])
+                    ->format('d/m/Y');
+
+                $dateFormatted = "{$from} até {$to}";
+            } else {
+                $dateFormatted = str_replace('-', '/', (string) $date);
+            }
 
             $pdf = PDF::loadView('dashboard.pdf', [
                 'months_years' => $dashboard['months_years'],
@@ -71,7 +87,7 @@ class DashboardController
                 'schedulings_dashboard' => $dashboard['schedulings_dashboard'],
                 'accounts_dashboard' => $dashboard['accounts_dashboard'],
                 'general' => $dashboard['general'],
-                'date' => $request->input('date'),
+                'date' => $dateFormatted,
             ]);
 
             return $pdf->download('dashboard.pdf');

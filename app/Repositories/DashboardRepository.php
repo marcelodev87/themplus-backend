@@ -40,7 +40,7 @@ class DashboardRepository
         return $this->model->where('enterprise_id', $enterpriseId)->get();
     }
 
-    public function mountDashboard($enterpriseId, $request)
+    public function mountDashboard($enterpriseId, $request, $takeAccounts = 3)
     {
         $mode = $request->input('mode');
         $date = $request->input('date');
@@ -54,7 +54,7 @@ class DashboardRepository
         $movements_dashboard = $this->movementRepository->getMovementsDashboard($enterpriseId, $date, $mode);
         $users_dashboard = $this->userRepository->getUsersDashboard($enterpriseId);
         $schedulings_dashboard = $this->schedulingRepository->getSchedulingsDashboard($enterpriseId, $date, $mode);
-        $accounts_dashboard = $this->accountRepository->getAccountsDashboard($enterpriseId);
+        $accounts_dashboard = $this->accountRepository->getAccountsDashboard($enterpriseId, $takeAccounts);
         $general = $this->movementRepository->getGeneralByEnteprise($enterpriseId);
 
         return [

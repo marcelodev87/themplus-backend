@@ -30,14 +30,19 @@ class AccountRepository
         return $this->model->where('enterprise_id', $enterpriseId)->where('active', 1)->get();
     }
 
-    public function getAccountsDashboard($enterpriseId)
+    public function getAccountsDashboard($enterpriseId, $take = 3)
     {
         $monthYear = Carbon::now()->format('m/Y');
 
-        $accounts = $this->model
+        $query = $this->model
             ->where('enterprise_id', $enterpriseId)
-            ->orderBy('balance', 'desc')
-            ->take(3)
+            ->orderBy('balance', 'desc');
+
+        if ($take > 0) {
+            $query->take($take);
+        }
+
+        $accounts = $query
             ->get(['name', 'balance'])
             ->map(function ($account) {
                 return [
