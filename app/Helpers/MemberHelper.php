@@ -29,6 +29,28 @@ class MemberHelper
         }
     }
 
+    public static function existsMemberWithCpf($enterpriseId, $cpf, $mode, $memberID = null)
+    {
+        $existingMember = DB::table('members')
+            ->where('enterprise_id', $enterpriseId)
+            ->where('cpf', $cpf)
+            ->first();
+
+        if ($mode === 'create') {
+            if ($existingMember) {
+                throw ValidationException::withMessages([
+                    'name' => ['Já existe um membro com esse cpf'],
+                ]);
+            }
+        } else {
+            if ($existingMember && $existingMember->id !== $memberID) {
+                throw ValidationException::withMessages([
+                    'name' => ['Já existe outro membro com esse cpf'],
+                ]);
+            }
+        }
+    }
+
     public static function hasLink($enterpriseID, $memberID): void
     {
         $memberExists = DB::table('members')

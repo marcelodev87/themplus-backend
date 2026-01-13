@@ -30,6 +30,12 @@ class MemberService
             'create',
         );
 
+        MemberHelper::existsMemberWithCpf(
+            $request->user()->enterprise_id,
+            $request->input('cpf'),
+            'create',
+        );
+
         $data = $request->only([
             'name',
             'profession',
@@ -93,6 +99,13 @@ class MemberService
             $request->user()->enterprise_id,
             $request->input('name'),
             'update',
+            $request->input('id')
+        );
+
+        MemberHelper::existsMemberWithCpf(
+            $request->user()->enterprise_id,
+            $request->input('cpf'),
+            'create',
             $request->input('id')
         );
 
