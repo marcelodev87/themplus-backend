@@ -286,9 +286,6 @@ class EnterpriseRepository
                 DB::table('settings_counter')->where('enterprise_id', $office->id)->delete();
                 // ---------------------
 
-                DB::table('schedulings')->where('enterprise_id', $office->id)->delete();
-                // ---------------------
-
                 $cells = DB::table('cells')->where('enterprise_id', $office->id)->get();
                 foreach ($cells as $cell) {
                     DB::table('cell_members')->where('cell_id', $cell->id)->delete();
