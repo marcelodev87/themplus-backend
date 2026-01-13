@@ -79,9 +79,12 @@ class SimulateAsaasPixWebhook extends Command
             ],
         ];
 
-        $ngrokDomain = env('NGROK_DOMAIN');
-
-        $url = "https://{$ngrokDomain}/api/webhook-asaas/";
+        if (app()->environment('local')) {
+            $ngrokDomain = env('NGROK_DOMAIN');
+            $url = "https://{$ngrokDomain}/api/webhook-asaas/";
+        } else {
+            $url = rtrim(config('app.url'), '/') . '/api/webhook-asaas/';
+        }
 
         $response = Http::withHeaders([
             'asaas-access-token' => 'jo1m3hsapj109Jasj9FCM091mkg99az0s91mHaj',
