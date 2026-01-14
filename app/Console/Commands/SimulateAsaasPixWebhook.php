@@ -16,6 +16,11 @@ class SimulateAsaasPixWebhook extends Command
     {
         $pixQrCodeId = $this->argument('pixQrCodeId');
 
+        $externalReference =
+                'user_' . env('USER_ID_SIMULATE_PAYMENT_ASAAS') .
+                '|subscription_' . env('SUBSCRIPTION_ID_SIMULATE_PAYMENT_ASAAS') .
+                '|month_1';
+
         $payload = [
             'id' => 'evt_05b708f961d739ea7eba7e4db318f621&368604920',
             'event' => 'PAYMENT_RECEIVED',
@@ -36,7 +41,7 @@ class SimulateAsaasPixWebhook extends Command
                 'interestValue' => null,
                 'nossoNumero' => null,
                 'description' => 'Pedido 056984',
-                'externalReference' => 'user_0848471c-ebb9-4729-9bc3-c06002a7e1f5|subscription_d6c8afea-efc8-4c26-8d0c-2f3a0fdffc0d|month_1',
+                'externalReference' => $externalReference,
                 'billingType' => 'PIX',
                 'pixQrCodeId' => $pixQrCodeId,
                 'status' => 'RECEIVED',
@@ -87,7 +92,7 @@ class SimulateAsaasPixWebhook extends Command
         }
 
         $response = Http::withHeaders([
-            'asaas-access-token' => 'jo1m3hsapj109Jasj9FCM091mkg99az0s91mHaj',
+            'asaas-access-token' => env('ASAAS_WEBHOOK_TOKEN'),
             'Content-Type' => 'application/json',
         ])->post($url, $payload);
 

@@ -12,8 +12,8 @@ enum Subscription: string
     {
         return match ($this) {
             self::free => 'GRÁTIS',
-            self::basic => 'BÁSICA',
-            self::advanced => 'AVANÇADA',
+            self::basic => 'BÁSICO',
+            self::advanced => 'AVANÇADO',
         };
     }
 }
