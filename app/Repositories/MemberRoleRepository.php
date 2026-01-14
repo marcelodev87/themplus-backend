@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Models\MemberRole;
 
-class CellMemberRepository
+class MemberRoleRepository
 {
     protected $model;
 
