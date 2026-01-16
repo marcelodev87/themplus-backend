@@ -233,6 +233,7 @@ class AsaasWebhookService
 
         if ($deleted) {
             $this->renewExpirationDate($data);
+            \Log::info(['chegou aqui']);
             PaymentMade::dispatch();
         }
 
