@@ -8,9 +8,9 @@ use App\Http\Resources\AccountSelect;
 use App\Repositories\AccountRepository;
 use App\Repositories\DashboardRepository;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class DashboardController
 {
@@ -63,7 +63,6 @@ class DashboardController
             $dashboard = $this->repository->mountDashboard($enterpriseId, $request, 0);
 
             $date = $request->input('date');
-
 
             if (is_array($date)) {
                 $from = Carbon::createFromFormat('Y-m/d', $date['from'])

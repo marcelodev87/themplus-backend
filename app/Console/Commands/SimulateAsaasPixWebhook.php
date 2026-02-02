@@ -17,8 +17,8 @@ class SimulateAsaasPixWebhook extends Command
         $pixQrCodeId = $this->argument('pixQrCodeId');
 
         $externalReference =
-                'user_' . env('USER_ID_SIMULATE_PAYMENT_ASAAS') .
-                '|subscription_' . env('SUBSCRIPTION_ID_SIMULATE_PAYMENT_ASAAS') .
+                'user_'.env('USER_ID_SIMULATE_PAYMENT_ASAAS').
+                '|subscription_'.env('SUBSCRIPTION_ID_SIMULATE_PAYMENT_ASAAS').
                 '|month_1';
 
         $payload = [
@@ -88,7 +88,7 @@ class SimulateAsaasPixWebhook extends Command
             $ngrokDomain = env('NGROK_DOMAIN');
             $url = "https://{$ngrokDomain}/api/webhook-asaas/";
         } else {
-            $url = rtrim(config('app.url'), '/') . '/api/webhook-asaas/';
+            $url = rtrim(config('app.url'), '/').'/api/webhook-asaas/';
         }
 
         $response = Http::withHeaders([

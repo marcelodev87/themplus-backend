@@ -35,7 +35,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function hideSensitiveRequestDetails(): void
     {
-        if ($this->app->environment('local')  || $this->app->environment('development')) {
+        if ($this->app->environment('local') || $this->app->environment('development')) {
             return;
         }
 
@@ -59,5 +59,4 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
             return app()->environment(['local', 'development']);
         });
     }
-
 }
