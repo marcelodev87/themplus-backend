@@ -47,9 +47,12 @@ class UserController
 
             $token = $newToken->plainTextToken;
 
+            $user->load(['enterprise.subscription']);
+
             return response()->json([
                 'user' => $user,
                 'token' => $token,
+                'enterprise' => $enterprise,
                 'enterprise_created' => $enterprise->created_by,
                 'enterprise_position' => $enterprise->position,
                 'enterprise_name' => $enterprise->name,
@@ -93,9 +96,12 @@ class UserController
                 $user->view_enterprise_name = $enterpriseView->name;
                 $user->view_enterprise_code = $enterpriseView->code_financial;
 
+                $user->load(['enterprise.subscription']);
+
                 return response()->json([
                     'user' => $user,
                     'token' => $token,
+                    'enterprise' => $enterprise,
                     'enterprise_created' => $enterprise->created_by,
                     'enterprise_position' => $enterprise->position,
                     'message' => 'Cadastro realizado com sucesso',
@@ -148,6 +154,8 @@ class UserController
             if ($user) {
                 DB::commit();
 
+                $user->load(['enterprise.subscription']);
+
                 return response()->json(['user' => $user, 'message' => 'Sua senha foi redefinida com sucesso'], 200);
             }
 
@@ -174,6 +182,8 @@ class UserController
                 $user->view_enterprise_code = $enterpriseView->code_financial;
                 $user->view_enterprise_name = $enterpriseView->name;
 
+                $user->load(['enterprise.subscription']);
+
                 return response()->json(['user' => $user, 'message' => 'Seus dados foram atualizados com sucesso'], 200);
             }
 
@@ -198,6 +208,8 @@ class UserController
 
                 $enterpriseView = $this->enterpriseRepository->findById($user->view_enterprise_id);
                 $user->view_enterprise_name = $enterpriseView->name;
+
+                $user->load(['enterprise.subscription']);
 
                 return response()->json(['user' => $user, 'message' => 'Sua senha foi atualizada com sucesso'], 200);
             }

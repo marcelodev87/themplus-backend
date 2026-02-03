@@ -62,6 +62,23 @@ class MemberController
         }
     }
 
+    public function getProfile(Request $request)
+    {
+        try {
+            $user = $this->repository->findById($request->user()->id);
+
+            $user->load(['enterprise.subscription']);
+
+            return response()->json([
+                'user' => $user,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar dados do perfil '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function inbox(Request $request)
     {
         try {

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Helpers\AccountHelper;
+use App\Helpers\MovementHelper;
 use App\Helpers\RegisterHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
@@ -111,6 +112,12 @@ class MovementService
         $movementsArray = $request->input('movements');
 
         foreach ($movementsArray as $index => $movementData) {
+
+            MovementHelper::allowCreateMovement(
+                $request->user()->enterprise_id,
+                Carbon::createFromFormat('d-m-Y', $request->input('date'))
+            );
+
             $fileUrl = null;
 
             if ($request->hasFile("movements.$index.receipt")) {

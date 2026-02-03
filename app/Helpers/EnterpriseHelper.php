@@ -55,4 +55,12 @@ class EnterpriseHelper
             throw new \Exception('Sua organização não é uma filial');
         }
     }
+
+    public static function isEqualSubscription($enterpriseID, $name)
+    {
+        $enterprise = DB::table('enterprises')->where('id', $enterpriseID)->first();
+        $subscription = DB::table('subscriptions')->where('id', $enterprise->subscription)->first();
+
+        return $subscription->name === $name;
+    }
 }

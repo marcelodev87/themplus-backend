@@ -6,8 +6,10 @@ use App\Exports\SchedulingExport;
 use App\Helpers\AccountHelper;
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\FinancialMovementHelper;
+use App\Helpers\MovementHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
+use App\Helpers\SchedulingHelper;
 use App\Http\Resources\AccountResource;
 use App\Http\Resources\AccountSelect;
 use App\Http\Resources\CategoryResource;
@@ -18,6 +20,7 @@ use App\Repositories\SchedulingRepository;
 use App\Rules\SchedulingRule;
 use App\Services\SchedulingService;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -154,6 +157,12 @@ class SchedulingController
     {
         try {
             DB::beginTransaction();
+
+            SchedulingHelper::allowCreateScheduling(
+                $request->user()->enterprise_id,
+                Carbon::createFromFormat('d/m/Y', $request->input('date'))
+            );
+
             $schedulings = $this->service->create($request);
 
             foreach ($schedulings as $scheduling) {
@@ -202,6 +211,12 @@ class SchedulingController
     {
         try {
             DB::beginTransaction();
+
+            SchedulingHelper::allowCreateScheduling(
+                $request->user()->enterprise_id,
+                Carbon::createFromFormat('d-m-Y', $request->input('date'))
+            );
+
             $schedulingData = $this->repository->findByIdWithRelations($request->input('id'));
             $scheduling = $this->service->update($request);
 
@@ -247,6 +262,11 @@ class SchedulingController
     {
         try {
             DB::beginTransaction();
+
+            MovementHelper::allowCreateMovement(
+                $request->user()->enterprise_id,
+                Carbon::now('America/Sao_Paulo')->format('Y-m-d')
+            );
 
             $this->rule->finalize($id);
             $schedulingData = $this->repository->findByIdWithRelations($id);

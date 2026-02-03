@@ -16,7 +16,7 @@ use App\Http\Controllers\FinancialReceiptController;
 use App\Http\Controllers\MemberChurchController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MinistryController;
-use App\Http\Controllers\MovementAnalyzeController;
+// use App\Http\Controllers\MovementAnalyzeController;
 use App\Http\Controllers\MovementController;
 use App\Http\Controllers\NetworkController;
 use App\Http\Controllers\OrderController;
@@ -40,32 +40,35 @@ Route::post('/newPassword', [UserController::class, 'resetPassword']);
 Route::get('/active-pre-registration/{id}', [PreRegistrationConfigController::class, 'check']);
 Route::post('/create-pre-registration', [PreRegistrationController::class, 'store']);
 
-Route::prefix('external')->group(function () {
-    Route::post('/check-phone', [MovementAnalyzeController::class, 'checkPhone']);
-    Route::post('/informations', [MovementAnalyzeController::class, 'informations']);
-    Route::prefix('movement-analyze')->group(function () {
-        Route::post('/', [MovementAnalyzeController::class, 'store']);
-    });
-});
+// ENDPOINTS PARA INTERGRAÇÃO COM WHATSAPP
+// Route::prefix('external')->group(function () {
+//     Route::post('/check-phone', [MovementAnalyzeController::class, 'checkPhone']);
+//     Route::post('/informations', [MovementAnalyzeController::class, 'informations']);
+//     Route::prefix('movement-analyze')->group(function () {
+//         Route::post('/', [MovementAnalyzeController::class, 'store']);
+//     });
+// });
 
 Route::prefix('webhook-asaas')->middleware(['webhook.token'])->group(function () {
     Route::post('/', [AsaasWebhookController::class, 'webhook']);
 });
 
-Route::prefix('user')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('user')->middleware(['auth:sanctum'])->group(function () {
     Route::put('/password', [UserController::class, 'updatePassword']);
     Route::put('/data', [UserController::class, 'updateData']);
 });
 
-Route::prefix('movement-analyze')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
-    Route::get('/', [MovementAnalyzeController::class, 'index']);
-    Route::post('/finalize', [MovementAnalyzeController::class, 'finalize']);
-    Route::put('/', [MovementAnalyzeController::class, 'update']);
-    Route::delete('/{id}', [MovementAnalyzeController::class, 'destroy']);
-});
+// ENDPOINTS PARA INTERGRAÇÃO COM WHATSAPP
+// Route::prefix('movement-analyze')->middleware(['auth:sanctum'])->group(function () {
+//     Route::get('/', [MovementAnalyzeController::class, 'index']);
+//     Route::post('/finalize', [MovementAnalyzeController::class, 'finalize']);
+//     Route::put('/', [MovementAnalyzeController::class, 'update']);
+//     Route::delete('/{id}', [MovementAnalyzeController::class, 'destroy']);
+// });
 
-Route::prefix('member')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('member')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [MemberController::class, 'index']);
+    Route::get('/profile', [MemberController::class, 'getProfile']);
     Route::get('/inbox', [MemberController::class, 'inbox']);
     Route::get('/{id}', [MemberController::class, 'indexByEnterprise']);
     Route::get('/find/{id}', [MemberController::class, 'show']);
@@ -83,7 +86,7 @@ Route::prefix('member')->middleware(['auth:sanctum', 'token.expiration'])->group
     Route::delete('/inbox/{id}', [MemberController::class, 'destroyNotification']);
 });
 
-Route::prefix('category')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('category')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
     Route::get('/panel', [CategoryController::class, 'categoryPanel']);
     Route::get('/filter', [CategoryController::class, 'filterCategories']);
@@ -95,44 +98,44 @@ Route::prefix('category')->middleware(['auth:sanctum', 'token.expiration'])->gro
     Route::delete('/{id}', [CategoryController::class, 'destroy']);
 });
 
-Route::prefix('department')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('department')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [DepartmentController::class, 'index']);
     Route::post('/', [DepartmentController::class, 'store'])->middleware('admin');
     Route::put('/', [DepartmentController::class, 'update'])->middleware('admin');
     Route::delete('/{id}', [DepartmentController::class, 'destroy'])->middleware('admin');
 });
 
-Route::prefix('relationship')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('relationship')->middleware(['auth:sanctum', 'not.free'])->group(function () {
     Route::get('/', [RelationshipController::class, 'index']);
     Route::post('/', [RelationshipController::class, 'store'])->middleware('admin');
     Route::put('/', [RelationshipController::class, 'update'])->middleware('admin');
     Route::delete('/{id}', [RelationshipController::class, 'destroy'])->middleware('admin');
 });
 
-Route::prefix('alert')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('alert')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/{id}', [AlertController::class, 'index']);
     Route::post('/', [AlertController::class, 'store']);
     Route::put('/', [AlertController::class, 'update']);
     Route::delete('/{id}', [AlertController::class, 'destroy']);
 });
 
-Route::prefix('role')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('role')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [RoleController::class, 'index']);
-    Route::post('/', [RoleController::class, 'store']);
-    Route::put('/', [RoleController::class, 'update']);
+    Route::post('/', [RoleController::class, 'store'])->middleware('not.free');
+    Route::put('/', [RoleController::class, 'update'])->middleware('not.free');
     Route::delete('/{id}', [RoleController::class, 'destroy']);
 });
 
-Route::prefix('network')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('network')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [NetworkController::class, 'index']);
-    Route::post('/', [NetworkController::class, 'store']);
-    Route::put('/', [NetworkController::class, 'update']);
+    Route::post('/', [NetworkController::class, 'store'])->middleware('not.free');
+    Route::put('/', [NetworkController::class, 'update'])->middleware('not.free');
     Route::delete('/{id}', [NetworkController::class, 'destroy']);
 });
 
-Route::prefix('member-church')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('member-church')->middleware(['auth:sanctum'])->group(function () {
 
-    Route::prefix('pre-registration')->group(function () {
+    Route::prefix('pre-registration')->middleware('not.free')->group(function () {
         Route::prefix('config')->group(function () {
             Route::get('', [PreRegistrationConfigController::class, 'index']);
             Route::put('', [PreRegistrationConfigController::class, 'update']);
@@ -143,33 +146,33 @@ Route::prefix('member-church')->middleware(['auth:sanctum', 'token.expiration'])
     });
 
     Route::get('/', [MemberChurchController::class, 'index']);
-    Route::post('/', [MemberChurchController::class, 'store']);
-    Route::put('/', [MemberChurchController::class, 'update']);
-    Route::put('/active', [MemberChurchController::class, 'active']);
+    Route::post('/', [MemberChurchController::class, 'store'])->middleware('not.free');
+    Route::put('/', [MemberChurchController::class, 'update'])->middleware('not.free');
+    Route::put('/active', [MemberChurchController::class, 'active'])->middleware('not.free');
     Route::delete('/{id}', [MemberChurchController::class, 'destroy']);
 });
 
-Route::prefix('ministry')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('ministry')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [MinistryController::class, 'index']);
-    Route::post('/', [MinistryController::class, 'store']);
-    Route::put('/', [MinistryController::class, 'update']);
+    Route::post('/', [MinistryController::class, 'store'])->middleware('not.free');
+    Route::put('/', [MinistryController::class, 'update'])->middleware('not.free');
     Route::delete('/{id}', [MinistryController::class, 'destroy']);
 });
 
-Route::prefix('cell')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
-    Route::prefix('member')->group(function () {
+Route::prefix('cell')->middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('member')->middleware('not.free')->group(function () {
         Route::post('', [CellMemberController::class, 'store']);
         Route::delete('', [CellMemberController::class, 'destroy']);
     });
 
     Route::get('/', [CellController::class, 'index']);
-    Route::post('/', [CellController::class, 'store']);
-    Route::put('/', [CellController::class, 'update']);
+    Route::post('/', [CellController::class, 'store'])->middleware('not.free');
+    Route::put('/', [CellController::class, 'update'])->middleware('not.free');
     Route::delete('/{id}', [CellController::class, 'destroy']);
 
 });
 
-Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('movement')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/member', [MovementController::class, 'indexMovementMember']);
     Route::get('/{date}', [MovementController::class, 'index']);
     Route::get('/filter/{date}', [MovementController::class, 'filterMovements']);
@@ -185,7 +188,7 @@ Route::prefix('movement')->middleware(['auth:sanctum', 'token.expiration'])->gro
     Route::delete('/{id}', [MovementController::class, 'destroy']);
 });
 
-Route::prefix('scheduling')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('scheduling')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/{date}', [SchedulingController::class, 'index']);
     Route::get('/filter/{date}', [SchedulingController::class, 'filterSchedulings']);
     Route::get('/informations/{type}', [SchedulingController::class, 'getFormInformations']);
@@ -197,7 +200,7 @@ Route::prefix('scheduling')->middleware(['auth:sanctum', 'token.expiration'])->g
     Route::delete('/{id}', [SchedulingController::class, 'destroy']);
 });
 
-Route::prefix('account')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('account')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [AccountController::class, 'index']);
     Route::post('/', [AccountController::class, 'store'])->middleware('admin');
     Route::post('/export', [AccountController::class, 'export']);
@@ -207,7 +210,7 @@ Route::prefix('account')->middleware(['auth:sanctum', 'token.expiration'])->grou
     Route::delete('/{id}', [AccountController::class, 'destroy'])->middleware('admin');
 });
 
-Route::prefix('order')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('order')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/client', [OrderController::class, 'indexViewClient']);
     Route::get('/counter', [OrderController::class, 'indexViewCounter']);
     Route::get('/bonds', [OrderController::class, 'indexBonds']);
@@ -218,7 +221,7 @@ Route::prefix('order')->middleware(['auth:sanctum', 'token.expiration'])->group(
     Route::delete('/bond/{id}', [OrderController::class, 'destroyBond']);
 });
 
-Route::prefix('financial')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('financial')->middleware(['auth:sanctum', 'not.free'])->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
     Route::get('/movements-observations/{date}', [FinancialController::class, 'indexObservations']);
     Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
@@ -232,7 +235,7 @@ Route::prefix('financial')->middleware(['auth:sanctum', 'token.expiration'])->gr
     });
 });
 
-Route::prefix('report')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('report')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/{id}', [ReportController::class, 'index']);
     Route::get('/details/{id}', [ReportController::class, 'details']);
     Route::post('/undo/{id}', [ReportController::class, 'undo']);
@@ -243,25 +246,25 @@ Route::prefix('report')->middleware(['auth:sanctum', 'token.expiration'])->group
     Route::delete('/reopen/{id}', [ReportController::class, 'reopen']);
 });
 
-Route::prefix('dashboard')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('dashboard')->middleware(['auth:sanctum'])->group(function () {
     Route::post('/', [DashboardController::class, 'index']);
     Route::post('/export', [DashboardController::class, 'export']);
 });
 
-Route::prefix('feed')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('feed')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [FeedController::class, 'index']);
 });
 
-Route::prefix('register')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('register')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/{period}', [RegisterController::class, 'index'])->middleware('admin');
     Route::get('/details/{id}', [RegisterController::class, 'show'])->middleware('admin');
 });
 
-Route::prefix('feedback')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('feedback')->middleware(['auth:sanctum'])->group(function () {
     Route::post('/', [FeedbackController::class, 'store']);
 });
 
-Route::prefix('enterprise')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('enterprise')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [EnterpriseController::class, 'show']);
     Route::get('/view', [EnterpriseController::class, 'showViewEnterprises'])->middleware('admin');
     Route::get('/search/{text}', [EnterpriseController::class, 'search']);
@@ -281,22 +284,22 @@ Route::prefix('enterprise')->middleware(['auth:sanctum', 'token.expiration'])->g
     });
 });
 
-Route::prefix('office')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('office')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [EnterpriseController::class, 'indexOffices']);
-    Route::post('/', [EnterpriseController::class, 'storeOffice'])->middleware('admin');
+    Route::post('/', [EnterpriseController::class, 'storeOffice'])->middleware(['admin', 'not.free']);
     Route::delete('/{id}', [EnterpriseController::class, 'destroyOffice'])->middleware('admin');
 });
 
-Route::prefix('resource')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
-    Route::get('/subscription', [EnterpriseController::class, 'mySubscription']);
-    Route::get('/coupons', [EnterpriseController::class, 'myCoupons']);
-});
+// Route::prefix('resource')->middleware(['auth:sanctum'])->group(function () {
+//     Route::get('/subscription', [EnterpriseController::class, 'mySubscription']);
+//     Route::get('/coupons', [EnterpriseController::class, 'myCoupons']);
+// });
 
-Route::prefix('subscription')->middleware(['auth:sanctum', 'token.expiration'])->group(function () {
+Route::prefix('subscription')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [SubscriptionController::class, 'index']);
     Route::prefix('payment')->group(function () {
         Route::post('/credit-card', [SubscriptionController::class, 'paymentCreditCard']);
         Route::post('/pix', [SubscriptionController::class, 'paymentPix']);
-        Route::post('/free', [SubscriptionController::class, 'updateFreeSubscription']);
+        // Route::post('/free', [SubscriptionController::class, 'updateFreeSubscription']);
     });
 });

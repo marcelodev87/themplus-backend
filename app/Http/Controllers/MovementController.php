@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\MovementExport;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\MovementHelper;
 use App\Helpers\NotificationsHelper;
 use App\Helpers\RegisterHelper;
 use App\Http\Resources\AccountResource;
@@ -301,6 +302,11 @@ class MovementController
         try {
             DB::beginTransaction();
 
+            MovementHelper::allowCreateMovement(
+                $request->user()->enterprise_id,
+                Carbon::createFromFormat('d/m/Y', $request->input('date'))
+            );
+
             $movements = $this->service->create($request);
             foreach ($movements as $movement) {
                 $movementData = $this->repository->findByIdWithRelations($movement->id);
@@ -351,6 +357,12 @@ class MovementController
     {
         try {
             DB::beginTransaction();
+
+            MovementHelper::allowCreateMovement(
+                $request->user()->enterprise_id,
+                Carbon::createFromFormat('d-m-Y', $request->input('date'))
+            );
+
             $movementData = $this->repository->findByIdWithRelations($request->input('id'));
             $movement = $this->service->update($request);
 

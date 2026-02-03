@@ -31,6 +31,12 @@ class CreditCardService
         $this->rule->create($request);
         $subscription = $this->subscriptionRepository->findById($request->subscriptionID);
 
+        $available = explode(',', env('SUBSCRIPTIONS_AVAILABLE', ''));
+
+        if (! in_array($subscription->name, $available)) {
+            throw new \Exception('Assinatura não permitida');
+        }
+
         $data = [
             'userID' => Auth::user()->id,
             'subscriptionID' => $subscription->id,

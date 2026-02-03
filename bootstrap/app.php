@@ -15,7 +15,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
-            'token.expiration' => \App\Http\Middleware\CheckTokenExpiration::class,
+            'not.free' => \App\Http\Middleware\CheckIsNotSubscriptionFree::class,
+            // 'token.expiration' => \App\Http\Middleware\CheckTokenExpiration::class,
             'webhook.token' => \App\Http\Middleware\AsaasWebhookMiddleware::class,
         ]);
     })

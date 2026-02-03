@@ -116,6 +116,11 @@ class OrderController
         try {
             DB::beginTransaction();
 
+            $isFree = EnterpriseHelper::isEqualSubscription($request->input('enterpriseId'), 'free');
+            if ($isFree) {
+                throw new \Exception('A organização não pode receber solicitação, pois tem um plano gratuito');
+            }
+
             $order = $this->service->create($request);
             $enterprise = $this->enterpriseRepository->findById($request->input('enterpriseId'));
 
@@ -183,6 +188,11 @@ class OrderController
     {
         try {
             DB::beginTransaction();
+
+            $isFree = EnterpriseHelper::isEqualSubscription($request->user()->enterprise_id, 'free');
+            if ($isFree) {
+                throw new \Exception('Não pode aceitar solicitação, pois atualmete está com o plano gratuito');
+            }
 
             $this->rule->actionClient($request);
             $orderData = $this->repository->findByIdWithCounter($request->input('id'));
