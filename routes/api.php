@@ -221,17 +221,17 @@ Route::prefix('order')->middleware(['auth:sanctum'])->group(function () {
     Route::delete('/bond/{id}', [OrderController::class, 'destroyBond']);
 });
 
-Route::prefix('financial')->middleware(['auth:sanctum', 'not.free'])->group(function () {
+Route::prefix('financial')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
-    Route::get('/movements-observations/{date}', [FinancialController::class, 'indexObservations']);
-    Route::post('/', [FinancialController::class, 'finalize'])->middleware('admin');
-    Route::get('/settings-counter', [SettingsCounterController::class, 'index'])->middleware('admin');
-    Route::put('/settings-counter', [SettingsCounterController::class, 'update'])->middleware('admin');
+    Route::get('/movements-observations/{date}', [FinancialController::class, 'indexObservations'])->middleware(['not.free']);
+    Route::post('/', [FinancialController::class, 'finalize'])->middleware(['admin','not.free']);
+    Route::get('/settings-counter', [SettingsCounterController::class, 'index'])->middleware(['admin','not.free']);
+    Route::put('/settings-counter', [SettingsCounterController::class, 'update'])->middleware(['admin','not.free']);
 
     Route::prefix('file-financial')->group(function () {
         Route::get('/{monthYear}', [FinancialReceiptController::class, 'index']);
-        Route::post('/{monthYear}', [FinancialReceiptController::class, 'store']);
-        Route::delete('/{id}', [FinancialReceiptController::class, 'destroy']);
+        Route::post('/{monthYear}', [FinancialReceiptController::class, 'store'])->middleware(['not.free']);
+        Route::delete('/{id}', [FinancialReceiptController::class, 'destroy'])->middleware(['not.free']);
     });
 });
 
