@@ -224,9 +224,9 @@ Route::prefix('order')->middleware(['auth:sanctum'])->group(function () {
 Route::prefix('financial')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [FinancialController::class, 'index']);
     Route::get('/movements-observations/{date}', [FinancialController::class, 'indexObservations'])->middleware(['not.free']);
-    Route::post('/', [FinancialController::class, 'finalize'])->middleware(['admin','not.free']);
-    Route::get('/settings-counter', [SettingsCounterController::class, 'index'])->middleware(['admin','not.free']);
-    Route::put('/settings-counter', [SettingsCounterController::class, 'update'])->middleware(['admin','not.free']);
+    Route::post('/', [FinancialController::class, 'finalize'])->middleware(['admin', 'not.free']);
+    Route::get('/settings-counter', [SettingsCounterController::class, 'index'])->middleware(['admin', 'not.free']);
+    Route::put('/settings-counter', [SettingsCounterController::class, 'update'])->middleware(['admin', 'not.free']);
 
     Route::prefix('file-financial')->group(function () {
         Route::get('/{monthYear}', [FinancialReceiptController::class, 'index']);

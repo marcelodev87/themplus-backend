@@ -21,7 +21,12 @@ class SubscriptionsV2Seeder extends Seeder
 
         Subscription::updateOrCreate(
             ['name' => 'advanced'],
-            ['price' => 129]
+            ['price' => 129],
+        );
+
+        Subscription::updateOrCreate(
+            ['name' => 'etika'],
+            ['price' => 0],
         );
     }
 }

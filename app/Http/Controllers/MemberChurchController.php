@@ -88,6 +88,8 @@ class MemberChurchController
         try {
             DB::beginTransaction();
 
+            MemberHelper::allowCreateMember($request->user()->enterprise_id);
+
             $member = $this->service->create($request);
 
             if ($member) {

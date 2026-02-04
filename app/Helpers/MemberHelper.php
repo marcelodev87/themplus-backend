@@ -103,4 +103,33 @@ class MemberHelper
             ]);
         }
     }
+
+    public static function allowCreateMember(string $enterpriseID): void
+    {
+        $subscriptionName = DB::table('enterprises')
+            ->join('subscriptions', 'subscriptions.id', '=', 'enterprises.subscription_id')
+            ->where('enterprises.id', $enterpriseID)
+            ->value('subscriptions.name');
+
+        if (! $subscriptionName) {
+            throw ValidationException::withMessages([
+                'enterprise' => ['Subscription não encontrada'],
+            ]);
+        }
+
+        if ($subscriptionName === 'etika') {
+
+            $countMembers = DB::table('members')
+                ->where('enterprise_id', $enterpriseID)
+                ->count();
+
+            if ($countMembers >= 20) {
+                throw ValidationException::withMessages([
+                    'limit' => [
+                        'Plano Cliente Etika permite no máximo 20 membros',
+                    ],
+                ]);
+            }
+        }
+    }
 }
