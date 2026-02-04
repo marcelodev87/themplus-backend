@@ -10,6 +10,7 @@ use App\Repositories\NotificationRepository;
 use App\Repositories\PaymentInfoRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 
 class AsaasWebhookService
 {
@@ -233,14 +234,13 @@ class AsaasWebhookService
 
         if ($deleted) {
             $this->renewExpirationDate($data);
-            \Log::info(['chegou aqui']);
             PaymentMade::dispatch();
         }
 
         return $deleted;
     }
 
-    private function renewExpirationDate($data)
+ private function renewExpirationDate($data)
     {
         [$userPart, $subscriptionPart, $monthQuantityPart] = explode('|', $data['payment']['externalReference']);
 
@@ -249,30 +249,50 @@ class AsaasWebhookService
         $monthQuantity = (int) str_replace('month_', '', $monthQuantityPart);
 
         $user = $this->userRepository->findById($userID);
+        $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
 
-        $expiredDate = now('America/Sao_Paulo')
-            ->addMonths($monthQuantity)
-            ->toDateTimeString();
+        $timezone = 'America/Sao_Paulo';
+        $now = now($timezone);
+
+        if ($enterprise->expired_date) {
+            $enterpriseExpired = Carbon::parse(
+                $enterprise->expired_date,
+                $timezone
+            );
+
+            $baseDate = $enterpriseExpired->greaterThan($now)
+                ? $enterpriseExpired
+                : $now;
+        } else {
+            $baseDate = $now;
+        }
+
+        $expiredDate = $baseDate
+            ->copy()
+            ->addMonths($monthQuantity);
 
         $this->enterpriseRepository->update($user->enterprise_id, [
             'subscription_id' => $subscriptionID,
-            'expired_date' => $expiredDate,
+            'expired_date' => $expiredDate->toDateTimeString(),
         ]);
 
         $subscription = $this->subscriptionRepository->findById($subscriptionID);
         $subscriptionName = Subscription::from($subscription->name)->label();
 
-        $expiredDateFormatted = now('America/Sao_Paulo')
-            ->addMonths($monthQuantity)->format('d/m/Y H:i:s');
+        $expiredDateFormatted = $expiredDate->format('d/m/Y H:i:s');
 
-        $this->notificationRepository->create($user->enterprise_id, 'Assinatura renovada!', sprintf(
-            "O usuário %s renovou a assinatura com sucesso!\n".
-            "Detalhes da Renovação:\n".
-            "Plano: %s\n".
-            'Novo Vencimento: %s',
-            $user->name,
-            $subscriptionName,
-            $expiredDateFormatted
-        ));
+        $this->notificationRepository->create(
+            $user->enterprise_id,
+            'Assinatura renovada!',
+            sprintf(
+                "O usuário %s renovou a assinatura com sucesso!\n" .
+                "Detalhes da Renovação:\n" .
+                "Plano: %s\n" .
+                "Novo Vencimento: %s",
+                $user->name,
+                $subscriptionName,
+                $expiredDateFormatted
+            )
+        );
     }
 }
