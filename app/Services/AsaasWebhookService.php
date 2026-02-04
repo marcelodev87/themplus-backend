@@ -240,7 +240,7 @@ class AsaasWebhookService
         return $deleted;
     }
 
- private function renewExpirationDate($data)
+    private function renewExpirationDate($data)
     {
         [$userPart, $subscriptionPart, $monthQuantityPart] = explode('|', $data['payment']['externalReference']);
 
@@ -285,10 +285,10 @@ class AsaasWebhookService
             $user->enterprise_id,
             'Assinatura renovada!',
             sprintf(
-                "O usuário %s renovou a assinatura com sucesso!\n" .
-                "Detalhes da Renovação:\n" .
-                "Plano: %s\n" .
-                "Novo Vencimento: %s",
+                "O usuário %s renovou a assinatura com sucesso!\n".
+                "Detalhes da Renovação:\n".
+                "Plano: %s\n".
+                'Novo Vencimento: %s',
                 $user->name,
                 $subscriptionName,
                 $expiredDateFormatted
