@@ -59,7 +59,7 @@ class EnterpriseHelper
     public static function isEqualSubscription($enterpriseID, $name)
     {
         $enterprise = DB::table('enterprises')->where('id', $enterpriseID)->first();
-        $subscription = DB::table('subscriptions')->where('id', $enterprise->subscription)->first();
+        $subscription = DB::table('subscriptions')->where('id', $enterprise->subscription_id)->first();
 
         return $subscription->name === $name;
     }
