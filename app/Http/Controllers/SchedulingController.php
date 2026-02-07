@@ -265,7 +265,7 @@ class SchedulingController
 
             MovementHelper::allowCreateMovement(
                 $request->user()->enterprise_id,
-                Carbon::now('America/Sao_Paulo')->format('Y-m-d')
+                Carbon::now('America/Sao_Paulo')
             );
 
             $this->rule->finalize($id);
