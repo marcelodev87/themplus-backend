@@ -248,13 +248,17 @@ class AsaasWebhookService
         $subscriptionID = str_replace('subscription_', '', $subscriptionPart);
         $monthQuantity = (int) str_replace('month_', '', $monthQuantityPart);
 
+        $subscription = $this->subscriptionRepository->findById($subscriptionID);
+        $subscriptionClientContabilidade = $this->subscriptionRepository->findByName('etika');
+        $subscriptionName = Subscription::from($subscription->name)->label();
+
         $user = $this->userRepository->findById($userID);
         $enterprise = $this->enterpriseRepository->findById($user->enterprise_id);
 
         $timezone = 'America/Sao_Paulo';
         $now = now($timezone);
 
-        if ($enterprise->expired_date) {
+        if ($enterprise->expired_date && $enterprise->subscription_id !== $subscriptionClientContabilidade->id) {
             $enterpriseExpired = Carbon::parse(
                 $enterprise->expired_date,
                 $timezone
@@ -276,8 +280,6 @@ class AsaasWebhookService
             'expired_date' => $expiredDate->toDateTimeString(),
         ]);
 
-        $subscription = $this->subscriptionRepository->findById($subscriptionID);
-        $subscriptionName = Subscription::from($subscription->name)->label();
 
         $expiredDateFormatted = $expiredDate->format('d/m/Y H:i:s');
 
