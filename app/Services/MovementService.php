@@ -107,24 +107,54 @@ class MovementService
     public function insert($request)
     {
         $this->rule->insert($request);
-        $createdMovements = [];
 
-        $movementsArray = $request->input('movements');
+        $enterpriseId = $request->user()->enterprise_id;
+        $createdMovements = [];
+        $movementsArray = $request->input('movements', []);
+
+        if (empty($movementsArray)) {
+            return response()->json([]);
+        }
+
+        $periodGroups = [];
 
         foreach ($movementsArray as $index => $movementData) {
 
-            MovementHelper::allowCreateMovement(
-                $request->user()->enterprise_id,
-                Carbon::createFromFormat('d-m-Y', $request->input('date'))
-            );
+            if (empty($movementData['date'])) {
+                continue;
+            }
+
+            try {
+                $date = Carbon::createFromFormat('d/m/Y', $movementData['date']);
+            } catch (\Exception $e) {
+                continue;
+            }
+
+            $key = $date->format('Y-m');
+            $periodGroups[$key] = ($periodGroups[$key] ?? 0) + 1;
+        }
+
+        MovementHelper::allowCreateMovementBatch($enterpriseId, $periodGroups);
+
+        foreach ($movementsArray as $index => $movementData) {
+
+            $dateString = $movementData['date'] ?? null;
+            if (! $dateString) {
+                continue;
+            }
+
+            try {
+                $dateCarbon = Carbon::createFromFormat('d/m/Y', $dateString);
+            } catch (\Exception $e) {
+                continue;
+            }
 
             $fileUrl = null;
 
             if ($request->hasFile("movements.$index.receipt")) {
                 $file = $request->file("movements.$index.receipt");
 
-                $env = env('APP_ENV');
-                $folder = match ($env) {
+                $folder = match (env('APP_ENV')) {
                     'local' => 'receipts-local',
                     'development' => 'receipts-development',
                     'production' => 'receipts-production',
@@ -135,32 +165,51 @@ class MovementService
                 $fileUrl = Storage::disk('s3')->url($path);
             }
 
+            $accountId = $movementData['account'] ?? null;
+            $categoryId = $movementData['category'] ?? null;
+
+            if ($accountId && $categoryId) {
+                AccountHelper::openingBalance($accountId, $categoryId);
+            }
+
             $data = [
-                'type' => $movementData['type'],
-                'date_movement' => Carbon::createFromFormat('d/m/Y', $movementData['date']),
-                'value' => $movementData['value'],
-                'description' => $movementData['description'],
+                'type' => $movementData['type'] ?? null,
+                'date_movement' => $dateCarbon,
+                'value' => $movementData['value'] ?? null,
+                'description' => $movementData['description'] ?? null,
                 'receipt' => $fileUrl,
-                'category_id' => $movementData['category'],
-                'account_id' => $movementData['account'],
-                'enterprise_id' => $request->user()->enterprise_id,
+                'category_id' => $categoryId,
+                'account_id' => $accountId,
+                'enterprise_id' => $enterpriseId,
             ];
 
-            AccountHelper::openingBalance($movementData['account'], $movementData['category']);
-
             $movement = $this->repository->create($data);
-            if ($movement) {
-                $createdMovements[] = $movement;
-                $this->updateBalanceAccount($movementData['account']);
 
-                RegisterHelper::create(
-                    $request->user()->id,
-                    $request->user()->enterprise_id,
-                    'insert',
-                    'movement',
-                    "{$movement->value}|{$movement->type}|{$movement->account->name}|{$movement->account->account_number}|{$movement->account->agency_number}|{$movement->category->name}|{$movement->date_movement}"
-                );
+            if (! $movement) {
+                continue;
             }
+
+            $createdMovements[] = $movement;
+
+            if ($accountId) {
+                $this->updateBalanceAccount($accountId);
+            }
+
+            RegisterHelper::create(
+                $request->user()->id,
+                $enterpriseId,
+                'insert',
+                'movement',
+                implode('|', [
+                    $movement->value,
+                    $movement->type,
+                    optional($movement->account)->name,
+                    optional($movement->account)->account_number,
+                    optional($movement->account)->agency_number,
+                    optional($movement->category)->name,
+                    $movement->date_movement,
+                ])
+            );
         }
 
         return response()->json($createdMovements);
