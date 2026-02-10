@@ -4,15 +4,19 @@ namespace App\Repositories;
 
 use App\Models\Enterprise;
 use App\Models\Member;
+use App\Models\MemberRelationship;
 use Illuminate\Support\Facades\DB;
 
 class MemberRepository
 {
     protected $model;
 
-    public function __construct(Member $model)
+    protected $modelMemberRelationship;
+
+    public function __construct(Member $model, MemberRelationship $modelMemberRelationship)
     {
         $this->model = $model;
+        $this->modelMemberRelationship = $modelMemberRelationship;
     }
 
     public function getAll()
@@ -82,5 +86,14 @@ class MemberRepository
         }
 
         return false;
+    }
+
+    public function deleteRelationship($member_id, $related_member_id, $relationship_id)
+    {
+        return $this->modelMemberRelationship
+                ->where('member_id', $member_id)
+                ->where('related_member_id', $related_member_id)
+                ->where('relationship_id', $relationship_id)
+                ->delete();
     }
 }

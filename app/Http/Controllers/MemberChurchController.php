@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\EnterpriseHelper;
 use App\Helpers\MemberHelper;
+use App\Http\Resources\MemberChurchResource;
 use App\Repositories\MemberRepository;
 use App\Rules\MemberRule;
 use App\Services\MemberService;
@@ -39,6 +40,19 @@ class MemberChurchController
             return response()->json(['members' => $members, 'filled_data' => $filledData], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar todas os membros: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function show(Request $request)
+    {
+        try {
+            $member = $this->repository->findById($request['memberID']);
+
+            return response()->json(['member' => new MemberChurchResource($member)], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao buscar membro: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -155,6 +169,30 @@ class MemberChurchController
             DB::rollBack();
 
             Log::error('Erro ao deletar membro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function deleteRelationship(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->rule->deleteRelationship($request);
+            $relationship = $this->repository->deleteRelationship($request['memberID'], $request['relatedMemberID'], $request['relationshipID']);
+
+            if ($relationship) {
+                DB::commit();
+
+                return response()->json(['message' => 'Relação excluída com sucesso'], 200);
+            }
+
+            throw new \Exception('Falha ao deletar relação');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao deletar relação: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }

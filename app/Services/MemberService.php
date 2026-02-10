@@ -105,7 +105,7 @@ class MemberService
         MemberHelper::existsMemberWithCpf(
             $request->user()->enterprise_id,
             $request->input('cpf'),
-            'create',
+            'update',
             $request->input('id')
         );
 

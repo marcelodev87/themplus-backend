@@ -220,4 +220,30 @@ class MemberRule
 
         return true;
     }
+
+    public function deleteRelationship($request)
+    {
+        $rules = [
+            'memberID' => 'required|string|exists:members,id',
+            'relatedMemberID' => 'required|string|exists:members,id',
+            'relationshipID' => 'required|string|exists:relationships,id',
+        ];
+
+        $messages = [
+            'memberID.required' => 'O ID do membro é obrigatório',
+            'memberID.exists' => 'O ID do membro não existe',
+            'relatedMemberID.required' => 'O ID do membro é obrigatório',
+            'relatedMemberID.exists' => 'O ID do membro não existe',
+            'relationshipID.required' => 'O ID da relação é obrigatória',
+            'relationshipID.exists' => 'O ID da relação não existe',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator, response()->json(['errors' => $validator->errors()], 422));
+        }
+
+        return true;
+    }
 }

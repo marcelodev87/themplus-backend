@@ -146,7 +146,9 @@ Route::prefix('member-church')->middleware(['auth:sanctum'])->group(function () 
     });
 
     Route::get('/', [MemberChurchController::class, 'index']);
+    Route::get('/{memberID}', [MemberChurchController::class, 'show']);
     Route::post('/', [MemberChurchController::class, 'store'])->middleware('not.free');
+    Route::post('relationship/', [MemberChurchController::class, 'deleteRelationship'])->middleware('not.free');
     Route::put('/', [MemberChurchController::class, 'update'])->middleware('not.free');
     Route::put('/active', [MemberChurchController::class, 'active'])->middleware('not.free');
     Route::delete('/{id}', [MemberChurchController::class, 'destroy']);
@@ -290,10 +292,10 @@ Route::prefix('office')->middleware(['auth:sanctum'])->group(function () {
     Route::delete('/{id}', [EnterpriseController::class, 'destroyOffice'])->middleware('admin');
 });
 
-// Route::prefix('resource')->middleware(['auth:sanctum'])->group(function () {
-//     Route::get('/subscription', [EnterpriseController::class, 'mySubscription']);
-//     Route::get('/coupons', [EnterpriseController::class, 'myCoupons']);
-// });
+Route::prefix('resource')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/subscription', [EnterpriseController::class, 'mySubscription']);
+    // Route::get('/coupons', [EnterpriseController::class, 'myCoupons']);
+});
 
 Route::prefix('subscription')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [SubscriptionController::class, 'index']);
