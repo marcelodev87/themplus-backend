@@ -22,7 +22,7 @@ class CheckIsNotSubscriptionFree
             ->value('subscriptions.name');
 
         if ($subscriptionName === 'free') {
-            abort(403, 'Não disponível para plano gratuito');
+            abort(403, 'Não disponível para plano gratuito. Vá até o painel de Assinaturas e contrate o plano desejado.');
         }
 
         return $next($request);
