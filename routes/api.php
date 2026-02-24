@@ -300,6 +300,7 @@ Route::prefix('resource')->middleware(['auth:sanctum'])->group(function () {
 Route::prefix('subscription')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [SubscriptionController::class, 'index']);
     Route::prefix('payment')->group(function () {
+        Route::post('/test', [SubscriptionController::class, 'test']);
         Route::post('/credit-card', [SubscriptionController::class, 'paymentCreditCard']);
         Route::post('/pix', [SubscriptionController::class, 'paymentPix']);
         // Route::post('/free', [SubscriptionController::class, 'updateFreeSubscription']);

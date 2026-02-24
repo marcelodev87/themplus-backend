@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class DeleteOldRegisters extends Command
 {
     protected $signature = 'registers:clean-old';
+
     protected $description = 'Exclui registros da tabela register com created_at mais antigo que 2 meses';
 
     public function handle()

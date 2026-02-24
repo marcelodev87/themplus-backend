@@ -9,7 +9,7 @@ class MemberChurchResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-         $maritalMap = [
+        $maritalMap = [
             'single' => 'Solteiro(a)',
             'married' => 'Casado(a)',
             'divorced' => 'Divorciado(a)',

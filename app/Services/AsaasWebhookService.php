@@ -278,8 +278,8 @@ class AsaasWebhookService
         $this->enterpriseRepository->update($user->enterprise_id, [
             'subscription_id' => $subscriptionID,
             'expired_date' => $expiredDate->toDateTimeString(),
+            'allow_test_subscription' => 0,
         ]);
-
 
         $expiredDateFormatted = $expiredDate->format('d/m/Y H:i:s');
 

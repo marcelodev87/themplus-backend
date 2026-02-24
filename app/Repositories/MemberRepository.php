@@ -91,9 +91,9 @@ class MemberRepository
     public function deleteRelationship($member_id, $related_member_id, $relationship_id)
     {
         return $this->modelMemberRelationship
-                ->where('member_id', $member_id)
-                ->where('related_member_id', $related_member_id)
-                ->where('relationship_id', $relationship_id)
-                ->delete();
+            ->where('member_id', $member_id)
+            ->where('related_member_id', $related_member_id)
+            ->where('relationship_id', $relationship_id)
+            ->delete();
     }
 }

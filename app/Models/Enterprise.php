@@ -31,6 +31,7 @@ class Enterprise extends Model
         'counter_enterprise_id',
         'code_financial',
         'expired_date',
+        'allow_test_subscription',
     ];
 
     public function users()
