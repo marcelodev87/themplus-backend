@@ -205,6 +205,13 @@ class EnterpriseRepository
             DB::table('networks')->where('enterprise_id', $id)->delete();
             // ---------------------
 
+            $members = DB::table('members')->where('enterprise_id', $id)->get();
+            foreach ($members as $mb) {
+                if ($mb->image_url) {
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $mb->image_url);
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
+            }
             DB::table('members')->where('enterprise_id', $id)->delete();
             // ---------------------
 
@@ -314,6 +321,13 @@ class EnterpriseRepository
                 DB::table('networks')->where('enterprise_id', $office->id)->delete();
                 // ---------------------
 
+                $members = DB::table('members')->where('enterprise_id', $office->id)->get();
+                foreach ($members as $mb) {
+                    if ($mb->image_url) {
+                        $oldFilePath = str_replace(env('AWS_URL').'/', '', $mb->image_url);
+                        Storage::disk('s3')->delete($oldFilePath);
+                    }
+                }
                 DB::table('members')->where('enterprise_id', $office->id)->delete();
                 // ---------------------
 
@@ -411,6 +425,13 @@ class EnterpriseRepository
             DB::table('networks')->where('enterprise_id', $id)->delete();
             // ---------------------
 
+            $members = DB::table('members')->where('enterprise_id', $id)->get();
+            foreach ($members as $mb) {
+                if ($mb->image_url) {
+                    $oldFilePath = str_replace(env('AWS_URL').'/', '', $mb->image_url);
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
+            }
             DB::table('members')->where('enterprise_id', $id)->delete();
             // ---------------------
 

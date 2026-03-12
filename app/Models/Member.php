@@ -41,6 +41,7 @@ class Member extends Model
         'reason_end_date',
         'church_end_date',
         'enterprise_id',
+        'image_url',
     ];
 
     public function enterprise()

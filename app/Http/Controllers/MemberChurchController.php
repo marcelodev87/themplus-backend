@@ -8,9 +8,11 @@ use App\Http\Resources\MemberChurchResource;
 use App\Repositories\MemberRepository;
 use App\Rules\MemberRule;
 use App\Services\MemberService;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class MemberChurchController
 {
@@ -53,6 +55,31 @@ class MemberChurchController
             return response()->json(['member' => new MemberChurchResource($member)], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar membro: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function certificate(Request $request)
+    {
+        try {
+            $member = $this->repository->findById($request['memberID']);
+            $member->load('enterprise');
+
+            if (! $member) {
+                throw new \Exception('Membro não encontrado');
+            }
+            if (! $member->date_baptismo) {
+                throw new \Exception('Membro sem data de batismo, não é possível gerar certificado');
+            }
+
+            $pdf = PDF::loadView('certificate.pdf', [
+                'member' => $member,
+            ])->setPaper('a4', 'landscape');
+
+            return $pdf->download('certificate.pdf');
+        } catch (\Exception $e) {
+            Log::error('Erro ao exportar certificado: '.$e->getMessage());
 
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -155,6 +182,13 @@ class MemberChurchController
             DB::beginTransaction();
 
             $this->rule->delete($id);
+
+            $member = $this->repository->findById($id);
+            if ($member && $member->image_url) {
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $member->image_url);
+                Storage::disk('s3')->delete($oldFilePath);
+            }
+
             $member = $this->repository->delete($id);
 
             if ($member) {

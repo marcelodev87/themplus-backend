@@ -22,6 +22,7 @@ class CheckExpiredEnterprises extends Command
 
         if (! $freePlan) {
             $this->error('Plano free não encontrado');
+
             return;
         }
 

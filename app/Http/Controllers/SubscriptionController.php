@@ -171,5 +171,4 @@ class SubscriptionController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-
 }

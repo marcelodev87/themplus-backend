@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\MemberHelper;
 use App\Repositories\MemberRepository;
 use App\Rules\MemberRule;
+use Illuminate\Support\Facades\Storage;
 
 class MemberService
 {
@@ -88,6 +89,8 @@ class MemberService
             $member->family()->sync($syncData);
         }
 
+        $this->updateImage($request, $member->id);
+
         return $member;
     }
 
@@ -160,7 +163,46 @@ class MemberService
             $member->family()->sync($syncData);
         }
 
+        $this->updateImage($request);
+
         return $member;
 
+    }
+
+    private function updateImage($request, $memberID = null)
+    {
+        if ($request->photoDelete) {
+
+            $member = $this->repository->findById($request->input('id'));
+
+            if ($member->image_url) {
+                $oldFilePath = str_replace(env('AWS_URL').'/', '', $member->image_url);
+                Storage::disk('s3')->delete($oldFilePath);
+
+                $this->repository->update($request->input('id'), ['image_url' => null]);
+            }
+        }
+
+        if ($request->hasFile('photoAdd')) {
+
+            $fileUrl = null;
+
+            $env = env('APP_ENV');
+
+            $folder = match ($env) {
+                'local' => 'receipts-local',
+                'development' => 'receipts-development',
+                'production' => 'receipts-production',
+                default => 'receipts',
+            };
+
+            $path = $request->file('photoAdd')->store($folder, 's3');
+
+            $fileUrl = Storage::disk('s3')->url($path);
+
+            $memberID = $memberID ?? $request->input('id');
+
+            $this->repository->update($memberID, ['image_url' => $fileUrl]);
+        }
     }
 }
