@@ -68,6 +68,7 @@ class MemberService
         $data['church_end_date'] = $request->input('churchEndDate');
         $data['role_id'] = $request->input('roleID');
         $data['enterprise_id'] = $request->user()->enterprise_id;
+        $data['registration'] = $this->repository->nextRegistration($request->user()->enterprise_id);
 
         $member = $this->repository->create($data);
         if ($request->has('roles') && is_array($request->input('roles'))) {

@@ -150,6 +150,7 @@ Route::prefix('member-church')->middleware(['auth:sanctum'])->group(function () 
     Route::post('/', [MemberChurchController::class, 'store'])->middleware('not.free');
     Route::post('relationship/', [MemberChurchController::class, 'deleteRelationship'])->middleware('not.free');
     Route::post('/certificate/{memberID}', [MemberChurchController::class, 'certificate']);
+    Route::post('/wallet-member', [MemberChurchController::class, 'walletMember']);
     Route::post('/update', [MemberChurchController::class, 'update'])->middleware('not.free');
     Route::put('/active', [MemberChurchController::class, 'active'])->middleware('not.free');
     Route::delete('/{id}', [MemberChurchController::class, 'destroy']);

@@ -19,9 +19,9 @@ class MemberRepository
         $this->modelMemberRelationship = $modelMemberRelationship;
     }
 
-    public function getAll()
+    public function getAllByIds(array $ids)
     {
-        return $this->model->all();
+        return $this->model->whereIn('id', $ids)->with(['enterprise'])->get();
     }
 
     public function getAllByEnterprise(
@@ -49,6 +49,15 @@ class MemberRepository
     public function findById($id)
     {
         return $this->model->find($id);
+    }
+
+    public function nextRegistration(string $enterpriseId): int
+    {
+        $max = $this->model
+            ->where('enterprise_id', $enterpriseId)
+            ->max('registration');
+
+        return ($max ?? 0) + 1;
     }
 
     public function create(array $data)

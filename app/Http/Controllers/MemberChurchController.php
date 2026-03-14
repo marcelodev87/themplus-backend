@@ -85,6 +85,34 @@ class MemberChurchController
         }
     }
 
+    public function walletMember(Request $request)
+    {
+        try {
+            $memberIds = $request->memberIds;
+
+            if (empty($memberIds) || ! is_array($memberIds)) {
+                throw new \Exception('Lista de membros inválida ou vazia');
+            }
+
+            $members = $this->repository->getAllByIds($memberIds);
+
+            if ($members->isEmpty()) {
+                throw new \Exception('Nenhum membro encontrado');
+            }
+
+            $pdf = PDF::loadView('wallet.pdf', [
+                'members' => $members,
+            ])->setPaper('a4', 'portrait');
+
+            return $pdf->download('carteiras-membros.pdf');
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao exportar carteiras: '.$e->getMessage());
+
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
     public function active(Request $request)
     {
         try {
