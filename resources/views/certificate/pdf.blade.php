@@ -19,6 +19,10 @@
             text-align: center;
         }
 
+        .certificate-container {
+            margin-top: 100px;
+        }
+
         .title {
             font-family: 'Cinzel', serif;
             font-size: 52px;
@@ -104,7 +108,7 @@
     </style>
 </head>
 <body>
-    <div>
+    <div class="certificate-container">
         <div class="title">Certificado de Batismo</div>
         <div class="subtitle">Certificamos que</div>
         <div class="name">
