@@ -97,7 +97,7 @@ class SubscriptionController
 
             $expiredDate = $now
                 ->copy()
-                ->addDays(1);
+                ->addDays(7);
 
             $subscription = $this->repository->findById($request->subscriptionID);
             if (! $subscription) {
