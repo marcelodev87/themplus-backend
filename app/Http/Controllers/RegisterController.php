@@ -594,7 +594,7 @@ class RegisterController
                 $accountNumber = $parts[3] === '' ? 'Não definido' : $parts[3];
                 $accountAgency = $parts[4] === '' ? 'Não definido' : $parts[4];
                 $category = $parts[5];
-                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou uma nova movimentação que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$dateMovement}. Momento de registro: {$dateRegisterFormatted}";
@@ -609,7 +609,7 @@ class RegisterController
                 $accountNumber = $parts[3 === '' ? 'Não definido' : $parts[3]];
                 $accountAgency = $parts[4] === '' ? 'Não definido' : $parts[4];
                 $category = $parts[5];
-                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou uma nova movimentação a partir de uma inserção de planilha, que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$dateMovement}. Momento de registro: {$dateRegisterFormatted}";
@@ -623,7 +623,7 @@ class RegisterController
                 $accountNumber = $parts[3] === '' ? 'Não definido' : $parts[3];
                 $accountAgency = $parts[4] === '' ? 'Não definido' : $parts[4];
                 $category = $parts[5];
-                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou uma movimentação que continha o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$dateMovement}. Momento de registro: {$dateRegisterFormatted}";
@@ -636,7 +636,7 @@ class RegisterController
                 $accountNumber = $parts[3] === '' ? 'Não definido' : $parts[3];
                 $accountAgency = $parts[4] === '' ? 'Não definido' : $parts[4];
                 $category = $parts[5];
-                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu uma movimentação que continha o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$dateMovement}. Momento de registro: {$dateRegisterFormatted}";
@@ -848,7 +848,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} criou um novo agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento do registro: {$dateRegisterFormatted}";
@@ -861,7 +861,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} atualizou um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento do registro: {$dateRegisterFormatted}";
@@ -874,7 +874,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} finalizou um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento do registro: {$dateRegisterFormatted}";
@@ -887,7 +887,7 @@ class RegisterController
                 $accountNumber = $parts[3];
                 $accountAgency = $parts[4];
                 $category = $parts[5];
-                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->format('d/m/Y');
+                $date_movement = Carbon::createFromFormat('Y-m-d', $parts[6])->startOfDay()->format('d/m/Y');
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
 
                 $text = "O(A) usuário(a) {$register->user->name} de e-mail {$register->user->email} excluiu um agendamento que contém o valor de R$ {$value} com categoria {$category} do tipo {$type} na Conta: {$accountName} / Número conta: {$accountNumber} / Agência: {$accountAgency} e data definida como {$date_movement}. Momento do registro: {$dateRegisterFormatted}";
@@ -1021,7 +1021,7 @@ class RegisterController
                 $parts = explode('|', $register->identification);
                 $value = number_format($parts[0], 2, ',', '.');
                 $type = $parts[1];
-                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[2])->format('d/m/Y');
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[2])->startOfDay()->format('d/m/Y');
                 $enterpriseName = $parts[3];
                 $enterpriseEmail = $parts[4];
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);
@@ -1032,7 +1032,7 @@ class RegisterController
                 $parts = explode('|', $register->identification);
                 $value = number_format($parts[0], 2, ',', '.');
                 $type = $parts[1];
-                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[2])->format('d/m/Y');
+                $dateMovement = Carbon::createFromFormat('Y-m-d', $parts[2])->startOfDay()->format('d/m/Y');
                 $enterpriseName = $parts[3];
                 $enterpriseEmail = $parts[4];
                 $dateRegisterFormatted = str_replace('-', '/', $register->date_register);

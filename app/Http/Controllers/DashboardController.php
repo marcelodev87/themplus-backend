@@ -65,10 +65,10 @@ class DashboardController
             $date = $request->input('date');
 
             if (is_array($date)) {
-                $from = Carbon::createFromFormat('Y-m/d', $date['from'])
+                $from = Carbon::createFromFormat('Y-m/d', $date['from'])->startOfDay()
                     ->format('d/m/Y');
 
-                $to = Carbon::createFromFormat('Y-m/d', $date['to'])
+                $to = Carbon::createFromFormat('Y-m/d', $date['to'])->startOfDay()
                     ->format('d/m/Y');
 
                 $dateFormatted = "{$from} até {$to}";

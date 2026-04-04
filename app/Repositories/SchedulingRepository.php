@@ -51,7 +51,7 @@ class SchedulingRepository
         $dateColumn = 'date_movement';
         if ($mode === 'month') {
 
-            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $carbonDate = Carbon::createFromFormat('m-Y', $date)->startOfDay();
             $month = $carbonDate->month;
             $year = $carbonDate->year;
 
@@ -59,8 +59,8 @@ class SchedulingRepository
                 ->whereMonth("schedulings.$dateColumn", $month);
         } else {
 
-            $from = Carbon::createFromFormat('Y-m/d', $date['from']);
-            $to = Carbon::createFromFormat('Y-m/d', $date['to']);
+            $from = Carbon::createFromFormat('Y-m/d', $date['from'])->startOfDay();
+            $to = Carbon::createFromFormat('Y-m/d', $date['to'])->startOfDay();
 
             $query->whereBetween("schedulings.$dateColumn", [$from, $to]);
         }
@@ -89,7 +89,7 @@ class SchedulingRepository
             ->with(['category:id,name,type']);
 
         if ($mode === 'month') {
-            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $carbonDate = Carbon::createFromFormat('m-Y', $date)->startOfDay();
             $month = $carbonDate->month;
             $year = $carbonDate->year;
 
@@ -97,8 +97,8 @@ class SchedulingRepository
                 ->whereMonth('schedulings.date_movement', $month);
         } else {
 
-            $from = Carbon::createFromFormat('Y-m/d', $date['from']);
-            $to = Carbon::createFromFormat('Y-m/d', $date['to']);
+            $from = Carbon::createFromFormat('Y-m/d', $date['from'])->startOfDay();
+            $to = Carbon::createFromFormat('Y-m/d', $date['to'])->startOfDay();
 
             $query->whereBetween('schedulings.date_movement', [$from, $to]);
         }

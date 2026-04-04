@@ -65,7 +65,7 @@ class PopulateClient1Seeder extends Seeder
             $dateFormatted = null;
             if (! empty($row['dia'])) {
                 try {
-                    $dateFormatted = Carbon::createFromFormat('d/m/Y', trim($row['dia']))->format('Y-m-d');
+                    $dateFormatted = Carbon::createFromFormat('d/m/Y', trim($row['dia']))->startOfDay()->format('Y-m-d');
                 } catch (\Exception $e) {
                 }
             }

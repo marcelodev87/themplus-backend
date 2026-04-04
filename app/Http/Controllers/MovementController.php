@@ -304,7 +304,7 @@ class MovementController
 
             MovementHelper::allowCreateMovement(
                 $request->user()->enterprise_id,
-                Carbon::createFromFormat('d/m/Y', $request->input('date'))
+                Carbon::createFromFormat('d/m/Y', $request->input('date'))->startOfDay()
             );
 
             $movements = $this->service->create($request);
@@ -360,7 +360,7 @@ class MovementController
 
             MovementHelper::allowCreateMovement(
                 $request->user()->enterprise_id,
-                Carbon::createFromFormat('d-m-Y', $request->input('date'))
+                Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay()
             );
 
             $movementData = $this->repository->findByIdWithRelations($request->input('id'));

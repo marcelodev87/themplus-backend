@@ -160,7 +160,7 @@ class SchedulingController
 
             SchedulingHelper::allowCreateScheduling(
                 $request->user()->enterprise_id,
-                Carbon::createFromFormat('d/m/Y', $request->input('date'))
+                Carbon::createFromFormat('d/m/Y', $request->input('date'))->startOfDay()
             );
 
             $schedulings = $this->service->create($request);
@@ -214,7 +214,7 @@ class SchedulingController
 
             SchedulingHelper::allowCreateScheduling(
                 $request->user()->enterprise_id,
-                Carbon::createFromFormat('d-m-Y', $request->input('date'))
+                Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay()
             );
 
             $schedulingData = $this->repository->findByIdWithRelations($request->input('id'));

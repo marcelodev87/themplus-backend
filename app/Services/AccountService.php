@@ -75,7 +75,7 @@ class AccountService
         $dataOut = [
             'type' => 'saída',
             'value' => $request->input('value'),
-            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
+            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->startOfDay()->format('Y-m-d'),
             'category_id' => $transferOut->id,
             'account_id' => $request->input('accountOut'),
             'enterprise_id' => $request->user()->enterprise_id,
@@ -83,7 +83,7 @@ class AccountService
         $dataEntry = [
             'type' => 'entrada',
             'value' => $request->input('value'),
-            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->format('Y-m-d'),
+            'date_movement' => Carbon::createFromFormat('d/m/Y', $request->input('date'))->startOfDay()->format('Y-m-d'),
             'category_id' => $transferEntry->id,
             'account_id' => $request->input('accountEntry'),
             'enterprise_id' => $request->user()->enterprise_id,

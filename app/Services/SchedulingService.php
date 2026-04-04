@@ -51,7 +51,7 @@ class SchedulingService
         }
 
         $programmed = (int) $request->input('programmed');
-        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
+        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'))->startOfDay();
 
         $createdSchedulings = [];
 
@@ -100,7 +100,7 @@ class SchedulingService
             'type' => $request->input('type'),
             'value' => $request->input('value'),
             'description' => $request->input('description'),
-            'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d'),
+            'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay()->format('Y-m-d'),
             'category_id' => $request->input('category'),
             'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
             'account_id' => $request->input('account'),

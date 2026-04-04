@@ -64,7 +64,7 @@ class MovementService
         }
 
         $programed = $request->input('programmed');
-        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'));
+        $initialDate = Carbon::createFromFormat('d/m/Y', $request->input('date'))->startOfDay();
 
         $createdMovements = [];
 
@@ -125,7 +125,7 @@ class MovementService
             }
 
             try {
-                $date = Carbon::createFromFormat('d/m/Y', $movementData['date']);
+                $date = Carbon::createFromFormat('d/m/Y', $movementData['date'])->startOfDay();
             } catch (\Exception $e) {
                 continue;
             }
@@ -144,7 +144,7 @@ class MovementService
             }
 
             try {
-                $dateCarbon = Carbon::createFromFormat('d/m/Y', $dateString);
+                $dateCarbon = Carbon::createFromFormat('d/m/Y', $dateString)->startOfDay();
             } catch (\Exception $e) {
                 continue;
             }
@@ -253,7 +253,7 @@ class MovementService
             AccountHelper::openingBalance($request->input('account'), $request->input('category'));
         }
 
-        $initialDate = Carbon::createFromFormat('d-m-Y', $request->input('date'));
+        $initialDate = Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay();
         $financial = $this->financialRepository->getReports($request->user()->enterprise_id);
 
         $month = $initialDate->month;
@@ -272,7 +272,7 @@ class MovementService
             'account_id' => $request->input('account'),
             'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
             'enterprise_id' => $request->user()->enterprise_id,
-            'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->format('Y-m-d'),
+            'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay()->format('Y-m-d'),
         ];
 
         $data = $this->handleFileUpdate($request, $movement, $data);

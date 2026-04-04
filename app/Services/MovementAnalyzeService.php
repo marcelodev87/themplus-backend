@@ -84,7 +84,7 @@ class MovementAnalyzeService
             $fileUrl = Storage::disk('s3')->url($path);
         }
 
-        $initialDate = Carbon::createFromFormat('Y-m-d', $request->input('date'));
+        $initialDate = Carbon::createFromFormat('Y-m-d', $request->input('date'))->startOfDay();
 
         $financial = $this->financialRepository->getReports($request->user()->enterprise_id);
 

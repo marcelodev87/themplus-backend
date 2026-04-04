@@ -310,7 +310,7 @@ class ReportController
             if ($movement && $register) {
                 DB::commit();
 
-                $dateObject = Carbon::createFromFormat('Y-m-d', $movementData->date_movement);
+                $dateObject = Carbon::createFromFormat('Y-m-d', $movementData->date_movement)->startOfDay();
                 $data = $dateObject->format('m-Y');
 
                 $movements = $this->movementRepository->getAllByEnterpriseWithRelationsByDate($movementData->enterprise_id, $data);

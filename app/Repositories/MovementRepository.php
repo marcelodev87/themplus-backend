@@ -324,7 +324,7 @@ class MovementRepository
             );
 
         if ($mode === 'month') {
-            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $carbonDate = Carbon::createFromFormat('m-Y', $date)->startOfDay();
             $month = $carbonDate->month;
             $year = $carbonDate->year;
 
@@ -335,8 +335,8 @@ class MovementRepository
             $fromDate = str_replace('/', '-', $date['from']);
             $toDate = str_replace('/', '-', $date['to']);
 
-            $from = Carbon::createFromFormat('Y-m-d', $fromDate);
-            $to = Carbon::createFromFormat('Y-m-d', $toDate);
+            $from = Carbon::createFromFormat('Y-m-d', $fromDate)->startOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $toDate)->startOfDay();
 
             $query->whereBetween('movements.date_movement', [$from, $to]);
         }
@@ -367,7 +367,7 @@ class MovementRepository
             ->with(['category:id,name,type']);
 
         if ($mode === 'month') {
-            $carbonDate = Carbon::createFromFormat('m-Y', $date);
+            $carbonDate = Carbon::createFromFormat('m-Y', $date)->startOfDay();
             $month = $carbonDate->month;
             $year = $carbonDate->year;
 
@@ -375,8 +375,8 @@ class MovementRepository
                 ->whereMonth('movements.date_movement', $month);
         } else {
 
-            $from = Carbon::createFromFormat('Y-m/d', $date['from']);
-            $to = Carbon::createFromFormat('Y-m/d', $date['to']);
+            $from = Carbon::createFromFormat('Y-m/d', $date['from'])->startOfDay();
+            $to = Carbon::createFromFormat('Y-m/d', $date['to'])->startOfDay();
 
             $query->whereBetween('movements.date_movement', [$from, $to]);
         }
