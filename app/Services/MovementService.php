@@ -247,10 +247,12 @@ class MovementService
         $this->rule->update($request);
         $movement = $this->repository->findById($request->input('id'));
 
+        $oldAccountId = $movement->account_id;
+        $newAccountId = $request->input('account');
+
         if ($this->checkCategorySaldoInicial($movement->category_id)
-            || $this->isDifferentAccounts($movement->account_id, $request->input('account')
-            )) {
-            AccountHelper::openingBalance($request->input('account'), $request->input('category'));
+            || $this->isDifferentAccounts($movement->account_id, $newAccountId)) {
+            AccountHelper::openingBalance($newAccountId, $request->input('category'));
         }
 
         $initialDate = Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay();
@@ -265,14 +267,14 @@ class MovementService
         }
 
         $data = [
-            'type' => $request->input('type'),
-            'value' => $request->input('value'),
-            'description' => $request->input('description'),
-            'category_id' => $request->input('category'),
-            'account_id' => $request->input('account'),
-            'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
+            'type'          => $request->input('type'),
+            'value'         => $request->input('value'),
+            'description'   => $request->input('description'),
+            'category_id'   => $request->input('category'),
+            'account_id'    => $newAccountId,
+            'member_id'     => $request->input('type') !== 'entrada' ? null : $request->input('member'),
             'enterprise_id' => $request->user()->enterprise_id,
-            'date_movement' => Carbon::createFromFormat('d-m-Y', $request->input('date'))->startOfDay()->format('Y-m-d'),
+            'date_movement' => $initialDate->format('Y-m-d'),
         ];
 
         $data = $this->handleFileUpdate($request, $movement, $data);
@@ -280,7 +282,11 @@ class MovementService
         $movement = $this->repository->update($request->input('id'), $data);
 
         if ($movement) {
-            return $this->updateBalanceAccount($request->input('account'));
+            if ($oldAccountId !== $newAccountId) {
+                $this->updateBalanceAccount($oldAccountId);
+            }
+
+            return $this->updateBalanceAccount($newAccountId);
         }
 
         return null;
