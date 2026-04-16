@@ -34,6 +34,10 @@ class Enterprise extends Model
         'allow_test_subscription',
     ];
 
+    protected $casts = [
+        'expired_date' => 'date:Y-m-d',
+    ];
+
     public function users()
     {
         return $this->hasMany(User::class, 'enterprise_id');
