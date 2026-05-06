@@ -267,12 +267,12 @@ class MovementService
         }
 
         $data = [
-            'type'          => $request->input('type'),
-            'value'         => $request->input('value'),
-            'description'   => $request->input('description'),
-            'category_id'   => $request->input('category'),
-            'account_id'    => $newAccountId,
-            'member_id'     => $request->input('type') !== 'entrada' ? null : $request->input('member'),
+            'type' => $request->input('type'),
+            'value' => $request->input('value'),
+            'description' => $request->input('description'),
+            'category_id' => $request->input('category'),
+            'account_id' => $newAccountId,
+            'member_id' => $request->input('type') !== 'entrada' ? null : $request->input('member'),
             'enterprise_id' => $request->user()->enterprise_id,
             'date_movement' => $initialDate->format('Y-m-d'),
         ];
@@ -457,6 +457,10 @@ class MovementService
         ];
 
         foreach ($movements as $movement) {
+            if (isset($movement->category) && $movement->category->name === 'Transferência') {
+                continue;
+            }
+
             $period = Carbon::parse($movement->date_movement)->format('Y/m');
 
             if (! isset($allowedPeriods[$period])) {
@@ -466,8 +470,8 @@ class MovementService
             if (! isset($results['amount'][$period])) {
                 $results['amount'][$period] = [
                     'period' => $period,
-                    'entry_value' => 0,
-                    'out_value' => 0,
+                    'entry_value' => (float) 0,
+                    'out_value' => (float) 0,
                 ];
                 $results['quantity'][$period] = [
                     'period' => $period,
@@ -476,13 +480,16 @@ class MovementService
                 ];
             }
 
+            $val = (float) $movement->value;
+
             switch (strtolower($movement->type)) {
                 case 'entrada':
-                    $results['amount'][$period]['entry_value'] += $movement->value;
+                    $results['amount'][$period]['entry_value'] += $val;
                     $results['quantity'][$period]['entry_quantity']++;
                     break;
                 case 'saída':
-                    $results['amount'][$period]['out_value'] += $movement->value;
+                case 'saida':
+                    $results['amount'][$period]['out_value'] += $val;
                     $results['quantity'][$period]['out_quantity']++;
                     break;
             }

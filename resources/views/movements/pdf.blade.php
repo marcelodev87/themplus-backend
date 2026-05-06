@@ -105,10 +105,14 @@ $totalEntrada = 0;
 $totalSaida = 0;
 
 foreach ($movements as $movement) {
-    if ($movement['type'] === 'entrada') {
-        $totalEntrada += $movement['value'];
-    } else {
-        $totalSaida += $movement['value'];
+    if (isset($movement['category']) && $movement['category']['name'] !== 'Transferência') {
+
+        if ($movement['type'] === 'entrada') {
+            $totalEntrada += $movement['value'];
+        } else {
+            $totalSaida += $movement['value'];
+        }
+
     }
 }
 
@@ -149,15 +153,21 @@ $saldo = $totalEntrada - $totalSaida;
             </thead>
             <tbody>
                 @foreach($movements as $movement)
-                    <tr>
+                    <tr style="color: {{ (isset($movement['category']) && $movement['category']['name'] === 'Transferência') ? 'gray' : 'inherit' }}">
                         <td>{{ $movement['account']['name'] }}</td>
                         <td>{{ $movement['account']['account_number'] }}</td>
                         <td>{{ $movement['account']['agency_number'] }}</td>
-                        <td>{{ $movement['category']['name'] }}</td>
+                        <td>{{ $movement['category']['name'] ?? 'N/A' }}</td>
                         <td>R$ {{ number_format($movement['value'], 2, ',', '.') }}</td>
-                        <td style="color: {{ $movement['type'] === 'entrada' ? 'green' : 'red' }}">
-                            {{ ucfirst($movement['type']) }}
+
+                        <td style="color: {{ (isset($movement['category']) && $movement['category']['name'] === 'Transferência') ? 'gray' : ($movement['type'] === 'entrada' ? 'green' : 'red') }}">
+                            @if(isset($movement['category']) && $movement['category']['name'] === 'Transferência')
+                                 {{ ucfirst($movement['type']) }} ( Transferência )
+                            @else
+                                {{ ucfirst($movement['type']) }}
+                            @endif
                         </td>
+
                         <td>{{ \Carbon\Carbon::parse($movement['date_movement'])->format('d/m/Y') }}</td>
                     </tr>
                 @endforeach
