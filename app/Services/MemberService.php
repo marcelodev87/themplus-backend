@@ -77,17 +77,23 @@ class MemberService
         if ($request->has('ministries') && is_array($request->input('ministries'))) {
             $member->ministries()->sync($request->input('ministries'));
         }
-        if ($request->has('family') && is_array($request->input('family'))) {
+        if ($request->has('family')) {
             $familyData = $request->input('family');
-            $syncData = [];
 
-            foreach ($familyData as $relation) {
-                $syncData[$relation['memberID']] = [
-                    'relationship_id' => $relation['relationshipID'],
-                ];
+            if (is_string($familyData)) {
+                $familyData = json_decode($familyData, true);
             }
 
-            $member->family()->sync($syncData);
+            if (is_array($familyData)) {
+                $syncData = [];
+                foreach ($familyData as $relation) {
+                    $syncData[$relation['memberID']] = [
+                        'relationship_id' => $relation['relationshipID'],
+                    ];
+                }
+
+                $member->family()->sync($syncData);
+            }
         }
 
         $this->updateImage($request, $member->id);
@@ -151,17 +157,23 @@ class MemberService
         if ($request->has('ministries')) {
             $member->ministries()->sync($request->input('ministries'));
         }
-        if ($request->has('family') && is_array($request->input('family'))) {
+        if ($request->has('family')) {
             $familyData = $request->input('family');
-            $syncData = [];
 
-            foreach ($familyData as $relation) {
-                $syncData[$relation['memberID']] = [
-                    'relationship_id' => $relation['relationshipID'],
-                ];
+            if (is_string($familyData)) {
+                $familyData = json_decode($familyData, true);
             }
 
-            $member->family()->sync($syncData);
+            if (is_array($familyData)) {
+                $syncData = [];
+                foreach ($familyData as $relation) {
+                    $syncData[$relation['memberID']] = [
+                        'relationship_id' => $relation['relationshipID'],
+                    ];
+                }
+
+                $member->family()->sync($syncData);
+            }
         }
 
         $this->updateImage($request);

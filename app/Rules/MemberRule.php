@@ -138,9 +138,9 @@ class MemberRule
             'churchEndDate' => 'nullable|string',
             'roles' => 'nullable|array',
             'roles.*' => 'exists:roles,id',
-            'family' => 'nullable|array',
-            'family.*.memberID' => 'required_with:family|exists:members,id',
-            'family.*.relationshipID' => 'required_with:family|exists:relationships,id',
+            // 'family' => 'nullable|array',
+            // 'family.*.memberID' => 'required_with:family|exists:members,id',
+            // 'family.*.relationshipID' => 'required_with:family|exists:relationships,id',
         ];
 
         $messages = [
@@ -186,10 +186,10 @@ class MemberRule
             'churchEndDate.string' => 'A data de término na igreja deve ser um texto.',
             'roles.array' => 'O campo roles deve ser um array de IDs.',
             'roles.*.exists' => 'Um ou mais papéis selecionados são inválidos.',
-            'family.array' => 'Os familiares devem ser um array.',
-            'family.*.memberID.required_with' => 'Cada familiar deve ter um ID de membro.',
-            'family.*.memberID.exists' => 'O membro familiar selecionado é inválido.',
-            'family.*.relationshipID.exists' => 'A relação é inválida.',
+            // 'family.array' => 'Os familiares devem ser um array.',
+            // 'family.*.memberID.required_with' => 'Cada familiar deve ter um ID de membro.',
+            // 'family.*.memberID.exists' => 'O membro familiar selecionado é inválido.',
+            // 'family.*.relationshipID.exists' => 'A relação é inválida.',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
