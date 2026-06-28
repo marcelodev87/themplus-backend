@@ -174,7 +174,7 @@ class MovementRepository
         return $query->get();
     }
 
-    public function export($out, $entry, $date, $categoryId, $enterpriseId)
+    public function export($out, $entry, $date, $categoryId, $enterpriseId, $account = null)
     {
         $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
@@ -189,6 +189,10 @@ class MovementRepository
 
         if ($categoryId !== null) {
             $query->where('category_id', $categoryId);
+        }
+
+        if ($account !== null) {
+            $query->where('account_id', $account);
         }
 
         if ($date) {

@@ -183,9 +183,14 @@ class MovementController
         $out = filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN);
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
-        $enterpriseId = $request->user()->view_enterprise_id;
+        $account = $request->query('account') && $request->query('account') !== 'null'
+            ? $request->query('account')
+            : null;
+        $enterpriseId = $request->query('enterprise') && $request->query('enterprise') !== 'null'
+            ? $request->query('enterprise')
+            : $request->user()->view_enterprise_id;
 
-        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId);
+        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId, $account);
 
         $dateTime = now()->format('Ymd_His');
         $fileName = "movements_{$enterpriseId}_{$dateTime}.xlsx";
