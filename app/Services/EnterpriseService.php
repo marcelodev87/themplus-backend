@@ -129,7 +129,7 @@ class EnterpriseService
 
         $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
         $this->accountRepository->create($dataAccount);
-        $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id]);
+        $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id, 'allow_add_user' => 1, 'allow_edit_user' => 1, 'allow_delete_user' => 1, 'allow_edit_movement' => 1, 'allow_delete_movement' => 1]);
         CategoryHelper::createDefault($enterprise->id);
 
         return $enterprise;
