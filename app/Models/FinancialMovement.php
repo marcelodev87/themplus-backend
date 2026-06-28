@@ -18,6 +18,8 @@ class FinancialMovement extends Model
         'year',
         'enterprise_id',
         'check_counter',
+        'check_counter_user',
+        'check_counter_date',
     ];
 
     public function enterprise()

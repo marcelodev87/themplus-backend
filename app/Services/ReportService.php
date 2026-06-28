@@ -47,6 +47,8 @@ class ReportService
                     'date_delivery' => $report->date_delivery,
                     'month_year' => "$report->month/$report->year",
                     'check_counter' => $report->check_counter,
+                    'check_counter_user' => $report->check_counter_user,
+                    'check_counter_date' => $report->check_counter_date,
                     'receipts' => $receipts,
                 ];
             });
@@ -61,6 +63,10 @@ class ReportService
     {
         $this->rule->index($id);
 
-        return $this->financialRepository->update($id, ['check_counter' => $request->user()->enterprise_id]);
+        return $this->financialRepository->update($id, [
+            'check_counter'      => $request->user()->enterprise_id,
+            'check_counter_user' => $request->user()->name,
+            'check_counter_date' => now('America/Sao_Paulo'),
+        ]);
     }
 }

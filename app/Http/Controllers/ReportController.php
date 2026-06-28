@@ -185,7 +185,7 @@ class ReportController
         try {
             DB::beginTransaction();
             $financial = $this->financialRepository->findById($id);
-            $report = $this->financialRepository->update($id, ['check_counter' => null]);
+            $report = $this->financialRepository->update($id, ['check_counter' => null, 'check_counter_user' => null, 'check_counter_date' => null]);
             $enterpriseName = $financial->enterprise->name;
 
             $register = RegisterHelper::create(
