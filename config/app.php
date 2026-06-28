@@ -20,6 +20,7 @@ return [
     'cipher' => 'AES-256-CBC',
 
     'key' => env('APP_KEY'),
+    'cnpj_etika' => env('CNPJ_ETIKA'),
 
     'previous_keys' => [
         ...array_filter(

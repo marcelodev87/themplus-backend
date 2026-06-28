@@ -98,7 +98,14 @@ class EnterpriseService
     {
         $this->rule->createOffice($request);
 
-        $subscription = $this->subscriptionRepository->findByName('free');
+        $subscription = null;
+
+        $enterprise = $this->repository->findById($request->user()->enterprise_id);
+        if($enterprise->cnpj === config('app.cnpj_etika')) {
+            $subscription = $this->subscriptionRepository->findByName('etika');
+        } else {
+            $subscription = $this->subscriptionRepository->findByName('free');
+        }
 
         $data = [
             'name' => $request->input('name'),
