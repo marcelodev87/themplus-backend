@@ -12,6 +12,7 @@ use App\Repositories\External\CouponExternalRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
+use App\Rules\CpfCnpjRule;
 use App\Rules\EnterpriseRule;
 
 class EnterpriseService
@@ -82,6 +83,13 @@ class EnterpriseService
         if ($request->input('cnpj') === null && $request->input('cpf') === null) {
             $data['cpf'] = $entepriseActual->cpf !== null ? $entepriseActual->cpf : null;
             $data['cnpj'] = $entepriseActual->cnpj !== null ? $entepriseActual->cnpj : null;
+        } else {
+            $data['cpf'] = $request->input('cpf') !== null
+                ? CpfCnpjRule::normalize($request->input('cpf'))
+                : null;
+            $data['cnpj'] = $request->input('cnpj') !== null
+                ? CpfCnpjRule::normalize($request->input('cnpj'))
+                : null;
         }
 
         $office = $this->repository->createOffice($data);
@@ -98,10 +106,18 @@ class EnterpriseService
     {
         $this->rule->createOffice($request);
 
-        $subscription = null;
+        $cnpj = $request->input('cnpj') !== null
+            ? CpfCnpjRule::normalize($request->input('cnpj'))
+            : null;
+        $cpf = $request->input('cpf') !== null
+            ? CpfCnpjRule::normalize($request->input('cpf'))
+            : null;
 
         $enterprise = $this->repository->findById($request->user()->enterprise_id);
-        if ($enterprise->cnpj === config('app.cnpj_etika')) {
+
+        $cnpjEtika = CpfCnpjRule::normalize((string) config('app.cnpj_etika'));
+
+        if ($enterprise->cnpj !== null && CpfCnpjRule::normalize($enterprise->cnpj) === $cnpjEtika) {
             $subscription = $this->subscriptionRepository->findByName('etika');
         } else {
             $subscription = $this->subscriptionRepository->findByName('free');
@@ -120,8 +136,8 @@ class EnterpriseService
             'phone' => $request->input('phone'),
             'subscription_id' => $subscription->id,
             'counter_enterprise_id' => $request->user()->enterprise_id,
-            'cnpj' => $request->input('cnpj'),
-            'cpf' => $request->input('cpf'),
+            'cnpj' => $cnpj,
+            'cpf' => $cpf,
             'code_financial' => $request->input('code'),
         ];
 
@@ -140,15 +156,23 @@ class EnterpriseService
         $this->rule->update($request);
 
         $enterprise = $this->repository->findById($request->input('id'));
-        if (($request->input('cpf') && $request->input('cpf') !== $enterprise->cpf) || $request->input('cnpj') && $request->input('cnpj') !== $enterprise->cnpj) {
+
+        $cnpj = $request->input('cnpj') !== null
+            ? CpfCnpjRule::normalize($request->input('cnpj'))
+            : null;
+        $cpf = $request->input('cpf') !== null
+            ? CpfCnpjRule::normalize($request->input('cpf'))
+            : null;
+
+        if (($cpf && $cpf !== $enterprise->cpf) || ($cnpj && $cnpj !== $enterprise->cnpj)) {
             EnterpriseHelper::existsEnterpriseCpfOrCnpj($request);
         }
 
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'cnpj' => $request->input('cnpj'),
-            'cpf' => $request->input('cpf'),
+            'cnpj' => $cnpj,
+            'cpf' => $cpf,
             'cep' => $request->input('cep'),
             'state' => $request->input('state'),
             'city' => $request->input('city'),

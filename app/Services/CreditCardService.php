@@ -37,6 +37,13 @@ class CreditCardService
             throw new \Exception('Assinatura não permitida');
         }
 
+        $cpfCnpj = $this->normalizeCpfCnpj($request->creditCardHolderInfo['cpfCnpj']);
+
+        $creditCardHolderInfo = array_merge(
+            $request->creditCardHolderInfo,
+            ['cpfCnpj' => $cpfCnpj]
+        );
+
         $data = [
             'userID' => Auth::user()->id,
             'subscriptionID' => $subscription->id,
@@ -45,18 +52,23 @@ class CreditCardService
             'description' => null,
             'installmentCount' => null,
             'creditCard' => $request->creditCard,
-            'creditCardHolderInfo' => $request->creditCardHolderInfo,
+            'creditCardHolderInfo' => $creditCardHolderInfo,
         ];
 
         $customers = $this->http->get('/customers');
 
-        $customerID = $this->existsClient($customers['data'], $request->creditCardHolderInfo['cpfCnpj']) ?: $this->createNewClient($request)['id'];
+        $customerID = $this->existsClient($customers['data'], $cpfCnpj) ?: $this->createNewClient($creditCardHolderInfo)['id'];
 
         $charge = $this->createCreditCardCharge($customerID, $data);
 
-        $payment = $this->payCreditCardCharge($charge['id'], $request);
+        $payment = $this->payCreditCardCharge($charge['id'], $data);
 
         return $this->isItPaid($payment['id']);
+    }
+
+    private function normalizeCpfCnpj(string $value): string
+    {
+        return preg_replace('/[\.\-\s\/]/', '', strtoupper($value));
     }
 
     private function createCreditCardCharge(string $customerID, $data)
@@ -121,15 +133,13 @@ class CreditCardService
         return null;
     }
 
-    private function createNewClient($request)
+    private function createNewClient(array $creditCardHolderInfo)
     {
-        $info = $request['creditCardHolderInfo'];
-
         return $this->http->post('/customers', [
-            'name' => $info['name'],
-            'cpfCnpj' => $info['cpfCnpj'],
-            'email' => $info['email'],
-            'mobilePhone' => $info['phone'],
+            'name' => $creditCardHolderInfo['name'],
+            'cpfCnpj' => $creditCardHolderInfo['cpfCnpj'],
+            'email' => $creditCardHolderInfo['email'],
+            'mobilePhone' => $creditCardHolderInfo['phone'],
         ]);
     }
 

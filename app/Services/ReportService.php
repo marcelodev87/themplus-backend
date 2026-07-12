@@ -64,7 +64,7 @@ class ReportService
         $this->rule->index($id);
 
         return $this->financialRepository->update($id, [
-            'check_counter'      => $request->user()->enterprise_id,
+            'check_counter' => $request->user()->enterprise_id,
             'check_counter_user' => $request->user()->name,
             'check_counter_date' => now('America/Sao_Paulo'),
         ]);
