@@ -259,6 +259,7 @@ class MovementRepository
             if (empty($monthsYears)) {
                 return [];
             }
+
             $resultArray = [];
 
             foreach ($monthsYears as $monthYear) {
@@ -272,24 +273,18 @@ class MovementRepository
 
                 $status = false;
                 $dateDelivery = null;
-                $hasObservation = false;
 
                 if ($financialRecords->isNotEmpty()) {
                     $status = true;
                     $dateDelivery = $financialRecords->first()->date_delivery;
                 }
 
-                $movements = DB::table('movements')
+                $hasObservation = DB::table('movements')
+                    ->where('enterprise_id', $enterpriseId)
                     ->whereYear('date_movement', $year)
                     ->whereMonth('date_movement', $month)
-                    ->get();
-
-                foreach ($movements as $movement) {
-                    if ($movement->observation !== null) {
-                        $hasObservation = true;
-                        break;
-                    }
-                }
+                    ->whereNotNull('observation')
+                    ->exists();
 
                 $resultArray[] = [
                     'month_year' => "$month/$year",
