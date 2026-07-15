@@ -81,9 +81,22 @@ class MovementRepository
 
     public function getDashboardYearsMovement($enterpriseId)
     {
+        $financialYears = DB::table('financial_movements')
+            ->where('enterprise_id', $enterpriseId)
+            ->distinct()
+            ->pluck('year')
+            ->map(fn ($year) => (int) $year)
+            ->toArray();
+
+        if (empty($financialYears)) {
+            return [];
+        }
+
         return $this->model
             ->where('enterprise_id', $enterpriseId)
+            ->whereNotNull('date_movement')
             ->selectRaw('DISTINCT YEAR(date_movement) as year')
+            ->whereIn(DB::raw('YEAR(date_movement)'), $financialYears)
             ->orderBy('year', 'asc')
             ->pluck('year')
             ->map(fn ($year) => (string) $year)

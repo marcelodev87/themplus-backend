@@ -59,7 +59,7 @@ class ReportController
     public function index(Request $request, $id)
     {
         try {
-            $year = (int) $request->query('year_graph') ?? Carbon::now()->year;
+            $year = (int) ($request->query('year_graph') ?? Carbon::now()->year);
 
             $data = $this->service->index($request, $id);
             $enterprise = $this->enterpriseRepository->findById($id);
