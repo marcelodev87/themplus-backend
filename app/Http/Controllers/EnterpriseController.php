@@ -244,6 +244,30 @@ class EnterpriseController
         }
     }
 
+    public function storeByAPI(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $enteprise = $this->service->createByAPI($request);
+
+            if ($enteprise) {
+                DB::commit();
+
+                return response()->json(['message' => 'Organização cadastrada com sucesso'], 201);
+            }
+
+            throw new \Exception('Falha ao criar organização');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao registrar organização: '.$e->getMessage());
+
+            $status = $e->getCode() ?: 500;
+
+            return response()->json(['message' => $e->getMessage()], $status);
+        }
+    }
+
     public function saveViewEnterprise(Request $request)
     {
         try {

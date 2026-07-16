@@ -39,6 +39,7 @@ Route::post('/verify', [UserController::class, 'verify']);
 Route::post('/newPassword', [UserController::class, 'resetPassword']);
 Route::get('/active-pre-registration/{id}', [PreRegistrationConfigController::class, 'check']);
 Route::post('/create-pre-registration', [PreRegistrationController::class, 'store']);
+Route::post('/enterprise/store-api', [EnterpriseController::class, 'storeByAPI']);
 
 // ENDPOINTS PARA INTERGRAÇÃO COM WHATSAPP
 // Route::prefix('external')->group(function () {

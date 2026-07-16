@@ -14,6 +14,7 @@ use App\Repositories\SubscriptionRepository;
 use App\Repositories\UserRepository;
 use App\Rules\CpfCnpjRule;
 use App\Rules\EnterpriseRule;
+use Illuminate\Support\Facades\Hash;
 
 class EnterpriseService
 {
@@ -139,6 +140,64 @@ class EnterpriseService
             'cnpj' => $cnpj,
             'cpf' => $cpf,
             'code_financial' => $request->input('code'),
+        ];
+
+        $enterprise = $this->repository->createOffice($data);
+
+        $dataAccount = ['name' => 'Caixinha', 'enterprise_id' => $enterprise->id];
+        $this->accountRepository->create($dataAccount);
+        $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id, 'allow_add_user' => 1, 'allow_edit_user' => 1, 'allow_delete_user' => 1, 'allow_edit_movement' => 1, 'allow_delete_movement' => 1]);
+        CategoryHelper::createDefault($enterprise->id);
+
+        return $enterprise;
+    }
+
+    public function createByAPI($request)
+    {
+        $this->rule->createByAPI($request);
+
+        $auth = $request->input('auth');
+        $inputData = $request->input('data');
+
+        $user = $this->userRepository->findByEmail($auth['email']);
+
+        if (! $user || ! Hash::check($auth['password'], $user->password)) {
+            throw new \Exception('Credenciais inválidas', 401);
+        }
+
+        $enterprise = $this->repository->findById($user->enterprise_id);
+
+        $cnpjEtika = CpfCnpjRule::normalize((string) config('app.cnpj_etika'));
+
+        if ($enterprise->cnpj === null || CpfCnpjRule::normalize($enterprise->cnpj) !== $cnpjEtika) {
+            throw new \Exception('Você não tem permissão para criar clientes', 403);
+        }
+
+        $subscription = $this->subscriptionRepository->findByName('etika');
+
+        $cnpj = ($inputData['cnpj'] ?? null) !== null
+            ? CpfCnpjRule::normalize($inputData['cnpj'])
+            : null;
+        $cpf = ($inputData['cpf'] ?? null) !== null
+            ? CpfCnpjRule::normalize($inputData['cpf'])
+            : null;
+
+        $data = [
+            'name' => $inputData['name'] ?? null,
+            'email' => $inputData['email'] ?? null,
+            'cep' => $inputData['cep'] ?? null,
+            'state' => $inputData['state'] ?? null,
+            'city' => $inputData['city'] ?? null,
+            'neighborhood' => $inputData['neighborhood'] ?? null,
+            'address' => $inputData['address'] ?? null,
+            'number_address' => $inputData['number_address'] ?? null,
+            'complement' => $inputData['complement'] ?? null,
+            'phone' => $inputData['phone'] ?? null,
+            'subscription_id' => $subscription->id,
+            'counter_enterprise_id' => $user->enterprise_id,
+            'cnpj' => $cnpj,
+            'cpf' => $cpf,
+            'code_financial' => $inputData['code'] ?? null,
         ];
 
         $enterprise = $this->repository->createOffice($data);

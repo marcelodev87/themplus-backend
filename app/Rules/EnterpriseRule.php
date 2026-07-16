@@ -29,6 +29,37 @@ class EnterpriseRule
         return true;
     }
 
+    public function createByAPI($request)
+    {
+        $rules = [
+            'auth' => 'required|array',
+            'auth.email' => 'required|string|email|max:50',
+            'auth.password' => 'required|string',
+            'data' => 'required|array',
+            'data.name' => 'required|string|min:3|max:80',
+        ];
+
+        $messages = [
+            'auth.required' => 'Os dados de autenticação são obrigatórios',
+            'auth.email.required' => 'O e-mail é obrigatório',
+            'auth.email.email' => 'O e-mail deve ser um endereço de e-mail válido',
+            'auth.email.max' => 'O e-mail não pode ter mais de 50 caracteres',
+            'auth.password.required' => 'A senha é obrigatória',
+            'data.required' => 'Os dados da organização são obrigatórios',
+            'data.name.required' => 'O nome da organização é obrigatório',
+            'data.name.min' => 'O nome da organização não pode ter menos de 3 caracteres',
+            'data.name.max' => 'O nome da organização não pode ter mais de 80 caracteres',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        return true;
+    }
+
     public function update($request)
     {
         $rules = [
