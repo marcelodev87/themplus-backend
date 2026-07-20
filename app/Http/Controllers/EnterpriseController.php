@@ -13,10 +13,12 @@ use App\Repositories\EnterpriseRepository;
 use App\Repositories\FinancialRepository;
 use App\Repositories\SettingsCounterRepository;
 use App\Repositories\UserRepository;
+use App\Rules\CpfCnpjRule;
 use App\Rules\EnterpriseRule;
 use App\Services\EnterpriseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class EnterpriseController
@@ -261,6 +263,41 @@ class EnterpriseController
             DB::rollBack();
 
             Log::error('Erro ao registrar organização: '.$e->getMessage());
+
+            $status = $e->getCode() ?: 500;
+
+            return response()->json(['message' => $e->getMessage()], $status);
+        }
+    }
+
+    public function getByAPI(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $auth = $request->input('auth');
+
+            $user = $this->userRepository->findByEmail($auth['email']);
+
+            if (! $user || ! Hash::check($auth['password'], $user->password)) {
+                throw new \Exception('Credenciais inválidas', 401);
+            }
+
+            $enterprise = $this->repository->findById($user->enterprise_id);
+
+            $cnpjEtika = CpfCnpjRule::normalize((string) config('app.cnpj_etika'));
+
+            if ($enterprise->cnpj === null || CpfCnpjRule::normalize($enterprise->cnpj) !== $cnpjEtika) {
+                throw new \Exception('Você não tem permissão para visualizar clientes', 403);
+            }
+
+            $enterprises = $this->repository->getAll();
+
+            return response()->json(['enterprises' => $enterprises], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erro ao listar organizações '.$e->getMessage());
 
             $status = $e->getCode() ?: 500;
 
