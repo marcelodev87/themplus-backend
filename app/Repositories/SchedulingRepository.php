@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Helpers\PeriodHelper;
 use App\Models\Scheduling;
 use App\Services\MovementService;
 use Carbon\Carbon;
@@ -188,14 +189,9 @@ class SchedulingRepository
         }
 
         if ($date) {
-            [$month, $year] = explode('-', $date);
-
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (! PeriodHelper::applyDateFilter($query, $date)) {
                 return collect();
             }
-
-            $query->whereMonth('date_movement', $month)
-                ->whereYear('date_movement', $year);
         }
 
         return $query->get();
@@ -206,14 +202,9 @@ class SchedulingRepository
         $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
-        [$month, $year] = explode('-', $date);
-
-        if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+        if (! PeriodHelper::applyDateFilter($query, $date)) {
             return collect();
         }
-
-        $query->whereMonth('date_movement', $month)
-            ->whereYear('date_movement', $year);
 
         return $query->get();
     }
@@ -274,12 +265,7 @@ class SchedulingRepository
         }
 
         if ($date) {
-            [$month, $year] = explode('-', $date);
-
-            if (is_numeric($month) && is_numeric($year) && strlen($month) === 2 && strlen($year) === 4) {
-                $query->whereMonth('date_movement', $month)
-                    ->whereYear('date_movement', $year);
-            } else {
+            if (! PeriodHelper::applyDateFilter($query, $date)) {
                 throw new \InvalidArgumentException('Formato de data inválida, use MM/YYYY.');
             }
         }

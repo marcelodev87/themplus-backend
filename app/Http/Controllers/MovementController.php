@@ -72,7 +72,7 @@ class MovementController
             $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $date);
             $months_years = $this->repository->getMonthYears($enterpriseId);
             $filledData = EnterpriseHelper::filledData($enterpriseId);
-            $delivered = $this->repository->checkDelivered($enterpriseId, $date);
+            $closedMonths = $this->repository->getClosedMonths($enterpriseId);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
             $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
@@ -85,7 +85,7 @@ class MovementController
                 'categories' => CategorySelect::collection($categories),
                 'accounts' => AccountSelect::collection($accounts),
                 'notifications' => $notifications,
-                'delivered' => $delivered,
+                'closed_months' => $closedMonths,
                 'movements_analyze' => $movements_analyze,
             ], 200);
         } catch (\Exception $e) {
@@ -160,7 +160,7 @@ class MovementController
 
             $movements = $this->repository->getAllByEnterpriseWithRelationsWithParamsByDate($request, $date);
             $months_years = $this->repository->getMonthYears($enterpriseId);
-            $delivered = $this->repository->checkDelivered($enterpriseId, $date);
+            $closedMonths = $this->repository->getClosedMonths($enterpriseId);
             $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
             $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
@@ -169,7 +169,7 @@ class MovementController
                 'months_years' => $months_years,
                 'categories' => CategorySelect::collection($categories),
                 'accounts' => AccountSelect::collection($accounts),
-                'delivered' => $delivered,
+                'closed_months' => $closedMonths,
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erro ao buscar movimentações com base nos filtros: '.$e->getMessage());
@@ -254,7 +254,7 @@ class MovementController
 
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
-                $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
+                $closedMonths = $this->repository->getClosedMonths($enterpriseId);
                 $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
                 $notifications = NotificationsHelper::getNoRead($request->user()->id);
                 $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
@@ -266,7 +266,7 @@ class MovementController
                     'accounts' => AccountSelect::collection($accounts),
                     'notifications' => $notifications,
                     'message' => 'Inserção de movimentações em lote realizada com sucesso',
-                    'delivered' => $delivered,
+                    'closed_months' => $closedMonths,
                 ], 201);
             }
 
@@ -334,7 +334,7 @@ class MovementController
 
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
-                $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
+                $closedMonths = $this->repository->getClosedMonths($enterpriseId);
                 $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
                 $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
@@ -344,7 +344,7 @@ class MovementController
                     'months_years' => $months_years,
                     'categories' => CategorySelect::collection($categories),
                     'accounts' => AccountSelect::collection($accounts),
-                    'delivered' => $delivered,
+                    'closed_months' => $closedMonths,
                 ], 201);
             }
 
@@ -388,7 +388,7 @@ class MovementController
 
                 $movements = $this->repository->getAllByEnterpriseWithRelationsByDate($enterpriseId, $currentDate);
                 $months_years = $this->repository->getMonthYears($enterpriseId);
-                $delivered = $this->repository->checkDelivered($enterpriseId, $currentDate);
+                $closedMonths = $this->repository->getClosedMonths($enterpriseId);
                 $categories = $this->categoryRepository->getAllByEnterpriseWithDefaults($enterpriseId);
                 $accounts = $this->accountRepository->getAllByEnterprise($enterpriseId);
 
@@ -396,7 +396,7 @@ class MovementController
                     'movements' => $movements,
                     'message' => 'Movimentação atualizada com sucesso',
                     'months_years' => $months_years,
-                    'delivered' => $delivered,
+                    'closed_months' => $closedMonths,
                     'categories' => CategorySelect::collection($categories),
                     'accounts' => AccountSelect::collection($accounts),
                 ], 200);

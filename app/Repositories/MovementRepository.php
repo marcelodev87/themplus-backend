@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Helpers\PeriodHelper;
 use App\Models\Movement;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -20,39 +21,15 @@ class MovementRepository
         return $this->model->all();
     }
 
-    public function checkDelivered($enterpriseId, $date)
-    {
-        [$month, $year] = explode('-', $date);
-
-        $exists = DB::table('financial_movements')
-            ->where('enterprise_id', $enterpriseId)
-            ->where('year', $year)
-            ->where('month', $month)
-            ->exists();
-
-        return $exists;
-    }
-
     public function getAllByEnterpriseWithRelationsByDate($enterpriseId, $date = null)
     {
         $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
 
         if (! empty($date)) {
-            $parts = explode('-', $date);
-
-            if (count($parts) !== 2) {
+            if (! PeriodHelper::applyDateFilter($query, $date)) {
                 return collect();
             }
-
-            [$month, $year] = $parts;
-
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
-                return collect();
-            }
-
-            $query->whereMonth('date_movement', $month)
-                ->whereYear('date_movement', $year);
         }
 
         return $query->get();
@@ -174,17 +151,23 @@ class MovementRepository
         }
 
         if ($date) {
-            [$month, $year] = explode('-', $date);
-
-            if (! is_numeric($month) || ! is_numeric($year) || strlen($month) !== 2 || strlen($year) !== 4) {
+            if (! PeriodHelper::applyDateFilter($query, $date)) {
                 return collect();
             }
-
-            $query->whereMonth('date_movement', $month)
-                ->whereYear('date_movement', $year);
         }
 
         return $query->get();
+    }
+
+    public function getClosedMonths($enterpriseId)
+    {
+        return DB::table('financial_movements')
+            ->where('enterprise_id', $enterpriseId)
+            ->get(['month', 'year'])
+            ->map(fn ($row) => sprintf('%02d-%d', $row->month, $row->year))
+            ->unique()
+            ->values()
+            ->toArray();
     }
 
     public function export($out, $entry, $date, $categoryId, $enterpriseId, $account = null)
@@ -209,12 +192,7 @@ class MovementRepository
         }
 
         if ($date) {
-            [$month, $year] = explode('-', $date);
-
-            if (is_numeric($month) && is_numeric($year) && strlen($month) === 2 && strlen($year) === 4) {
-                $query->whereMonth('date_movement', $month)
-                    ->whereYear('date_movement', $year);
-            } else {
+            if (! PeriodHelper::applyDateFilter($query, $date)) {
                 throw new \InvalidArgumentException('Formato de data inválida, use MM/YYYY.');
             }
         }
