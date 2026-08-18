@@ -31,16 +31,9 @@ class PreRegistrationConfigRepository
 
     public function updateByEnterpriseId(string $enterpriseId, array $data)
     {
-        $registration = $this->model
-            ->where('enterprise_id', $enterpriseId)
-            ->first();
-
-        if ($registration) {
-            $registration->update($data);
-
-            return $registration;
-        }
-
-        return null;
+        return $this->model->updateOrCreate(
+            ['enterprise_id' => $enterpriseId],
+            $data
+        );
     }
 }

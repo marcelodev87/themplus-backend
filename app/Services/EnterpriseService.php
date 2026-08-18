@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Helpers\CategoryHelper;
 use App\Helpers\EnterpriseHelper;
+use App\Helpers\PreRegistrationConfigHelper;
 use App\Repositories\AccountRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\EnterpriseHasCouponRepository;
@@ -99,6 +100,7 @@ class EnterpriseService
         $this->accountRepository->create($dataAccount);
         $this->settingsCounterRepository->create(['enterprise_id' => $office->id]);
         CategoryHelper::createDefault($office->id);
+        PreRegistrationConfigHelper::createDefault($office->id);
 
         return $office;
     }
@@ -148,6 +150,7 @@ class EnterpriseService
         $this->accountRepository->create($dataAccount);
         $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id, 'allow_add_user' => 1, 'allow_edit_user' => 1, 'allow_delete_user' => 1, 'allow_edit_movement' => 1, 'allow_delete_movement' => 1]);
         CategoryHelper::createDefault($enterprise->id);
+        PreRegistrationConfigHelper::createDefault($enterprise->id);
 
         return $enterprise;
     }
@@ -206,6 +209,7 @@ class EnterpriseService
         $this->accountRepository->create($dataAccount);
         $this->settingsCounterRepository->create(['enterprise_id' => $enterprise->id, 'allow_add_user' => 1, 'allow_edit_user' => 1, 'allow_delete_user' => 1, 'allow_edit_movement' => 1, 'allow_delete_movement' => 1]);
         CategoryHelper::createDefault($enterprise->id);
+        PreRegistrationConfigHelper::createDefault($enterprise->id);
 
         return $enterprise;
     }
