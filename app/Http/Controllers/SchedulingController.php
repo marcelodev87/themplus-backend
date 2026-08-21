@@ -106,8 +106,10 @@ class SchedulingController
         $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $enterpriseId = $request->user()->view_enterprise_id;
+        $start = $request->filled('start') ? $request->query('start') : null;
+        $end = $request->filled('end') ? $request->query('end') : null;
 
-        $schedulings = $this->repository->export($out, $entry, $expired, $date, $categoryId, $enterpriseId);
+        $schedulings = $this->repository->export($out, $entry, $expired, $date, $categoryId, $enterpriseId, $start, $end);
 
         $dateTime = now()->format('Ymd_His');
         $fileName = "schedulings_{$enterpriseId}_{$dateTime}.xlsx";
@@ -122,8 +124,10 @@ class SchedulingController
         $expired = filter_var($request->query('expired'), FILTER_VALIDATE_BOOLEAN);
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $enterpriseId = $request->user()->view_enterprise_id;
+        $start = $request->filled('start') ? $request->query('start') : null;
+        $end = $request->filled('end') ? $request->query('end') : null;
 
-        $schedulings = $this->repository->export($out, $entry, $expired, $date, $categoryId, $enterpriseId);
+        $schedulings = $this->repository->export($out, $entry, $expired, $date, $categoryId, $enterpriseId, $start, $end);
         $schedulings = collect($schedulings)->sortByDesc('date_movement');
 
         $pdf = PDF::loadView('schedulings.pdf', [

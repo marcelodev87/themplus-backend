@@ -130,6 +130,8 @@ class MovementRepository
         $out = $request->has('out') ? filter_var($request->query('out'), FILTER_VALIDATE_BOOLEAN) : null;
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $accountId = ($request->query('account') === 'null') ? null : $request->query('account');
+        $start = $request->filled('start') ? $request->query('start') : null;
+        $end = $request->filled('end') ? $request->query('end') : null;
 
         $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $request->user()->view_enterprise_id);
@@ -151,7 +153,7 @@ class MovementRepository
         }
 
         if ($date) {
-            if (! PeriodHelper::applyDateFilter($query, $date)) {
+            if (! PeriodHelper::applyDateFilter($query, $date, 'date_movement', $start, $end)) {
                 return collect();
             }
         }
@@ -170,7 +172,7 @@ class MovementRepository
             ->toArray();
     }
 
-    public function export($out, $entry, $date, $categoryId, $enterpriseId, $account = null)
+    public function export($out, $entry, $date, $categoryId, $enterpriseId, $account = null, $start = null, $end = null)
     {
         $query = $this->model->with(['account', 'category', 'member'])
             ->where('enterprise_id', $enterpriseId);
@@ -192,7 +194,7 @@ class MovementRepository
         }
 
         if ($date) {
-            if (! PeriodHelper::applyDateFilter($query, $date)) {
+            if (! PeriodHelper::applyDateFilter($query, $date, 'date_movement', $start, $end)) {
                 throw new \InvalidArgumentException('Formato de data inválida, use MM/YYYY.');
             }
         }

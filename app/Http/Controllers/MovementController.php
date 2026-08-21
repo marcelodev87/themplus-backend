@@ -189,8 +189,10 @@ class MovementController
         $enterpriseId = $request->query('enterprise') && $request->query('enterprise') !== 'null'
             ? $request->query('enterprise')
             : $request->user()->view_enterprise_id;
+        $start = $request->filled('start') ? $request->query('start') : null;
+        $end = $request->filled('end') ? $request->query('end') : null;
 
-        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId, $account);
+        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId, $account, $start, $end);
 
         $dateTime = now()->format('Ymd_His');
         $fileName = "movements_{$enterpriseId}_{$dateTime}.xlsx";
@@ -204,8 +206,10 @@ class MovementController
         $entry = filter_var($request->query('entry'), FILTER_VALIDATE_BOOLEAN);
         $categoryId = ($request->query('category') === 'null') ? null : $request->query('category');
         $enterpriseId = $request->user()->view_enterprise_id;
+        $start = $request->filled('start') ? $request->query('start') : null;
+        $end = $request->filled('end') ? $request->query('end') : null;
 
-        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId);
+        $movements = $this->repository->export($out, $entry, $date, $categoryId, $enterpriseId, null, $start, $end);
         $movements = collect($movements)->sortByDesc('date_movement');
 
         $pdf = PDF::loadView('movements.pdf', [
