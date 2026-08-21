@@ -26,6 +26,8 @@ class AsaasWebhookService
 
     protected $subscriptionRepository;
 
+    protected $counterLicenseService;
+
     public function __construct(
         AsaasWebhookRepository $repository,
         PaymentInfoRepository $paymentInfoRepository,
@@ -33,6 +35,7 @@ class AsaasWebhookService
         EnterpriseRepository $enterpriseRepository,
         NotificationRepository $notificationRepository,
         SubscriptionRepository $subscriptionRepository,
+        CounterLicenseService $counterLicenseService,
     ) {
         $this->repository = $repository;
         $this->paymentInfoRepository = $paymentInfoRepository;
@@ -40,6 +43,7 @@ class AsaasWebhookService
         $this->enterpriseRepository = $enterpriseRepository;
         $this->notificationRepository = $notificationRepository;
         $this->subscriptionRepository = $subscriptionRepository;
+        $this->counterLicenseService = $counterLicenseService;
     }
 
     public function checkWebhook($request)
@@ -296,5 +300,18 @@ class AsaasWebhookService
                 $expiredDateFormatted
             )
         );
+
+        if ($subscription->type === 'counter') {
+            $usage = $this->counterLicenseService->getUsage($user->enterprise_id);
+
+            if ($usage['is_over_limit']) {
+                $this->notificationRepository->create(
+                    $user->enterprise_id,
+                    'Limite de licenças excedido',
+                    "Seu novo plano permite {$usage['limit']} licença(s), mas você possui {$usage['used']} assinatura(s) Básica concedida(s). ".
+                    "Desvincule {$usage['excess']} empresa(s) na tela de Assinaturas para regularizar."
+                );
+            }
+        }
     }
 }

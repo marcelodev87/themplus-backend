@@ -42,7 +42,8 @@ class SubscriptionController
     {
         try {
             $notifications = NotificationsHelper::getNoRead($request->user()->id);
-            $subscriptions = $this->repository->getAll();
+            $type = $request->query('type', 'client');
+            $subscriptions = $this->repository->getAllByType($type);
 
             return response()->json(['subscriptions' => $subscriptions, 'notifications' => $notifications], 200);
         } catch (\Exception $e) {

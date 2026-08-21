@@ -15,5 +15,7 @@ class Subscription extends Model
     protected $fillable = [
         'name',
         'price',
+        'type',
+        'client_limit',
     ];
 }

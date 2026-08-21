@@ -37,6 +37,8 @@ class EnterpriseService
 
     protected $couponExternalRepository;
 
+    protected $counterLicenseService;
+
     public function __construct(
         EnterpriseRule $rule,
         EnterpriseRepository $repository,
@@ -46,7 +48,8 @@ class EnterpriseService
         SettingsCounterRepository $settingsCounterRepository,
         CategoryRepository $categoryRepository,
         EnterpriseHasCouponRepository $enterpriseHasCouponRepository,
-        CouponExternalRepository $couponExternalRepository
+        CouponExternalRepository $couponExternalRepository,
+        \App\Services\CounterLicenseService $counterLicenseService
     ) {
         $this->rule = $rule;
         $this->repository = $repository;
@@ -57,6 +60,7 @@ class EnterpriseService
         $this->categoryRepository = $categoryRepository;
         $this->enterpriseHasCouponRepository = $enterpriseHasCouponRepository;
         $this->couponExternalRepository = $couponExternalRepository;
+        $this->counterLicenseService = $counterLicenseService;
     }
 
     public function createOffice($request)
@@ -152,7 +156,16 @@ class EnterpriseService
         CategoryHelper::createDefault($enterprise->id);
         PreRegistrationConfigHelper::createDefault($enterprise->id);
 
-        return $enterprise;
+        $grantError = null;
+        if ($request->boolean('grant_basic_subscription')) {
+            try {
+                $this->counterLicenseService->grant($request->user()->enterprise_id, $enterprise->id);
+            } catch (\Exception $e) {
+                $grantError = $e->getMessage();
+            }
+        }
+
+        return ['enterprise' => $enterprise, 'grant_error' => $grantError];
     }
 
     public function createByAPI($request)

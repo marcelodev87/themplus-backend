@@ -6,6 +6,7 @@ use App\Http\Controllers\AsaasWebhookController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CellController;
 use App\Http\Controllers\CellMemberController;
+use App\Http\Controllers\CounterLicenseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EnterpriseController;
@@ -309,4 +310,10 @@ Route::prefix('subscription')->middleware(['auth:sanctum'])->group(function () {
         Route::post('/pix', [SubscriptionController::class, 'paymentPix']);
         // Route::post('/free', [SubscriptionController::class, 'updateFreeSubscription']);
     });
+});
+
+Route::prefix('subscription-counter')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/usage', [CounterLicenseController::class, 'usage']);
+    Route::post('/grant/{clientEnterpriseId}', [CounterLicenseController::class, 'grant'])->middleware('not.compliant');
+    Route::delete('/revoke/{clientEnterpriseId}', [CounterLicenseController::class, 'revoke']);
 });

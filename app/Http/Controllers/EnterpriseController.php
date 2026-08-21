@@ -228,12 +228,15 @@ class EnterpriseController
     {
         try {
             DB::beginTransaction();
-            $enteprise = $this->service->createByCounter($request);
+            $result = $this->service->createByCounter($request);
 
-            if ($enteprise) {
+            if ($result['enterprise']) {
                 DB::commit();
 
-                return response()->json(['message' => 'Organização cadastrada com sucesso'], 201);
+                return response()->json([
+                    'message' => 'Organização cadastrada com sucesso',
+                    'grant_error' => $result['grant_error'],
+                ], 201);
             }
 
             throw new \Exception('Falha ao criar organização');

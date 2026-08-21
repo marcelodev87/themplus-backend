@@ -28,6 +28,11 @@ class SubscriptionRepository
         return $this->model->where('name', $name)->first();
     }
 
+    public function getAllByType($type)
+    {
+        return $this->model->where('type', $type)->get();
+    }
+
     public function create(array $data)
     {
         return $this->model->create($data);
